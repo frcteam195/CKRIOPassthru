@@ -5,12 +5,11 @@
 #include "Task.hpp"
 #include <stdint.h>
 
-class SendMotorValuesTask : public Task
+class ReadSensorDataTask : public Task
 {
 public:
-    SendMotorValuesTask();
-    ~SendMotorValuesTask();
+    ReadSensorDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
 private:
-    static constexpr uint32_t THREAD_RATE_MS = 5;
+    static constexpr uint32_t THREAD_RATE_MS = 10;
 };

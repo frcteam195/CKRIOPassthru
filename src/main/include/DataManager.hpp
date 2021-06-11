@@ -1,6 +1,9 @@
 #pragma once
 #include "DataStructures.hpp"
 #include "utils/Singleton.hpp"
+#include "ctre/Phoenix.h"
+#include <vector>
+#include <map>
 
 class DataManager : public Singleton<DataManager>
 {
@@ -8,6 +11,7 @@ class DataManager : public Singleton<DataManager>
 public:
     std::vector<MotorData> motorData;
     std::vector<MotorConfigData> motorConfigData;
+    std::map<uint16_t, TalonFX*> motorObjectList;
 private:
     DataManager();
 };

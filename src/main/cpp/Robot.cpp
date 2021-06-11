@@ -4,9 +4,33 @@
 
 #include "Robot.hpp"
 #include <functional>
+#include <pthread.h>
+#include <iostream>
 
-void Robot::RobotInit() {
-  TaskScheduler::getInstance();
+Robot::Robot() : TimedRobot(20_ms) {}
+
+void Robot::RobotInit()
+{
+	///////////////////////////
+	//Set Main Thread Priority
+	//Must also set configuration for rtprio 99, priority -20, and nice -20 in /etc/security/limits.conf
+	sched_param sch;
+	sch.sched_priority = 99;
+	if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &sch) != 0)
+	{
+		std::cout << "Error setting main thread priority!" << std::endl;
+	}
+	///////////////////////////
+
+
+	//Register Tasks
+	TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask, 5);
+	TaskScheduler::getInstance().scheduleTask(sendMotorConfigTask, 100);
+	TaskScheduler::getInstance().scheduleTask(readSensorDataTask, 10);
+	TaskScheduler::getInstance().scheduleTask(sendOutboundDataTask, 10);
+
+	//Start Scheduler
+	TaskScheduler::getInstance().start();
 }
 void Robot::RobotPeriodic() {}
 
@@ -23,7 +47,8 @@ void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() {
-  return frc::StartRobot<Robot>();
+int main()
+{
+	return frc::StartRobot<Robot>();
 }
 #endif

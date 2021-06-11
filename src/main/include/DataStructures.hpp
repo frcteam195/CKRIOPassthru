@@ -4,7 +4,7 @@
 
 struct MotorData
 {
-    uint8_t motorId;
+    uint16_t motorId;
     double outputVal;
     ControlMode ctrlMode;
     double arbFF;

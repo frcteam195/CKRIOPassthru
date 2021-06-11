@@ -4,34 +4,27 @@
 #include <vector>
 #include <functional>
 #include <frc/Notifier.h>
-#include "utils/ElapsedTimer.hpp"
-
-//void func(uint32_t elapsedTimeMSSinceLastCall)
-#define FUNC_TYPE std::function<void(unsigned int)>
-
-struct Task {
-    FUNC_TYPE funcPtr;
-    double taskRateSec;
-    double timeNextUpdate;
-    double timeLastUpdate;
-public:
-    Task(FUNC_TYPE funcPtr, double taskRateSec) : funcPtr(funcPtr), taskRateSec(taskRateSec) {};
-};
+#include "utils/RTTimer.hpp"
+#include <stdint.h>
+#include <thread>
+#include "tasks/Task.hpp"
 
 class TaskScheduler : public Singleton<TaskScheduler>
 {
     friend Singleton;
 public:
-    void scheduleTask(Task t);
+    void scheduleTask(Task &t);
+    void scheduleTask(Task &t, uint32_t taskRateMs);
     void start();
     void stop();
 private:
     TaskScheduler();
     ~TaskScheduler();
     void run();
-    ElapsedTimer eTimer;
-    double timeNow;
-    double nextWakeTime;
-    std::vector<Task> taskList;
-    frc::Notifier taskThreadNotifier;
+    RTTimer rtTimer;
+    bool threadActive;
+    std::thread mThread;
+    uint32_t timeNow;
+    uint32_t nextWakeTime;
+    std::vector<Task*> taskList;
 };

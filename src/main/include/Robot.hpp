@@ -5,22 +5,35 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
-#include <utils/TaskScheduler.hpp>
+#include "utils/TaskScheduler.hpp"
+#include "tasks/SendMotorValuesTask.hpp"
+#include "tasks/SendMotorConfigTask.hpp"
+#include "tasks/SendOutboundDataTask.hpp"
+#include "tasks/ReadSensorDataTask.hpp"
 
 class Robot : public frc::TimedRobot {
- public:
-  void RobotInit() override;
-  void RobotPeriodic() override;
+public:
+	Robot();
 
-  void AutonomousInit() override;
-  void AutonomousPeriodic() override;
+	void RobotInit() override;
+	void RobotPeriodic() override;
+	
+	void AutonomousInit() override;
+	void AutonomousPeriodic() override;
 
-  void TeleopInit() override;
-  void TeleopPeriodic() override;
+	void TeleopInit() override;
+	void TeleopPeriodic() override;
 
-  void DisabledInit() override;
-  void DisabledPeriodic() override;
+	void DisabledInit() override;
+	void DisabledPeriodic() override;
 
-  void TestInit() override;
-  void TestPeriodic() override;
+	void TestInit() override;
+	void TestPeriodic() override;
+
+private:
+	//Declare tasks as member variables in Robot cpp so they never go out of scope
+	SendMotorValuesTask sendMotorValuesTask;
+	SendMotorConfigTask sendMotorConfigTask;
+	SendOutboundDataTask sendOutboundDataTask;
+	ReadSensorDataTask readSensorDataTask;
 };
