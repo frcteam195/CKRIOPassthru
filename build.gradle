@@ -1,16 +1,38 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.17'
-  }
-}
-
 plugins {
     id "cpp"
     id "google-test-test-suite"
     id "edu.wpi.first.GradleRIO" version "2021.3.1"
+    id "org.hidetake.ssh" version "2.10.1"
+}
+
+remotes {
+	rio{
+		host = '10.1.95.2'
+		user = 'admin'
+		password = ''
+	}
+}
+
+ssh.settings {
+	knownHosts = allowAnyHosts
+    timeoutSec = 30
+}
+
+task deployRIOIPKs {
+	group 'embeddedtools'
+	doLast {
+		project.logger.lifecycle("Deploying RIO IPKs")
+		ssh.run {
+			session(remotes.rio) {
+				execute 'sudo mkdir -p /tmp/ipks'
+				put from: fileTree(dir: 'ipks/'), into: '/tmp/ipks'
+ 				execute 'sudo chmod -R 777 /tmp/ipks'
+ 				execute 'cd /tmp/ipks && for f in *.ipk; do sudo opkg install "$f" --force-overwrite; done'
+ 				execute 'sudo rm -Rf /tmp/ipks'
+ 				execute 'sudo sync'
+			}
+		}
+	}
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
