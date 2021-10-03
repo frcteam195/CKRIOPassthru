@@ -145,6 +145,7 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/main/cpp'
+                    srcDir 'src/main/protogen'
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
@@ -152,6 +153,7 @@ model {
                     if (includeSrcInIncludeRoot) {
                         srcDir 'src/main/cpp'
                     }
+                    srcDir 'src/main/protogen'
                 }
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'

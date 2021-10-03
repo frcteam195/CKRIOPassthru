@@ -83,6 +83,7 @@ void TaskScheduler::run()
                 }
             }
         }
+        //TODO: Fix this timing, this doesn't likely work yet.
         HAL_UpdateNotifierAlarm(m_notifier, HAL_GetFPGATime(&c_status) + (nextWakeTime * 1000), &c_status);
         uint64_t retTime = HAL_WaitForNotifierAlarm(m_notifier, &c_status);
     }
