@@ -18,40 +18,40 @@ ssh.settings {
     timeoutSec = 30
 }
 
-task deployriolibs {
-	group 'embeddedtools'
-	doLast {
-		project.logger.lifecycle("Deploying RIO IPKs")
-		ssh.run {
-			session(remotes.rio) {
-				execute 'sudo mkdir -p /tmp/lib'
-				put from: fileTree(dir: 'lib/'), into: '/tmp/lib'
- 				execute 'sudo chmod -R 777 /tmp/lib'
- 				execute 'cp /tmp/lib/* /usr/lib/'
- 				execute 'sudo rm -Rf /tmp/lib'
-                execute '/sbin/ldconfig'
- 				execute 'sudo sync'
-			}
-		}
-	}
-}
+// task deployriolibs {
+// 	group 'embeddedtools'
+// 	doLast {
+// 		project.logger.lifecycle("Deploying RIO IPKs")
+// 		ssh.run {
+// 			session(remotes.rio) {
+// 				execute 'sudo mkdir -p /tmp/lib'
+// 				put from: fileTree(dir: 'lib/'), into: '/tmp/lib'
+//  				execute 'sudo chmod -R 777 /tmp/lib'
+//  				execute 'cp /tmp/lib/* /usr/lib/'
+//  				execute 'sudo rm -Rf /tmp/lib'
+//                 execute '/sbin/ldconfig'
+//  				execute 'sudo sync'
+// 			}
+// 		}
+// 	}
+// }
 
-task deployRIOIPKs {
-	group 'embeddedtools'
-	doLast {
-		project.logger.lifecycle("Deploying RIO IPKs")
-		ssh.run {
-			session(remotes.rio) {
-				execute 'sudo mkdir -p /tmp/ipks'
-				put from: fileTree(dir: 'ipks/'), into: '/tmp/ipks'
- 				execute 'sudo chmod -R 777 /tmp/ipks'
- 				execute 'cd /tmp/ipks && for f in *.ipk; do sudo opkg install "$f" --force-overwrite; done'
- 				execute 'sudo rm -Rf /tmp/ipks'
- 				execute 'sudo sync'
-			}
-		}
-	}
-}
+// task deployRIOIPKs {
+// 	group 'embeddedtools'
+// 	doLast {
+// 		project.logger.lifecycle("Deploying RIO IPKs")
+// 		ssh.run {
+// 			session(remotes.rio) {
+// 				execute 'sudo mkdir -p /tmp/ipks'
+// 				put from: fileTree(dir: 'ipks/'), into: '/tmp/ipks'
+//  				execute 'sudo chmod -R 777 /tmp/ipks'
+//  				execute 'cd /tmp/ipks && for f in *.ipk; do sudo opkg install "$f" --force-overwrite; done'
+//  				execute 'sudo rm -Rf /tmp/ipks'
+//  				execute 'sudo sync'
+// 			}
+// 		}
+// 	}
+// }
 
 task protoc(type: Exec) {
     workingDir "$projectDir/src/main/proto"
