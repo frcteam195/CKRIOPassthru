@@ -10,6 +10,8 @@
 #include "tasks/SendMotorConfigTask.hpp"
 #include "tasks/SendOutboundDataTask.hpp"
 #include "tasks/ReadSensorDataTask.hpp"
+#include "zmq/zmq.h"
+#include <string>
 
 class Robot : public frc::TimedRobot {
 public:
@@ -36,4 +38,6 @@ private:
 	SendMotorConfigTask sendMotorConfigTask;
 	SendOutboundDataTask sendOutboundDataTask;
 	ReadSensorDataTask readSensorDataTask;
+
+	std::string s_exec(const char* cmd);
 };

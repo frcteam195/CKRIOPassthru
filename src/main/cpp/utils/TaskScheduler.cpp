@@ -1,9 +1,12 @@
 #include "utils/TaskScheduler.hpp"
 #include "utils/CKMath.hpp"
 #include "units/time.h"
+#include "hal/Notifier.h"
+#include "hal/HAL.h"
 
 TaskScheduler::TaskScheduler()
 {
+    m_notifier = HAL_InitializeNotifier(&c_status);
 }
 
 TaskScheduler::~TaskScheduler()
@@ -31,6 +34,8 @@ void TaskScheduler::start()
 
 void TaskScheduler::stop()
 {
+    HAL_StopNotifier(m_notifier, &c_status);
+    HAL_CleanNotifier(m_notifier, &c_status);
     threadActive = false;
     if (mThread.joinable())
     {
@@ -78,5 +83,7 @@ void TaskScheduler::run()
                 }
             }
         }
+        HAL_UpdateNotifierAlarm(m_notifier, HAL_GetFPGATime(&c_status) + (nextWakeTime * 1000), &c_status);
+        uint64_t retTime = HAL_WaitForNotifierAlarm(m_notifier, &c_status);
     }
 }

@@ -18,6 +18,24 @@ ssh.settings {
     timeoutSec = 30
 }
 
+task deployriolibs {
+	group 'embeddedtools'
+	doLast {
+		project.logger.lifecycle("Deploying RIO IPKs")
+		ssh.run {
+			session(remotes.rio) {
+				execute 'sudo mkdir -p /tmp/lib'
+				put from: fileTree(dir: 'lib/'), into: '/tmp/lib'
+ 				execute 'sudo chmod -R 777 /tmp/lib'
+ 				execute 'cp /tmp/lib/* /usr/lib/'
+ 				execute 'sudo rm -Rf /tmp/lib'
+                execute '/sbin/ldconfig'
+ 				execute 'sudo sync'
+			}
+		}
+	}
+}
+
 task deployRIOIPKs {
 	group 'embeddedtools'
 	doLast {
@@ -33,6 +51,15 @@ task deployRIOIPKs {
 			}
 		}
 	}
+}
+
+task protoc(type: Exec) {
+    workingDir "$projectDir/src/main/proto"
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'mycommand'
+    } else {
+        commandLine 'sh', '-c', 'protoc --cpp_out=../protogen/ *.proto'
+    }
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -96,13 +123,13 @@ model {
         libs(PrebuiltLibraries) {
             libzmq {
                 binaries.withType(SharedLibraryBinary) {
-                    sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq_4.3.4.so")
+                    sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq_4.3.4.so")
                 }
             }
 
             libprotobuf {
                 binaries.withType(SharedLibraryBinary) {
-                    sharedLibraryFile = file( projectDir.absolutePath + "/lib/libprotobuf/libprotobuf_3.18.0.so")
+                    sharedLibraryFile = file( projectDir.absolutePath + "/lib/libprotobuf_3.18.0.so")
                 }
             }
         }
@@ -128,6 +155,10 @@ model {
                 }
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'
+                binaries.all {
+                    linker.args << "-lzmq"
+                    linker.args << "-lprotobuf"
+                }
             }
 
             // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.

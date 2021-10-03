@@ -27,4 +27,6 @@ private:
     uint32_t timeNow;
     uint32_t nextWakeTime;
     std::vector<Task*> taskList;
+    int32_t c_status;
+    uint32_t m_notifier;
 };
