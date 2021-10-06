@@ -10,10 +10,16 @@ namespace ck
         struct sched_param sp_set;
         sp_set.sched_priority = 99;
         int ret = sched_setscheduler(netPID, SCHED_FIFO, &sp_set);
+        if (ret != 0) {
+
+        }
         
         int policy = sched_getscheduler(netPID);
         struct sched_param sp;
         ret = sched_getparam(netPID, &sp);
+        if (ret != 0) {
+            
+        }
         if (sp.sched_priority != 99 || policy != SCHED_FIFO)
         {
             std::cout << "Error setting FRCNetComm priority" << std::endl;

@@ -56,7 +56,7 @@ ssh.settings {
 task protoc(type: Exec) {
     workingDir "$projectDir/src/main/proto"
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', 'mycommand'
+        commandLine 'cmd', '/c', 'protoc --cpp_out=..\\protogen *.proto'
     } else {
         commandLine 'sh', '-c', 'protoc --cpp_out=../protogen/ *.proto'
     }
@@ -154,6 +154,7 @@ model {
                         srcDir 'src/main/cpp'
                     }
                     srcDir 'src/main/protogen'
+                    include '**/*.h', '**/*.hpp'
                 }
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'
