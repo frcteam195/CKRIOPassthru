@@ -154,7 +154,7 @@ model {
                         srcDir 'src/main/cpp'
                     }
                     srcDir 'src/main/protogen'
-                    include '**/*.h', '**/*.hpp'
+                    //include '**/*.h', '**/*.hpp'
                 }
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'
