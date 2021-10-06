@@ -10,6 +10,6 @@ class SendOutboundDataTask : public Task
 public:
     SendOutboundDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
-private:
     static constexpr uint32_t THREAD_RATE_MS = 10;
+private:
 };

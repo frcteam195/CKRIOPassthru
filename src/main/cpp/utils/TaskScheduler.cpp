@@ -3,6 +3,7 @@
 #include "units/time.h"
 #include "hal/Notifier.h"
 #include "hal/HAL.h"
+#include "utils/ThreadPriorityHelper.hpp"
 
 TaskScheduler::TaskScheduler()
 {
@@ -45,15 +46,7 @@ void TaskScheduler::stop()
 
 void TaskScheduler::run()
 {
-    ///////////////////////////
-    //Set Scheduler Thread Priority below main thread to prevent preempting netcomm
-    sched_param sch;
-    sch.sched_priority = 90;
-    if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &sch) != 0)
-    {
-        std::cout << "Error setting scheduler thread priority!" << std::endl;
-    }
-    ///////////////////////////
+    ck::configureThreadPriority(90);
 
     while (threadActive)
     {

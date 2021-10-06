@@ -10,6 +10,6 @@ class ReadSensorDataTask : public Task
 public:
     ReadSensorDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
-private:
     static constexpr uint32_t THREAD_RATE_MS = 10;
+private:
 };
