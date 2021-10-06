@@ -156,6 +156,7 @@ model {
                     srcDir 'src/main/protogen'
                     //include '**/*.h', '**/*.hpp'
                 }
+                //If libraries are not found, copy them to arm eabi gnu++ lib folder (remove version num from name or add simlink)
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'
                 binaries.all {
