@@ -24,8 +24,8 @@ private:
     RTTimer rtTimer;
     bool threadActive;
     std::thread mThread;
-    uint32_t timeNow;
-    uint32_t nextWakeTime;
+    uint64_t timeNow;
+    uint64_t nextWakeTime = std::numeric_limits<uint64_t>::max();
     std::vector<Task*> taskList;
     int32_t c_status;
     uint32_t m_notifier;

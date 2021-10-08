@@ -9,11 +9,11 @@ RTTimer::RTTimer()
 void RTTimer::start()
 {
     int32_t status;
-    startTimeMs = HAL_GetFPGATime(&status) / 1000;
+    startTimeuS = HAL_GetFPGATime(&status);
 }
 
-uint32_t RTTimer::hasElapsedMs()
+uint64_t RTTimer::hasElapseduS()
 {
     int32_t status;
-    return ((uint32_t)(HAL_GetFPGATime(&status)/1000)) - startTimeMs;
+    return HAL_GetFPGATime(&status) - startTimeuS;
 }

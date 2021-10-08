@@ -20,9 +20,9 @@ bool NetworkManager::receiveMessagePump()
         zmq::recv_result_t retVal = zmqRecvSock.recv(msg, zmq::recv_flags::dontwait);
         if (retVal.has_value() && retVal.value_or(0) > 0)
         {
-            std::vector<uint8_t> vec(bytes, bytes + msg.size());
             std::string msgGroup = msg.group();
-            recvMsgMap[msgGroup] = vec;
+            //TODO: verify that this vector is created and copies bytes, then is moved into map
+            recvMsgMap[msgGroup] = std::move(std::vector<uint8_t>(bytes, bytes + msg.size()));
             return true;
         }
         return false;

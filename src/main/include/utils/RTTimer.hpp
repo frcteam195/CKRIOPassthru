@@ -7,7 +7,7 @@ class RTTimer {
 public:
     RTTimer();
     void start();
-    uint32_t hasElapsedMs();
+    uint64_t hasElapseduS();
 private:
-    uint32_t startTimeMs;
+    uint64_t startTimeuS;
 };
