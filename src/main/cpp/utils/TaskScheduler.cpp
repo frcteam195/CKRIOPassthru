@@ -65,11 +65,11 @@ void TaskScheduler::run()
                 if (t->timeNextUpdateuS < timeNow || t->timeNextUpdateuS == 0)
                 {
                     t->run(timeNow - t->timeLastUpdateuS);
-                    t->timeLastUpdateuS = timeNow;
+                    t->timeLastUpdateuS = t->timeNextUpdateuS;
                     t->timeNextUpdateuS = t->timeLastUpdateuS + (t->taskRateMs * 1000);
-                    nextWakeTime = nextWakeTime < timeNow ? t->timeNextUpdateuS : nextWakeTime;
-                    nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
                 }
+                nextWakeTime = nextWakeTime < timeNow ? t->timeNextUpdateuS : nextWakeTime;
+                nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
             }
         }
         HAL_UpdateNotifierAlarm(m_notifier, nextWakeTime, &c_status);

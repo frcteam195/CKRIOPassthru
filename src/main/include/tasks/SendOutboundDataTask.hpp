@@ -12,6 +12,6 @@ public:
     SendOutboundDataTask();
     RTTimer rtTimer;
     void run(unsigned int timeSinceLastUpdateMs) override;
-    static constexpr uint32_t THREAD_RATE_MS = 10;
+    static constexpr uint32_t THREAD_RATE_MS = 100;
 private:
 };
