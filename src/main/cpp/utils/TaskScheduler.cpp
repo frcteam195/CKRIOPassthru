@@ -52,6 +52,7 @@ void TaskScheduler::run()
     while (threadActive)
     {
         timeNow = HAL_GetFPGATime(&c_status);
+        nextWakeTime = std::numeric_limits<uint64_t>::max();
         for (Task *t : taskList)
         {
             if (t)
@@ -68,7 +69,6 @@ void TaskScheduler::run()
                     t->timeLastUpdateuS = t->timeNextUpdateuS;
                     t->timeNextUpdateuS = t->timeLastUpdateuS + (t->taskRateMs * 1000);
                 }
-                nextWakeTime = nextWakeTime < timeNow ? t->timeNextUpdateuS : nextWakeTime;
                 nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
             }
         }

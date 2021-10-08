@@ -10,6 +10,6 @@ SendOutboundDataTask::SendOutboundDataTask() : Task(THREAD_RATE_MS)
 
 void SendOutboundDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
-    std::cout << "Actual 10ms loop time (ms): " << (rtTimer.hasElapseduS() / 1000.0) << std::endl;
-    rtTimer.start();
+    // std::cout << "Actual 10ms loop time (ms): " << (rtTimer.hasElapseduS() / 1000.0) << std::endl;
+    // rtTimer.start();
 }

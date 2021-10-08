@@ -58,7 +58,8 @@ task protoc(type: Exec) {
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine 'cmd', '/c', 'protoc --cpp_out=..\\protogen *.proto'
     } else {
-        commandLine 'sh', '-c', 'protoc --cpp_out=../protogen/ *.proto'
+        //commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto; rm -Rf ../cpp/protogen; rm -Rf ../include/protogen; mkdir -p ../cpp/protogen; mkdir -p ../include/protogen; mv ../protogen/*.h ../include/protogen; mv ../protogen/*.cc ../cpp/protogen; rm -Rf ../protogen/'
+        commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
     }
 }
 
@@ -154,7 +155,7 @@ model {
                         srcDir 'src/main/cpp'
                     }
                     srcDir 'src/main/protogen'
-                    //include '**/*.h', '**/*.hpp'
+                    include '**/*.h', '**/*.hpp'
                 }
                 //If libraries are not found, copy them to arm eabi gnu++ lib folder (remove version num from name or add simlink)
                 lib library: 'libzmq', linkage: 'shared'
