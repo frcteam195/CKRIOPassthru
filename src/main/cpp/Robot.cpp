@@ -18,10 +18,10 @@ void Robot::RobotInit()
 	ck::configureThreadPriority(98);
 
 	//Register Tasks
-	// TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
 	// TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask);
-	// TaskScheduler::getInstance().scheduleTask(sendMotorConfigTask);
-	TaskScheduler::getInstance().scheduleTask(readSensorDataTask);
+	// TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
+	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
+	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(joystickManagerTask);
 

@@ -34,7 +34,7 @@ void SendRobotDataTask::sendRobotStatusMessage()
     mRobotStatus.set_game_data(ds->GetGameSpecificMessage());
     if (mRobotStatus.SerializeToArray(mRobotStatusBuf, mRobotStatus.ByteSizeLong()))
     {
-        NetworkManager::getInstance().sendMessage(STATUS_MESSAGE_GROUP, mRobotStatusBuf, mRobotStatus.ByteSizeLong());
+        NetworkManager::getInstance().sendMessage(ROBOT_STATUS_MESSAGE_GROUP, mRobotStatusBuf, mRobotStatus.ByteSizeLong());
     }
     else
     {

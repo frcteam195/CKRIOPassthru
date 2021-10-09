@@ -6,14 +6,13 @@
 #include <stdint.h>
 #include "utils/RTTimer.hpp"
 #include "RobotStatus.pb.h"
-#include "RobotControl.pb.h"
 #include <string>
 #include "frc/DriverStation.h"
 
 class SendRobotDataTask : public Task
 {
 public:
-    inline const static std::string STATUS_MESSAGE_GROUP = "robotstatus";
+    inline const static std::string ROBOT_STATUS_MESSAGE_GROUP = "robotstatus";
 
     SendRobotDataTask();
     ~SendRobotDataTask();

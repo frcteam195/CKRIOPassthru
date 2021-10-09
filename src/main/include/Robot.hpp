@@ -8,9 +8,9 @@
 #include "utils/TaskScheduler.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/SendMotorValuesTask.hpp"
-#include "tasks/SendMotorConfigTask.hpp"
+#include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
-#include "tasks/ReadSensorDataTask.hpp"
+#include "tasks/SendSensorDataTask.hpp"
 #include "tasks/JoystickManagerTask.hpp"
 
 class Robot : public frc::TimedRobot {
@@ -36,9 +36,9 @@ private:
 	//Declare tasks as member variables in Robot cpp so they never go out of scope
 	ReceiveMessagesTask receiveMessagesTask;
 	SendMotorValuesTask sendMotorValuesTask;
-	SendMotorConfigTask sendMotorConfigTask;
+	ApplyMotorConfigTask applyMotorConfigTask;
 	SendRobotDataTask sendRobotDataTask;
-	ReadSensorDataTask readSensorDataTask;
+	SendSensorDataTask sendSensorDataTask;
 	JoystickManagerTask joystickManagerTask;
 
 	int testCounter;

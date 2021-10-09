@@ -29,5 +29,5 @@ private:
     const std::string CK_CO_IP = "10.0.2.82";   //mtodd laptop home
     const std::string CK_COMM_PORT = "5801";
 
-    static constexpr int BUF_SIZE = 1024;
+    static constexpr int BUF_SIZE = 1500;
 };
