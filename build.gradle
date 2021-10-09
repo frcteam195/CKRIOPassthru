@@ -30,7 +30,7 @@ task protoc {
                 commandLine 'cmd', '/c', 'protoc --cpp_out=..\\protogen *.proto'
             } else {
                 //commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto; rm -Rf ../cpp/protogen; rm -Rf ../include/protogen; mkdir -p ../cpp/protogen; mkdir -p ../include/protogen; mv ../protogen/*.h ../include/protogen; mv ../protogen/*.cc ../cpp/protogen; rm -Rf ../protogen/'
-                commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
+                commandLine 'sh', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
             }
         }
         exec {

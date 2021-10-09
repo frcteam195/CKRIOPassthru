@@ -40,4 +40,6 @@ private:
 	SendRobotDataTask sendRobotDataTask;
 	ReadSensorDataTask readSensorDataTask;
 	JoystickManagerTask joystickManagerTask;
+
+	int testCounter;
 };

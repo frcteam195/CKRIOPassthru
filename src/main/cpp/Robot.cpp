@@ -28,7 +28,11 @@ void Robot::RobotInit()
 	//Start Scheduler
 	TaskScheduler::getInstance().start();
 }
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+	// if (testCounter++ % 50 == 0) {
+	// 	std::cout << "Test" << std::endl;
+	// }
+}
 
 void Robot::AutonomousInit()
 {
