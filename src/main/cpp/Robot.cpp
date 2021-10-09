@@ -6,11 +6,14 @@
 #include "utils/ThreadPriorityHelper.hpp"
 #include <string>
 #include <iostream>
+#include "utils/RobotControlModeHelper.hpp"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
+
 	ck::configureSystemPriority();
 	ck::configureThreadPriority(98);
 
@@ -26,16 +29,29 @@ void Robot::RobotInit()
 }
 void Robot::RobotPeriodic() {}
 
-void Robot::AutonomousInit() {}
+void Robot::AutonomousInit()
+{
+	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
+}
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit()
+{
+	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::TELEOP);
+}
 void Robot::TeleopPeriodic() {}
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit()
+{
+	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
+
+}
 void Robot::DisabledPeriodic() {}
 
-void Robot::TestInit() {}
+void Robot::TestInit()
+{
+	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::TEST);
+}
 void Robot::TestPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS

@@ -1,9 +1,12 @@
 #include "utils/ThreadPriorityHelper.hpp"
 
+//#define SET_THREAD_PRIORITY
+
 namespace ck
 {
     bool configureSystemPriority()
     {
+#ifdef SET_THREAD_PRIORITY
         //system("sh -c \"ps -o pid,args | grep FRC_Net | grep -v lvuser | grep -v grep | sed s:/.*$::g | sed s:' '::g | xargs -I {} chrt -a -p -f 99 {}\"");
         std::string netstrPID = s_exec("ps -o pid,args | grep FRC_Net | grep -v lvuser | grep -v grep | sed s:/.*$::g | sed s:' '::g");
         pid_t netPID = std::stoi(netstrPID);
@@ -32,11 +35,13 @@ namespace ck
             }
             return false;
         }
+#endif
         return true;
     }
 
     bool configureThreadPriority(int priority)
     {
+#ifdef SET_THREAD_PRIORITY
         ///////////////////////////
         //Set Main Thread Priority
         //Must also set configuration for rtprio 99, priority -20, and nice -20 in /etc/security/limits.conf
@@ -48,6 +53,7 @@ namespace ck
             std::cout << "Error setting main thread priority!" << std::endl;
             return false;
         }
+#endif
         return true;
         ///////////////////////////
     }

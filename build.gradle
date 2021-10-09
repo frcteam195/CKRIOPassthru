@@ -53,15 +53,30 @@ ssh.settings {
 // 	}
 // }
 
-task protoc(type: Exec) {
-    workingDir "$projectDir/src/main/proto"
-    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine 'cmd', '/c', 'protoc --cpp_out=..\\protogen *.proto'
-    } else {
-        //commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto; rm -Rf ../cpp/protogen; rm -Rf ../include/protogen; mkdir -p ../cpp/protogen; mkdir -p ../include/protogen; mv ../protogen/*.h ../include/protogen; mv ../protogen/*.cc ../cpp/protogen; rm -Rf ../protogen/'
-        commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
+task protoc {
+    doFirst {
+        exec {
+            workingDir "$projectDir/src/main/proto"
+            if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+                commandLine 'cmd', '/c', 'protoc --cpp_out=..\\protogen *.proto'
+            } else {
+                //commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto; rm -Rf ../cpp/protogen; rm -Rf ../include/protogen; mkdir -p ../cpp/protogen; mkdir -p ../include/protogen; mv ../protogen/*.h ../include/protogen; mv ../protogen/*.cc ../cpp/protogen; rm -Rf ../protogen/'
+                commandLine 'sh', '-c', 'mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
+            }
+        }
+        exec {
+            workingDir "$projectDir/src/main/protogen"
+            commandLine 'sh', '-c', '~/wpilib/2021/roborio/bin/arm-frc2021-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
+        }
+        exec {
+            workingDir "$projectDir/src/main/protogen"
+            commandLine 'sh', '-c', '~/wpilib/2021/roborio/bin/arm-frc2021-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+        }
     }
 }
+
+build.dependsOn protoc
+build.mustRunAfter protoc
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -133,6 +148,12 @@ model {
                     sharedLibraryFile = file( projectDir.absolutePath + "/lib/libprotobuf_3.18.0.so")
                 }
             }
+
+            librosproto {
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file( projectDir.absolutePath + "/lib/librosproto.a")
+                }
+            }
         }
     }
 
@@ -146,7 +167,7 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/main/cpp'
-                    srcDir 'src/main/protogen'
+                    // srcDir 'src/main/protogen'
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
@@ -160,7 +181,9 @@ model {
                 //If libraries are not found, copy them to arm eabi gnu++ lib folder (remove version num from name or add simlink)
                 lib library: 'libzmq', linkage: 'shared'
                 lib library: 'libprotobuf', linkage: 'shared'
+                lib library: 'librosproto', linkage: 'static'
                 binaries.all {
+                    //cppCompiler.args << "-std=c++11"
                     linker.args << "-lzmq"
                     linker.args << "-lprotobuf"
                 }

@@ -74,6 +74,6 @@ void TaskScheduler::run()
         }
         HAL_UpdateNotifierAlarm(m_notifier, nextWakeTime, &c_status);
         uint64_t sleepTime = HAL_WaitForNotifierAlarm(m_notifier, &c_status) - timeNow;
-        sleepTime = 0;
+        sleepTime = sleepTime;  //Remove unused variable warning
     }
 }

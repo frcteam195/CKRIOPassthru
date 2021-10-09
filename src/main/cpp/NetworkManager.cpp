@@ -49,7 +49,7 @@ bool NetworkManager::sendMessage(std::string group, std::vector<uint8_t> &bytes)
     return sendMessage(group, &bytes[0], bytes.size());
 }
 
-bool NetworkManager::sendMessage(std::string group, uint8_t bytes[], int arrSize)
+bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize)
 {
     try {
         zmq::message_t msg(bytes, arrSize);

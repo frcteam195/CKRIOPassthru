@@ -15,7 +15,7 @@ public:
     bool receiveMessagePump();
     bool getMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, std::vector<uint8_t> &bytes);
-    bool sendMessage(std::string group, uint8_t bytes[], int arrSize);
+    bool sendMessage(std::string group, void* bytes, int arrSize);
 private:
     NetworkManager();
     zmq::context_t zmqCtx;
@@ -24,7 +24,8 @@ private:
     
     std::map<std::string, std::vector<uint8_t>> recvMsgMap;
 
-    const std::string CK_CO_IP = "10.1.95.5";
+    // const std::string CK_CO_IP = "10.1.95.5";
+    const std::string CK_CO_IP = "10.1.95.100";
     const std::string CK_COMM_PORT = "5801";
 
     static constexpr int BUF_SIZE = 1024;
