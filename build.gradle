@@ -18,41 +18,10 @@ ssh.settings {
     timeoutSec = 30
 }
 
-// task deployriolibs {
-// 	group 'embeddedtools'
-// 	doLast {
-// 		project.logger.lifecycle("Deploying RIO IPKs")
-// 		ssh.run {
-// 			session(remotes.rio) {
-// 				execute 'sudo mkdir -p /tmp/lib'
-// 				put from: fileTree(dir: 'lib/'), into: '/tmp/lib'
-//  				execute 'sudo chmod -R 777 /tmp/lib'
-//  				execute 'cp /tmp/lib/* /usr/lib/'
-//  				execute 'sudo rm -Rf /tmp/lib'
-//                 execute '/sbin/ldconfig'
-//  				execute 'sudo sync'
-// 			}
-// 		}
-// 	}
-// }
 
-// task deployRIOIPKs {
-// 	group 'embeddedtools'
-// 	doLast {
-// 		project.logger.lifecycle("Deploying RIO IPKs")
-// 		ssh.run {
-// 			session(remotes.rio) {
-// 				execute 'sudo mkdir -p /tmp/ipks'
-// 				put from: fileTree(dir: 'ipks/'), into: '/tmp/ipks'
-//  				execute 'sudo chmod -R 777 /tmp/ipks'
-//  				execute 'cd /tmp/ipks && for f in *.ipk; do sudo opkg install "$f" --force-overwrite; done'
-//  				execute 'sudo rm -Rf /tmp/ipks'
-//  				execute 'sudo sync'
-// 			}
-// 		}
-// 	}
-// }
-
+//For this task to run successfully, you must have the following in your system path:
+//protoc
+//roborio toolchain (wpilib/2021/roborio/bin/)
 task protoc {
     doFirst {
         exec {
@@ -66,11 +35,11 @@ task protoc {
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', '~/wpilib/2021/roborio/bin/arm-frc2021-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
+            commandLine 'sh', '-c', 'arm-frc2021-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', '~/wpilib/2021/roborio/bin/arm-frc2021-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+            commandLine 'sh', '-c', 'arm-frc2021-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
         }
     }
 }
@@ -211,3 +180,38 @@ model {
     //     }
     // }
 }
+
+// task deployriolibs {
+// 	group 'embeddedtools'
+// 	doLast {
+// 		project.logger.lifecycle("Deploying RIO IPKs")
+// 		ssh.run {
+// 			session(remotes.rio) {
+// 				execute 'sudo mkdir -p /tmp/lib'
+// 				put from: fileTree(dir: 'lib/'), into: '/tmp/lib'
+//  				execute 'sudo chmod -R 777 /tmp/lib'
+//  				execute 'cp /tmp/lib/* /usr/lib/'
+//  				execute 'sudo rm -Rf /tmp/lib'
+//                 execute '/sbin/ldconfig'
+//  				execute 'sudo sync'
+// 			}
+// 		}
+// 	}
+// }
+
+// task deployRIOIPKs {
+// 	group 'embeddedtools'
+// 	doLast {
+// 		project.logger.lifecycle("Deploying RIO IPKs")
+// 		ssh.run {
+// 			session(remotes.rio) {
+// 				execute 'sudo mkdir -p /tmp/ipks'
+// 				put from: fileTree(dir: 'ipks/'), into: '/tmp/ipks'
+//  				execute 'sudo chmod -R 777 /tmp/ipks'
+//  				execute 'cd /tmp/ipks && for f in *.ipk; do sudo opkg install "$f" --force-overwrite; done'
+//  				execute 'sudo rm -Rf /tmp/ipks'
+//  				execute 'sudo sync'
+// 			}
+// 		}
+// 	}
+// }
