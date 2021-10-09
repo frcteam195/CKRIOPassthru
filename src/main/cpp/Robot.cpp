@@ -22,7 +22,8 @@ void Robot::RobotInit()
 	// TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask);
 	// TaskScheduler::getInstance().scheduleTask(sendMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(readSensorDataTask);
-	TaskScheduler::getInstance().scheduleTask(sendOutboundDataTask);
+	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
+	TaskScheduler::getInstance().scheduleTask(joystickManagerTask);
 
 	//Start Scheduler
 	TaskScheduler::getInstance().start();

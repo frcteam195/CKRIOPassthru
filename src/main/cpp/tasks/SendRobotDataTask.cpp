@@ -1,4 +1,4 @@
-#include "tasks/SendOutboundDataTask.hpp"
+#include "tasks/SendRobotDataTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
 #include "utils/RobotControlModeHelper.hpp"
@@ -6,26 +6,26 @@
 #include <vector>
 #include <iostream>
 
-SendOutboundDataTask::SendOutboundDataTask() : Task(THREAD_RATE_MS), mRobotStatus()
+SendRobotDataTask::SendRobotDataTask() : Task(THREAD_RATE_MS), mRobotStatus()
 {
     mRobotStatusBuf = malloc(ROBOT_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mRobotStatusBuf, 0, ROBOT_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
 }
 
-SendOutboundDataTask::~SendOutboundDataTask()
+SendRobotDataTask::~SendRobotDataTask()
 {
     free(mRobotStatusBuf);
 }
 
 
-void SendOutboundDataTask::run(uint32_t timeSinceLastUpdateMs)
+void SendRobotDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     sendRobotStatusMessage();
     // std::cout << "Actual 10ms loop time (ms): " << (rtTimer.hasElapseduS() / 1000.0) << std::endl;
     // rtTimer.start();
 }
 
-void SendOutboundDataTask::sendRobotStatusMessage()
+void SendRobotDataTask::sendRobotStatusMessage()
 {
     mRobotStatus.Clear();
     mRobotStatus.set_robot_state((ck::RobotStatus_RobotState) RobotControlModeHelper::getInstance().getControlMode());

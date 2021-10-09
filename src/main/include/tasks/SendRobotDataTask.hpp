@@ -10,13 +10,13 @@
 #include <string>
 #include "frc/DriverStation.h"
 
-class SendOutboundDataTask : public Task
+class SendRobotDataTask : public Task
 {
 public:
     inline const static std::string STATUS_MESSAGE_GROUP = "robotstatus";
 
-    SendOutboundDataTask();
-    ~SendOutboundDataTask();
+    SendRobotDataTask();
+    ~SendRobotDataTask();
     RTTimer rtTimer;
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 10;

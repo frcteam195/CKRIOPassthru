@@ -9,8 +9,9 @@
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/SendMotorValuesTask.hpp"
 #include "tasks/SendMotorConfigTask.hpp"
-#include "tasks/SendOutboundDataTask.hpp"
+#include "tasks/SendRobotDataTask.hpp"
 #include "tasks/ReadSensorDataTask.hpp"
+#include "tasks/JoystickManagerTask.hpp"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -36,6 +37,7 @@ private:
 	ReceiveMessagesTask receiveMessagesTask;
 	SendMotorValuesTask sendMotorValuesTask;
 	SendMotorConfigTask sendMotorConfigTask;
-	SendOutboundDataTask sendOutboundDataTask;
+	SendRobotDataTask sendRobotDataTask;
 	ReadSensorDataTask readSensorDataTask;
+	JoystickManagerTask joystickManagerTask;
 };

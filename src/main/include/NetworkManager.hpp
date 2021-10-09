@@ -25,7 +25,7 @@ private:
     std::map<std::string, std::vector<uint8_t>> recvMsgMap;
 
     // const std::string CK_CO_IP = "10.1.95.5";
-    const std::string CK_CO_IP = "10.1.95.100";
+    const std::string CK_CO_IP = "10.1.95.223";
     const std::string CK_COMM_PORT = "5801";
 
     static constexpr int BUF_SIZE = 1024;

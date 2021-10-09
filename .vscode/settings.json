@@ -96,6 +96,8 @@
     "bit": "cpp",
     "ios": "cpp",
     "locale": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "__memory": "cpp",
+    "filesystem": "cpp"
   }
 }
