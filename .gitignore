@@ -1,4 +1,5 @@
 protogen/
+.vscode/c_cpp_properties.json
 
 # Created by https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
 

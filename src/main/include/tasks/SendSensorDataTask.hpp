@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Task.hpp"
+#include "IntellisenseDefs.h"
 #include "MotorStatus.pb.h"
 
 class SendSensorDataTask : public Task

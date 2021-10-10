@@ -5,6 +5,7 @@
 #include "Task.hpp"
 #include <stdint.h>
 #include "utils/RTTimer.hpp"
+#include "IntellisenseDefs.h"
 #include "RobotStatus.pb.h"
 #include <string>
 #include "frc/DriverStation.h"

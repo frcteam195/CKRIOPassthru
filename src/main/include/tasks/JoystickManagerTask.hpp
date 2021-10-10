@@ -4,6 +4,7 @@
 #include "frc/DriverStation.h"
 #include <vector>
 #include "frc/Joystick.h"
+#include "IntellisenseDefs.h"
 #include "RobotJoysticks.pb.h"
 
 #define MAX_NUM_JOYSTICKS 6
