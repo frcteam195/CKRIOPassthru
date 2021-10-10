@@ -20,6 +20,8 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
     ck::MotorConfiguration motorsUpdate;
     motorsUpdate.ParseFromArray(&buf[0], buf.size());
 
+    //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
+    //Maybe look into reportdifferencesto function
     if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg))
     {
         for (ck::MotorConfiguration_Motor const& m : motorsUpdate.motors())
