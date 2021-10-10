@@ -8,7 +8,7 @@
 #include <mutex>
 #include <functional>
 
-enum class MotorType
+enum class MotorType : int
 {
     TALON_FX = 0,
     TALON_SRX = 1
@@ -20,7 +20,7 @@ class MotorManager : public Singleton<MotorManager>
 public:
     void registerMotor(uint16_t id, MotorType motorType);
     void deleteMotor(uint16_t id);
-
+    void onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
     void forEach(std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
 
 private:

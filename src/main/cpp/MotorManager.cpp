@@ -19,6 +19,15 @@ void MotorManager::forEach(std::function<void(uint16_t, BaseMotorController*, Mo
     }
 }
 
+void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func)
+{
+    std::scoped_lock<std::mutex> lock(motorLock);
+    if (mRegisteredMotorList.count(id))
+    {
+        func(id, mRegisteredMotorList[id], mRegisteredMotorTypeList[id]);
+    }
+}
+
 void MotorManager::registerMotor(uint16_t id, MotorType motorType)
 {
     std::scoped_lock<std::mutex> lock(motorLock);

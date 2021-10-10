@@ -26,9 +26,10 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
     {
         for (ck::MotorConfiguration_Motor const& m : motorsUpdate.motors())
         {
+            MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
             //TODO: Implement per command differential set only if value is changed
             ck::MotorConfiguration_Motor_MotorControllerConfiguration config = m.motor_configuration();
-            MotorManager::getInstance().forEach([&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+            MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
             {
                 ck::runTalonFunctionWithRetry([&]() { return mCtrl->Config_kP(0, config.kp(), ck::kCANTimeoutMs); }, id);
                 ck::runTalonFunctionWithRetry([&]() { return mCtrl->Config_kI(0, config.ki(), ck::kCANTimeoutMs); }, id);
@@ -40,20 +41,4 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
     }
 
     mPrevMotorsMsg = motorsUpdate;
-
-
-    // std::map<uint16_t, TalonFX *> *motorList = &DataManager::getInstance().motorObjectList;
-    // for (MotorConfigData &m : DataManager::getInstance().motorConfigData)
-    // {
-    //     std::map<uint16_t, TalonFX *>::iterator it = motorList->find(m.motorId);
-    //     TalonFX *currMotor;
-    //     if (it != motorList->end())
-    //     {
-    //         //Motor Exists
-    //         currMotor = it->second;
-    //         //TODO: Do differential compare and Set parameters here if changed
-    //         //TODO: Make check/resend function for timeout error
-    //         currMotor->Config_kP(0, m.kP, 10);
-    //     }
-    // }
 }
