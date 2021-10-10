@@ -1,7 +1,7 @@
 #include "tasks/SendSensorDataTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
-#include "DataManager.hpp"
+#include "MotorManager.hpp"
 #include "NetworkManager.hpp"
 
 SendSensorDataTask::SendSensorDataTask() : Task(THREAD_RATE_MS), mMotorStatusMsg()
@@ -14,14 +14,14 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     mMotorStatusMsg.Clear();
 
-    for (auto const& [key, val] : DataManager::getInstance().motorObjectList)
+    MotorManager::getInstance().forEach([&] (uint16_t key, BaseMotorController* val, MotorType mType)
     {
         ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
         m->set_id(key);
         m->set_sensor_position(val->GetSelectedSensorPosition());
         m->set_sensor_velocity(val->GetSelectedSensorVelocity());
         m->set_bus_voltage(val->GetBusVoltage());
-        switch (DataManager::getInstance().motorTypeList[key])
+        switch (mType)
         {
         case MotorType::TALON_FX:
         {
@@ -43,7 +43,38 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
         }
             break;
         }
-    }
+    });
+
+    // for (auto const& [key, val] : DataManager::getInstance().motorObjectList)
+    // {
+    //     ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
+    //     m->set_id(key);
+    //     m->set_sensor_position(val->GetSelectedSensorPosition());
+    //     m->set_sensor_velocity(val->GetSelectedSensorVelocity());
+    //     m->set_bus_voltage(val->GetBusVoltage());
+    //     switch (DataManager::getInstance().motorTypeList[key])
+    //     {
+    //     case MotorType::TALON_FX:
+    //     {
+    //         TalonFX* tfx = reinterpret_cast<TalonFX*>(val);
+    //         m->set_bus_current(tfx->GetSupplyCurrent());
+    //         m->set_stator_current(tfx->GetStatorCurrent());
+    //     }
+    //         break;
+    //     case MotorType::TALON_SRX:
+    //     {
+    //         TalonSRX* tsrx = reinterpret_cast<TalonSRX*>(val);
+    //         m->set_bus_current(tsrx->GetSupplyCurrent());
+    //         m->set_stator_current(tsrx->GetStatorCurrent());
+    //     }
+    //         break;
+    //     default:
+    //     {
+
+    //     }
+    //         break;
+    //     }
+    // }
 
     if (mMotorStatusMsg.SerializeToArray(mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong()))
     {

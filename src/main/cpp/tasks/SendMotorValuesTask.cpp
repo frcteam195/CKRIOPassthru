@@ -1,7 +1,7 @@
 #include "tasks/SendMotorValuesTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
-#include "DataManager.hpp"
+#include "MotorManager.hpp"
 
 SendMotorValuesTask::SendMotorValuesTask() : Task(THREAD_RATE_MS) {}
 SendMotorValuesTask::~SendMotorValuesTask()

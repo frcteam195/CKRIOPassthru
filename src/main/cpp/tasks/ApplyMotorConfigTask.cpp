@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 #include "DataStructures.hpp"
-#include "DataManager.hpp"
+#include "MotorManager.hpp"
 #include "ctre/Phoenix.h"
 
 ApplyMotorConfigTask::ApplyMotorConfigTask() : Task(THREAD_RATE_MS) {}
