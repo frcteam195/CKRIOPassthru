@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <thread>
 #include "tasks/Task.hpp"
+#include <atomic>
 
 class TaskScheduler : public Singleton<TaskScheduler>
 {
@@ -22,7 +23,7 @@ private:
     ~TaskScheduler();
     void run();
     RTTimer rtTimer;
-    bool threadActive;
+    std::atomic_bool threadActive;
     std::thread mThread;
     uint64_t timeNow;
     uint64_t nextWakeTime = std::numeric_limits<uint64_t>::max();
