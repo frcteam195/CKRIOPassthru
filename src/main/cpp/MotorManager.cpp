@@ -69,13 +69,14 @@ void MotorManager::deleteMotor_internal_unsafe(uint16_t id)
         delete mRegisteredMotorList[id];
         mRegisteredMotorList.erase(id);
         mRegisteredMotorTypeList.erase(id);
+        mRegisteredMotorHeartbeatList.erase(id);
     }
 }
 
 void MotorManager::processHeartbeat()
 {
     std::scoped_lock<std::mutex> lock(motorLock);
-    for (auto it = mRegisteredMotorHeartbeatList.cbegin(); it != mRegisteredMotorHeartbeatList.cend(); )
+    for (auto it = mRegisteredMotorHeartbeatList.cbegin(); it != mRegisteredMotorHeartbeatList.cend(); it++)
     {
         mRegisteredMotorHeartbeatList[it->first]--;
         if (mRegisteredMotorHeartbeatList[it->first] <= 0)
@@ -83,13 +84,8 @@ void MotorManager::processHeartbeat()
             uint16_t currMotor = it->first;
             std::cout << "Deleting motor, id: " << currMotor << std::endl;
             deleteMotor_internal_unsafe(it->first);
-            mRegisteredMotorHeartbeatList.erase(it++);
             std::cout << "Motor deleted, id: " << currMotor << std::endl;
         }
-        else
-        {
-            it++;
-        }   
     }
 }
 
