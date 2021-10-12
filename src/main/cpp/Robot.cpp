@@ -24,14 +24,15 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(joystickManagerTask);
+	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
 
 	//Start Scheduler
 	TaskScheduler::getInstance().start();
 }
 void Robot::RobotPeriodic() {
-	if (testCounter++ % 50 == 0) {
-		std::cout << "Test" << std::endl;
-	}
+	// if (testCounter++ % 50 == 0) {
+	// 	std::cout << "Test" << std::endl;
+	// }
 }
 
 void Robot::AutonomousInit()

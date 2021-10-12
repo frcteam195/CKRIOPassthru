@@ -16,6 +16,8 @@ public:
     bool getMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, void* bytes, int arrSize);
+
+    void listStoredMessages();
 private:
     NetworkManager();
     zmq::context_t zmqCtx;

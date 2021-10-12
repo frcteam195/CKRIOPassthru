@@ -15,14 +15,16 @@ void NetworkManager::joinGroup(const char *group)
 bool NetworkManager::receiveMessagePump()
 {
     try {
-        const uint8_t bytes[BUF_SIZE] = {0};
-        zmq::message_t msg(bytes, BUF_SIZE);
+        zmq::message_t msg(BUF_SIZE);
         zmq::recv_result_t retVal = zmqRecvSock.recv(msg, zmq::recv_flags::dontwait);
         if (retVal.has_value() && retVal.value_or(0) > 0)
         {
+            std::vector<uint8_t> buf(msg.size(), 0);
+            memcpy(&buf[0], msg.data(), msg.size());
             std::string msgGroup = msg.group();
-            //TODO: verify that this vector is created and copies bytes, then is moved into map
-            recvMsgMap[msgGroup] = std::move(std::vector<uint8_t>(bytes, bytes + msg.size()));
+            //TODO: verify that this vector is moved into map properly and not copied
+            recvMsgMap[msgGroup] = std::move(buf);
+
             return true;
         }
         return false;
@@ -42,6 +44,15 @@ bool NetworkManager::getMessage(std::string group, std::vector<uint8_t> &bytes)
         return true;
     }
     return false;
+}
+
+void NetworkManager::listStoredMessages()
+{
+    for (auto const& [key, val] : recvMsgMap)
+    {
+        (void)val;
+        std::cout << "Group: " << key << std::endl;
+    }
 }
 
 bool NetworkManager::sendMessage(std::string group, std::vector<uint8_t> &bytes)

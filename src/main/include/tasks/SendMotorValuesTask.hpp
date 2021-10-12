@@ -7,6 +7,7 @@
 #include "IntellisenseDefs.h"
 #include "MotorControl.pb.h"
 #include "google/protobuf/util/message_differencer.h"
+#include "utils/RTTimer.hpp"
 
 class SendMotorValuesTask : public Task
 {
@@ -19,4 +20,7 @@ public:
     static constexpr uint32_t THREAD_RATE_MS = 5;
 private:
     ck::MotorControl mPrevMotorsMsg;
+    RTTimer rtTimer;
+    static constexpr unsigned int kMandatoryUpdatePerioduS = 200000;
+    static constexpr bool MANDATORY_UPDATE_ENABLED = true;
 };

@@ -25,14 +25,14 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
         {
         case MotorType::TALON_FX:
         {
-            TalonFX* tfx = reinterpret_cast<TalonFX*>(mCtrl);
+            TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
             m->set_bus_current(tfx->GetSupplyCurrent());
             m->set_stator_current(tfx->GetStatorCurrent());
         }
             break;
         case MotorType::TALON_SRX:
         {
-            TalonSRX* tsrx = reinterpret_cast<TalonSRX*>(mCtrl);
+            TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
             m->set_bus_current(tsrx->GetSupplyCurrent());
             m->set_stator_current(tsrx->GetStatorCurrent());
         }

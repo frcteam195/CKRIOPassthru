@@ -4,10 +4,10 @@
 #include "Task.hpp"
 #include <stdint.h>
 
-class ReceiveMessagesTask : public Task
+class ProcessHeartbeatTask : public Task
 {
 public:
-    ReceiveMessagesTask();
+    ProcessHeartbeatTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 20;
 private:
