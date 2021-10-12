@@ -13,6 +13,7 @@ class JoystickManagerTask : public Task
 {
 public:
     inline const static std::string JOYSTICK_MESSAGE_GROUP = "joystickstatus";
+    inline const static std::string TASK_NAME = "JoystickManagerTask";
 
     JoystickManagerTask();
     ~JoystickManagerTask();

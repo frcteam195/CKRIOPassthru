@@ -5,7 +5,7 @@
 #include <hal/DriverStationTypes.h>
 #include "NetworkManager.hpp"
 
-JoystickManagerTask::JoystickManagerTask() : Task(THREAD_RATE_MS)
+JoystickManagerTask::JoystickManagerTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     mJoystickStatusBuf = malloc(JOYSTICK_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mJoystickStatusBuf, 0, JOYSTICK_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
@@ -51,6 +51,5 @@ void JoystickManagerTask::run(uint32_t timeSinceLastUpdateMs)
     {
         std::cout << "Joystick status message failed to serialize. Message probably too large or invalid." << std::endl;
     }
-    // std::cout << "Actual 10ms loop time (ms): " << (rtTimer.hasElapseduS() / 1000.0) << std::endl;
-    // rtTimer.start();
+    mTaskTimer.reportElapsedTime();
 }

@@ -13,6 +13,7 @@
 #include "tasks/SendSensorDataTask.hpp"
 #include "tasks/JoystickManagerTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
+#include "tasks/TaskTimingReporterTask.hpp"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -42,6 +43,7 @@ private:
 	SendSensorDataTask sendSensorDataTask;
 	JoystickManagerTask joystickManagerTask;
 	ProcessHeartbeatTask processHeartbeatTask;
+	TaskTimingReporterTask taskTimingReporterTask;
 
 	int testCounter;
 };

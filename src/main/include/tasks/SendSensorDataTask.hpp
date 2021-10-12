@@ -9,6 +9,7 @@ class SendSensorDataTask : public Task
 {
 public:
     inline const static std::string MOTOR_STATUS_MESSAGE_GROUP = "motorstatus";
+    inline const static std::string TASK_NAME = "SendSensorDataTask";
 
     SendSensorDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;

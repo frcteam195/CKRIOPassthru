@@ -6,7 +6,7 @@
 #include <vector>
 #include <iostream>
 
-SendRobotDataTask::SendRobotDataTask() : Task(THREAD_RATE_MS), mRobotStatus()
+SendRobotDataTask::SendRobotDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mRobotStatus()
 {
     mRobotStatusBuf = malloc(ROBOT_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mRobotStatusBuf, 0, ROBOT_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
@@ -21,8 +21,7 @@ SendRobotDataTask::~SendRobotDataTask()
 void SendRobotDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     sendRobotStatusMessage();
-    // std::cout << "Actual 10ms loop time (ms): " << (rtTimer.hasElapseduS() / 1000.0) << std::endl;
-    // rtTimer.start();
+    mTaskTimer.reportElapsedTime();
 }
 
 void SendRobotDataTask::sendRobotStatusMessage()

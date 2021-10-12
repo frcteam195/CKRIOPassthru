@@ -9,7 +9,7 @@
 #include "NetworkManager.hpp"
 #include "utils/PhoenixHelper.hpp"
 
-SendMotorValuesTask::SendMotorValuesTask() : Task(THREAD_RATE_MS)
+SendMotorValuesTask::SendMotorValuesTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     NetworkManager::getInstance().joinGroup(MOTOR_CONTROL_MESSAGE_GROUP.c_str());
 }
@@ -52,4 +52,5 @@ void SendMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
 
         mPrevMotorsMsg = motorsUpdate;
     }
+    mTaskTimer.reportElapsedTime();
 }

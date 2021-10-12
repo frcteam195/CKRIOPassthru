@@ -1,7 +1,5 @@
 #include "utils/ThreadPriorityHelper.hpp"
 
-//#define SET_THREAD_PRIORITY
-
 namespace ck
 {
     bool configureSystemPriority()

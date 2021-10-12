@@ -1,6 +1,5 @@
 #pragma once
 
-#include "frc/Timer.h"
 #include <stdint.h>
 
 class RTTimer {

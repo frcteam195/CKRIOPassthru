@@ -24,7 +24,7 @@ void TaskScheduler::scheduleTask(Task &t)
 
 void TaskScheduler::scheduleTask(Task &t, uint32_t taskRateMs)
 {
-    t.taskRateMs = taskRateMs;
+    t.mTaskRateMs = taskRateMs;
     taskList.push_back(&t);
 }
 
@@ -57,7 +57,7 @@ void TaskScheduler::run()
         {
             if (t)
             {
-                if (t->taskRateMs <= 0) //Check loop rate is valid
+                if (t->mTaskRateMs <= 0) //Check loop rate is valid
                 {
                     continue;
                 }
@@ -67,7 +67,7 @@ void TaskScheduler::run()
                 {
                     t->run(timeNow - t->timeLastUpdateuS);
                     t->timeLastUpdateuS = t->timeNextUpdateuS;
-                    t->timeNextUpdateuS = t->timeLastUpdateuS + (t->taskRateMs * 1000);
+                    t->timeNextUpdateuS = t->timeLastUpdateuS + (t->mTaskRateMs * 1000);
                 }
                 nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
             }

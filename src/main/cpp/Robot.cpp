@@ -25,6 +25,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(joystickManagerTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
+	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
 
 	//Start Scheduler
 	TaskScheduler::getInstance().start();

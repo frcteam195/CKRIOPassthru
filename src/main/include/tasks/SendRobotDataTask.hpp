@@ -14,6 +14,7 @@ class SendRobotDataTask : public Task
 {
 public:
     inline const static std::string ROBOT_STATUS_MESSAGE_GROUP = "robotstatus";
+    inline const static std::string TASK_NAME = "SendRobotDataTask";
 
     SendRobotDataTask();
     ~SendRobotDataTask();

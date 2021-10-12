@@ -13,7 +13,7 @@ class SendMotorValuesTask : public Task
 {
 public:
     inline const static std::string MOTOR_CONTROL_MESSAGE_GROUP = "motorcontrol";
-
+    inline const static std::string TASK_NAME = "SendMotorValuesTask";
 
     SendMotorValuesTask();
     void run(unsigned int timeSinceLastUpdateMs) override;

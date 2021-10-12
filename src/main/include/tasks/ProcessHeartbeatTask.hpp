@@ -7,6 +7,8 @@
 class ProcessHeartbeatTask : public Task
 {
 public:
+    inline const static std::string TASK_NAME = "ProcessHeartbeatTask";
+
     ProcessHeartbeatTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 20;
