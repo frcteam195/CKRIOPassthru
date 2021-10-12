@@ -23,6 +23,8 @@ public:
     void onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
     void forEach(std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
 
+    //UNSAFE Methods will not lock the data structures before accessing. Be careful with usage
+    BaseMotorController* getMotor_unsafe(uint16_t id);
 private:
     MotorManager();
     ~MotorManager();

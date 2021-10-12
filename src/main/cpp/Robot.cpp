@@ -18,8 +18,8 @@ void Robot::RobotInit()
 	ck::configureThreadPriority(98);
 
 	//Register Tasks
-	// TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask);
-	// TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
+	TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask);
+	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
 	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
@@ -29,9 +29,9 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().start();
 }
 void Robot::RobotPeriodic() {
-	// if (testCounter++ % 50 == 0) {
-	// 	std::cout << "Test" << std::endl;
-	// }
+	if (testCounter++ % 50 == 0) {
+		std::cout << "Test" << std::endl;
+	}
 }
 
 void Robot::AutonomousInit()

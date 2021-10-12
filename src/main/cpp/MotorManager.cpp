@@ -66,3 +66,15 @@ void MotorManager::deleteMotor(uint16_t id)
         mRegisteredMotorTypeList.erase(id);
     }
 }
+
+BaseMotorController* MotorManager::getMotor_unsafe(uint16_t id)
+{
+    if (mRegisteredMotorList.count(id))
+    {
+        return mRegisteredMotorList[id];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
