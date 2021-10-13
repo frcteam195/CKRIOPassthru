@@ -1,22 +1,22 @@
-#include "tasks/JoystickManagerTask.hpp"
+#include "tasks/SendJoystickDataTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
 #include <hal/DriverStation.h>
 #include <hal/DriverStationTypes.h>
 #include "NetworkManager.hpp"
 
-JoystickManagerTask::JoystickManagerTask() : Task(THREAD_RATE_MS, TASK_NAME)
+SendJoystickDataTask::SendJoystickDataTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     mJoystickStatusBuf = malloc(JOYSTICK_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mJoystickStatusBuf, 0, JOYSTICK_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
 }
-JoystickManagerTask::~JoystickManagerTask()
+SendJoystickDataTask::~SendJoystickDataTask()
 {
     free(mJoystickStatusBuf);
 }
 
 
-void JoystickManagerTask::run(uint32_t timeSinceLastUpdateMs)
+void SendJoystickDataTask::run(uint32_t timeSinceLastUpdateMs)
 {  
     robotJoystickStatusMsg.Clear();
     for (int i = 0; i < MAX_NUM_JOYSTICKS; i++) {

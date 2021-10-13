@@ -9,14 +9,14 @@
 
 #define MAX_NUM_JOYSTICKS 6
 
-class JoystickManagerTask : public Task
+class SendJoystickDataTask : public Task
 {
 public:
     inline const static std::string JOYSTICK_MESSAGE_GROUP = "joystickstatus";
-    inline const static std::string TASK_NAME = "JoystickManagerTask";
+    inline const static std::string TASK_NAME = "SendJoystickDataTask";
 
-    JoystickManagerTask();
-    ~JoystickManagerTask();
+    SendJoystickDataTask();
+    ~SendJoystickDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 20;
 private:

@@ -15,7 +15,7 @@
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendSensorDataTask.hpp"
-#include "tasks/JoystickManagerTask.hpp"
+#include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "tasks/TaskTimingReporterTask.hpp"
 
@@ -45,7 +45,7 @@ private:
 	ApplyMotorValuesTask applyMotorValuesTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendSensorDataTask sendSensorDataTask;
-	JoystickManagerTask joystickManagerTask;
+	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
 	TaskTimingReporterTask taskTimingReporterTask;
 };
