@@ -19,4 +19,14 @@ public:
     static constexpr uint32_t THREAD_RATE_MS = 5;
 private:
     ck::MotorConfiguration mPrevMotorsMsg;
+
+    struct StatusFrameConfig
+    {
+        int CONTROL_FRAME_PERIOD_MS;
+		int STATUS_FRAME_GENERAL_1_MS;
+		int STATUS_FRAME_FEEDBACK0_2_MS;
+    };
+    static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 20};
+    static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 20};
+    static constexpr StatusFrameConfig SLAVE_CONFIG = {10, 100, 100};
 };
