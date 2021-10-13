@@ -1,6 +1,7 @@
 #include "utils/TaskTimer.hpp"
 #include "hal/HAL.h"
 #include <iostream>
+#include "utils/GlobalConfig.hpp"
 
 TaskTimer::TaskTimer(std::string taskName) : mTaskName(taskName)
 {
@@ -21,6 +22,8 @@ float TaskTimer::hasElapsedMs()
 
 void TaskTimer::reportElapsedTime()
 {
+#ifdef ENABLE_TASK_TIME_REPORTING
     TaskTimingManager::getInstance().reportTaskTiming(mTaskName, hasElapsedMs());
     start();
+#endif
 }

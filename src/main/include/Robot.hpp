@@ -47,5 +47,9 @@ private:
 	SendSensorDataTask sendSensorDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
+
+#ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;
+#endif
+
 };

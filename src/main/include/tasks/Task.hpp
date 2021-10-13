@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "utils/TaskTimer.hpp"
 #include <string>
+#include "utils/GlobalConfig.hpp"
 
 class Task {
 public:

@@ -17,7 +17,10 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
+
+#ifdef ENABLE_TASK_TIME_REPORTING
 	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
+#endif 
 
 	//Start Scheduler
 	TaskScheduler::getInstance().start();
