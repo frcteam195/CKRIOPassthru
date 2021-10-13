@@ -9,13 +9,13 @@
 #include "google/protobuf/util/message_differencer.h"
 #include "utils/RTTimer.hpp"
 
-class SendMotorValuesTask : public Task
+class ApplyMotorValuesTask : public Task
 {
 public:
     inline const static std::string MOTOR_CONTROL_MESSAGE_GROUP = "motorcontrol";
-    inline const static std::string TASK_NAME = "SendMotorValuesTask";
+    inline const static std::string TASK_NAME = "ApplyMotorValuesTask";
 
-    SendMotorValuesTask();
+    ApplyMotorValuesTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 5;
 private:

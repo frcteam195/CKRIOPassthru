@@ -5,9 +5,13 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
+#include <string>
+#include <iostream>
+#include "utils/RobotControlModeHelper.hpp"
 #include "utils/TaskScheduler.hpp"
+#include "utils/ThreadPriorityHelper.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
-#include "tasks/SendMotorValuesTask.hpp"
+#include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendSensorDataTask.hpp"
@@ -37,13 +41,11 @@ public:
 private:
 	//Declare tasks as member variables in Robot cpp so they never go out of scope
 	ReceiveMessagesTask receiveMessagesTask;
-	SendMotorValuesTask sendMotorValuesTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
+	ApplyMotorValuesTask applyMotorValuesTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendSensorDataTask sendSensorDataTask;
 	JoystickManagerTask joystickManagerTask;
 	ProcessHeartbeatTask processHeartbeatTask;
 	TaskTimingReporterTask taskTimingReporterTask;
-
-	int testCounter;
 };

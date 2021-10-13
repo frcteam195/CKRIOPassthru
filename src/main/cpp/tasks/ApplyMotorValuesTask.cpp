@@ -1,4 +1,4 @@
-#include "tasks/SendMotorValuesTask.hpp"
+#include "tasks/ApplyMotorValuesTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
 #include <map>
@@ -9,12 +9,12 @@
 #include "NetworkManager.hpp"
 #include "utils/PhoenixHelper.hpp"
 
-SendMotorValuesTask::SendMotorValuesTask() : Task(THREAD_RATE_MS, TASK_NAME)
+ApplyMotorValuesTask::ApplyMotorValuesTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     NetworkManager::getInstance().joinGroup(MOTOR_CONTROL_MESSAGE_GROUP.c_str());
 }
 
-void SendMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
+void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
 {
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;

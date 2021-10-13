@@ -1,12 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 #include "Robot.hpp"
-#include "utils/ThreadPriorityHelper.hpp"
-#include <string>
-#include <iostream>
-#include "utils/RobotControlModeHelper.hpp"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -18,11 +10,11 @@ void Robot::RobotInit()
 	ck::configureThreadPriority(98);
 
 	//Register Tasks
-	TaskScheduler::getInstance().scheduleTask(sendMotorValuesTask);
-	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
-	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
+	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
+	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
+	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(joystickManagerTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
 	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
@@ -30,11 +22,7 @@ void Robot::RobotInit()
 	//Start Scheduler
 	TaskScheduler::getInstance().start();
 }
-void Robot::RobotPeriodic() {
-	// if (testCounter++ % 50 == 0) {
-	// 	std::cout << "Test" << std::endl;
-	// }
-}
+void Robot::RobotPeriodic() {}
 
 void Robot::AutonomousInit()
 {

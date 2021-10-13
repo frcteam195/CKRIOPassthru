@@ -9,6 +9,10 @@ SendSensorDataTask::SendSensorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMot
     mMotorStatusBuf = malloc(MOTOR_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mMotorStatusBuf, 0, MOTOR_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
 }
+SendSensorDataTask::~SendSensorDataTask()
+{
+    free(mMotorStatusBuf);
+}
 
 void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
