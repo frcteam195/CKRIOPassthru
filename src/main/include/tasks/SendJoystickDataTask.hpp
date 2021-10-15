@@ -5,7 +5,7 @@
 #include <vector>
 #include "frc/Joystick.h"
 #include "IntellisenseDefs.h"
-#include "RobotJoysticks.pb.h"
+#include "JoystickStatus.pb.h"
 
 #define MAX_NUM_JOYSTICKS 6
 
@@ -23,7 +23,7 @@ private:
     const frc::DriverStation* ds = &frc::DriverStation::GetInstance();
     bool mJoystickConnected[MAX_NUM_JOYSTICKS] = {false};
     std::vector<int> mConnectedJoysticks;
-    ck::RobotJoystickStatus robotJoystickStatusMsg;
+    ck::JoystickStatus robotJoystickStatusMsg;
     const size_t JOYSTICK_STATUS_MESSAGE_SIZE = 1500;
     void* mJoystickStatusBuf;
 };

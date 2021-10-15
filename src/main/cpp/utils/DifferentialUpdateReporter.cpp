@@ -25,5 +25,5 @@ void DifferentialUpdateReporter::ReportDeleted(const Message & message1, const M
 
 void DifferentialUpdateReporter::RegisterUpdateFunction(FieldDescriptor* fieldDescriptor, std::function<void(const Message &msg)> func)
 {
-    mUpdateFunctionMap[fieldDescriptor] = func;
+    mUpdateFunctionMap[fieldDescriptor] = func; //std::move?
 }

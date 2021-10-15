@@ -21,7 +21,7 @@ void SendJoystickDataTask::run(uint32_t timeSinceLastUpdateMs)
     robotJoystickStatusMsg.Clear();
     for (int i = 0; i < MAX_NUM_JOYSTICKS; i++) {
         if(ds->IsJoystickConnected(i)) {
-            ck::RobotJoystickStatus_Joystick* protoJoystick = robotJoystickStatusMsg.add_joysticks();
+            ck::JoystickStatus_Joystick* protoJoystick = robotJoystickStatusMsg.add_joysticks();
 
             HAL_JoystickAxes rawAxes;
             HAL_GetJoystickAxes(i, &rawAxes);
