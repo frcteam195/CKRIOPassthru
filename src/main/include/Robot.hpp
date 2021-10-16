@@ -18,6 +18,7 @@
 #include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "tasks/TaskTimingReporterTask.hpp"
+#include "frc/livewindow/LiveWindow.h"
 
 class Robot : public frc::TimedRobot {
 public:

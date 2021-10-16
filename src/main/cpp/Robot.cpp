@@ -4,6 +4,8 @@ Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+	frc::LiveWindow::GetInstance()->DisableAllTelemetry();
+
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
 
 	ck::configureSystemPriority();

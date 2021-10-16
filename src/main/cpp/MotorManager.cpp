@@ -51,6 +51,7 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType)
         }
             break;
         }
+        std::cout << "Motor " << id << " created with type " << (int)motorType << std::endl;
     }
     mRegisteredMotorTypeList[id] = motorType;
     mRegisteredMotorHeartbeatList[id] = kMaxHeartbeatTicks;
