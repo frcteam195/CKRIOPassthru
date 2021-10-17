@@ -17,18 +17,23 @@ public:
     bool sendMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, void* bytes, int arrSize);
 
+    void connectListener(std::string ip);
+
     void listStoredMessages();
 private:
     NetworkManager();
+    ~NetworkManager();
+    bool sendMessage(std::string group, void* bytes, int arrSize, zmq::socket_t* zSock);
     zmq::context_t zmqCtx;
-    zmq::socket_t zmqSendSock;
+    std::vector<zmq::socket_t*> zmqSendSockVec;
+    // zmq::socket_t zmqSendSock;
     zmq::socket_t zmqRecvSock;
     
     std::map<std::string, std::vector<uint8_t>> recvMsgMap;
 
-    // const std::string CK_CO_IP = "10.1.95.5";
-    // const std::string CK_CO_IP = "10.1.95.223";
-    const std::string CK_CO_IP = "10.0.2.82";   //mtodd laptop home
+    const std::string CK_CO_IP = "10.1.95.5";
+    const std::string CK_ROB_TEST_IP = "10.0.2.79";   //rob linux home
+    const std::string CK_TODD_TEST_IP = "10.0.2.82";   //mtodd laptop home
     const std::string CK_COMM_PORT = "5801";
 
     static constexpr int BUF_SIZE = 1500;

@@ -1,10 +1,27 @@
 #include "NetworkManager.hpp"
 #include <iostream>
 
-NetworkManager::NetworkManager() : zmqCtx(), zmqSendSock(zmqCtx, zmq::socket_type::radio), zmqRecvSock(zmqCtx, zmq::socket_type::dish), recvMsgMap()
+NetworkManager::NetworkManager() : zmqCtx(), zmqSendSockVec(), zmqRecvSock(zmqCtx, zmq::socket_type::dish), recvMsgMap()
 {
     zmqRecvSock.bind(std::string("udp://*:") + CK_COMM_PORT);
-    zmqSendSock.connect(std::string("udp://") + CK_CO_IP + std::string(":") + CK_COMM_PORT);
+    connectListener(CK_CO_IP);
+    connectListener(CK_ROB_TEST_IP);
+    connectListener(CK_TODD_TEST_IP);
+}
+
+NetworkManager::~NetworkManager()
+{
+    for (zmq::socket_t* zSock : zmqSendSockVec)
+    {
+        delete zSock;
+    }
+}
+
+void NetworkManager::connectListener(std::string ip)
+{
+    zmq::socket_t* zSock = new zmq::socket_t(zmqCtx, zmq::socket_type::radio);
+    zSock->connect(std::string("udp://") + ip + std::string(":") + CK_COMM_PORT);
+    zmqSendSockVec.push_back(zSock);
 }
 
 void NetworkManager::joinGroup(const char *group)
@@ -62,10 +79,20 @@ bool NetworkManager::sendMessage(std::string group, std::vector<uint8_t> &bytes)
 
 bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize)
 {
+    bool retVal = true;
+    for (zmq::socket_t* zSock : zmqSendSockVec)
+    {
+        retVal &= sendMessage(group, bytes, arrSize, zSock);
+    }
+    return retVal;
+}
+
+bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize, zmq::socket_t* zSock)
+{
     try {
         zmq::message_t msg(bytes, arrSize);
         msg.set_group(group.c_str());
-        zmq::send_result_t retVal = zmqSendSock.send(msg, zmq::send_flags::dontwait);
+        zmq::send_result_t retVal = zSock->send(msg, zmq::send_flags::dontwait);
         return retVal.has_value() && retVal.value_or(0) > 0;
     }
     catch (std::exception &e) {
