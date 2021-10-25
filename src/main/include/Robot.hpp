@@ -13,6 +13,7 @@
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
+#include "tasks/CKLoggerTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendSensorDataTask.hpp"
 #include "tasks/SendJoystickDataTask.hpp"
@@ -48,6 +49,7 @@ private:
 	SendSensorDataTask sendSensorDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
+	CKLoggerTask ckLoggerTask;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;
