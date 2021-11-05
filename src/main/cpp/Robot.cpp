@@ -30,7 +30,8 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().start();
 }
 void Robot::RobotPeriodic() {
-	ckLogger << "Test message!!" << std::endl;
+	// ckLogger << "Test message!!" << std::endl;
+	// ckLogger << "Test message!!2" << std::endl2;
 }
 
 void Robot::AutonomousInit()

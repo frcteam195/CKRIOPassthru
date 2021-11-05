@@ -6,7 +6,9 @@ NetworkManager::NetworkManager() : zmqCtx(), zmqSendSockVec(), zmqRecvSock(zmqCt
     zmqRecvSock.bind(std::string("udp://*:") + CK_COMM_PORT);
     connectListener(CK_CO_IP);
     connectListener(CK_ROB_TEST_IP);
+    connectListener(CK_ROB2_TEST_IP);
     connectListener(CK_TODD_TEST_IP);
+    connectListener(CK_SULI_TEST_IP);
 }
 
 NetworkManager::~NetworkManager()

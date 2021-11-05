@@ -1,6 +1,7 @@
 #include "utils/TaskTimingManager.hpp"
 #include <iostream>
 #include "utils/GlobalConfig.hpp"
+#include "utils/CKLogger.hpp"
 
 TaskTimingManager::TaskTimingManager() {}
 
@@ -18,8 +19,8 @@ void TaskTimingManager::displayTaskTiming()
     std::scoped_lock<std::mutex> lock(taskTimingLock);
     for (auto const& [key, val] : mTaskTimingList)
     {
-        std::cout << key << ": " << val << "ms" << std::endl;
+        ckLogger << key << ": " << val << "ms" << std::endl;
     }
-    std::cout << std::endl;
+    ckLogger << "" << std::endl2;
 #endif
 }
