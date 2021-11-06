@@ -32,6 +32,7 @@ private:
     std::map<std::string, std::vector<uint8_t>> recvMsgMap;
 
     const std::string CK_CO_IP = "10.1.95.5";
+    const std::string CK_CO2_IP = "10.1.95.6";
     const std::string CK_ROB_TEST_IP = "10.0.2.79";   //rob linux home
     const std::string CK_TODD_TEST_IP = "10.0.2.82";   //mtodd laptop home
     const std::string CK_ROB2_TEST_IP = "10.0.2.87";   //Rob linux vm home
