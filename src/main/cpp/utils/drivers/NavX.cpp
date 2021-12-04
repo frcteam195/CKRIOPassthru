@@ -59,3 +59,12 @@ double NavX::getFusedHeading() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mFusedHeading;
 }
+
+bool NavX::hasUpdated() {
+    if (mRawSensorTimestampPrev < mAHRS.GetLastSensorTimestamp())
+    {
+        mRawSensorTimestampPrev = mAHRS.GetLastSensorTimestamp();
+        return true;
+    }
+    return false;
+}

@@ -20,12 +20,15 @@ public:
     double getPitch();
     double getYawRateDegreesPerSec();
     double getFusedHeading();
+    bool hasUpdated();
 
 	double mYawDegrees;
 	double mFusedHeading;
 	double mYawRateDegreesPerSecond;
 	static constexpr long kInvalidTimestamp = -1;
 	long mLastSensorTimestampMs;
+    
+    long mRawSensorTimestampPrev = -1;  //Init to -1 to force an update the first time
 
     std::mutex mSyncLock;
 

@@ -15,6 +15,7 @@
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/CKLoggerTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
+#include "tasks/SendIMUDataTask.hpp"
 #include "tasks/SendSensorDataTask.hpp"
 #include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
@@ -46,6 +47,7 @@ private:
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	SendRobotDataTask sendRobotDataTask;
+	SendRobotDataTask sendIMUDataTask;
 	SendSensorDataTask sendSensorDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;

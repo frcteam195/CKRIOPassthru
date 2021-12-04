@@ -9,7 +9,6 @@
 #include "RobotStatus.pb.h"
 #include <string>
 #include "frc/DriverStation.h"
-#include "utils/drivers/NavX.hpp"
 
 class SendRobotDataTask : public Task
 {
@@ -28,5 +27,4 @@ private:
     void* mRobotStatusBuf;
     const frc::DriverStation* ds = &frc::DriverStation::GetInstance();
     void sendRobotStatusMessage();
-    NavX mNavX;
 };
