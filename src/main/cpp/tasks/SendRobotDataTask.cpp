@@ -31,6 +31,10 @@ void SendRobotDataTask::sendRobotStatusMessage()
     mRobotStatus.set_alliance(ds->GetAlliance() == frc::DriverStation::Alliance::kRed ? ck::RobotStatus_Alliance::RobotStatus_Alliance_RED : ck::RobotStatus_Alliance::RobotStatus_Alliance_BLUE);
     mRobotStatus.set_match_time(ds->GetMatchTime());
     mRobotStatus.set_game_data(ds->GetGameSpecificMessage());
+    ck::RobotStatus_IMUData *imuSensorData = mRobotStatus.add_imu_sensor();
+    imuSensorData->set_yaw(mNavX.getFusedHeading());
+    imuSensorData->set_pitch(mNavX.getPitch());
+    imuSensorData->set_roll(mNavX.getRoll());
     if (mRobotStatus.SerializeToArray(mRobotStatusBuf, mRobotStatus.ByteSizeLong()))
     {
         NetworkManager::getInstance().sendMessage(ROBOT_STATUS_MESSAGE_GROUP, mRobotStatusBuf, mRobotStatus.ByteSizeLong());
