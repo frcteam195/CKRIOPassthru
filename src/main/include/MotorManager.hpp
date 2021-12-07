@@ -7,6 +7,7 @@
 #include <map>
 #include <mutex>
 #include <functional>
+#include "MotorConfiguration.pb.h"
 
 enum class MotorType : int
 {
@@ -21,6 +22,7 @@ public:
     void registerMotor(uint16_t id, MotorType motorType);
     void deleteMotor(uint16_t id);
     void onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
+    void onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseMotorController*, MotorType, const ck::MotorConfiguration::Motor&)> func);
     void forEach(std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
     void processHeartbeat();
     //UNSAFE Methods will not lock the data structures before accessing. Be careful with usage
