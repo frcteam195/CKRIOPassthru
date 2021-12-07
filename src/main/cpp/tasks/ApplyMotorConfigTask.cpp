@@ -195,22 +195,74 @@ void ApplyMotorConfigTask::initUpdateFunctions()
             [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kP(0, m.kp(), ck::kCANTimeoutMs); }, id); });
     });
+
     mDiffReporter.RegisterUpdateFunction(KI_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
             [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
-            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kI(0, m.kp(), ck::kCANTimeoutMs); }, id); });
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kI(0, m.ki(), ck::kCANTimeoutMs); }, id); });
     });
+
     mDiffReporter.RegisterUpdateFunction(KD_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
             [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
-            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kD(0, m.kp(), ck::kCANTimeoutMs); }, id); });
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kD(0, m.kd(), ck::kCANTimeoutMs); }, id); });
     });
+
     mDiffReporter.RegisterUpdateFunction(KF_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
             [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
-            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kF(0, m.kp(), ck::kCANTimeoutMs); }, id); });
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kF(0, m.kf(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(IZONE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_IntegralZone(0, m.izone(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(MAX_I_ACCUM_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMaxIntegralAccumulator(0, m.max_i_accum(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(ALLOWED_CLOSED_LOOP_ERROR_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigAllowableClosedloopError(0, m.allowed_closed_loop_error(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(MAX_CLOSED_LOOP_PEAK_OUTPUT_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigClosedLoopPeakOutput(0, m.max_closed_loop_peak_output(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(MOTION_CRUISE_VELOCITY_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionCruiseVelocity(m.motion_cruise_velocity(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(MOTION_ACCELERATION_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionAcceleration(m.motion_acceleration(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(MOTION_S_CURVE_STRENGTH_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionSCurveStrength(m.motion_s_curve_strength(), ck::kCANTimeoutMs); }, id); });
     });
 }
