@@ -111,3 +111,9 @@ BaseMotorController* MotorManager::getMotor_unsafe(uint16_t id)
         return nullptr;
     }
 }
+
+BaseMotorController* MotorManager::getMotor_threadsafe(uint16_t id)
+{
+    std::scoped_lock<std::mutex> lock(motorLock);
+    return getMotor_unsafe(id);
+}

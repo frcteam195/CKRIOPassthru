@@ -265,4 +265,134 @@ void ApplyMotorConfigTask::initUpdateFunctions()
             [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionSCurveStrength(m.motion_s_curve_strength(), ck::kCANTimeoutMs); }, id); });
     });
+
+    mDiffReporter.RegisterUpdateFunction(FORWARD_SOFT_LIMIT_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardSoftLimitThreshold(m.forward_soft_limit(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(FORWARD_SOFT_LIMIT_ENABLE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardSoftLimitEnable(m.forward_soft_limit_enable(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(REVERSE_SOFT_LIMIT_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseSoftLimitThreshold(m.reverse_soft_limit(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(REVERSE_SOFT_LIMIT_ENABLE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseSoftLimitEnable(m.reverse_soft_limit_enable(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(FEEDBACK_SENSOR_COEFFICIENT_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigSelectedFeedbackCoefficient(m.feedback_sensor_coefficient(), 0, ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(VOLTAGE_COMPENSATION_SATURATION_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigVoltageCompSaturation(m.voltage_compensation_saturation(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(VOLTAGE_COMPENSATION_ENABLED_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->EnableVoltageCompensation(m.voltage_compensation_enabled()); return mCtrl->GetLastError(); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(INVERT_TYPE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetInverted((InvertType)m.invert_type()); return mCtrl->GetLastError(); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(SENSOR_PHASE_INVERTED_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetSensorPhase(m.sensor_phase_inverted()); return mCtrl->GetLastError(); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(NEUTRAL_MODE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetNeutralMode((NeutralMode)m.neutral_mode()); return mCtrl->GetLastError(); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(OPEN_LOOP_RAMP_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigOpenloopRamp(m.open_loop_ramp(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(CLOSED_LOOP_RAMP_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigClosedloopRamp(m.closed_loop_ramp(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(SUPPLY_CURRENT_LIMIT_CONFIG_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            {
+                const ck::MotorConfiguration_Motor_CurrentLimitConfiguration &supplyCurrLimConfig = m.supply_current_limit_config();
+                switch (mType)
+                {
+                case MotorType::TALON_FX:
+                {
+                    TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
+                    ck::runTalonFunctionWithRetry([mCtrl, supplyCurrLimConfig, tfx]() { return tfx->ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(supplyCurrLimConfig.enable(), supplyCurrLimConfig.current_limit(), supplyCurrLimConfig.trigger_threshold_current(), supplyCurrLimConfig.trigger_threshold_time()), ck::kCANTimeoutMs); }, id);
+                }
+                    break;
+                case MotorType::TALON_SRX:
+                {
+                    TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
+                    ck::runTalonFunctionWithRetry([mCtrl, supplyCurrLimConfig, tsrx]() { return tsrx->ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(supplyCurrLimConfig.enable(), supplyCurrLimConfig.current_limit(), supplyCurrLimConfig.trigger_threshold_current(), supplyCurrLimConfig.trigger_threshold_time()), ck::kCANTimeoutMs); }, id);
+                }
+                    break;
+                default:
+                    break;
+                }
+            });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(STATOR_CURRENT_LIMIT_CONFIG_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { 
+                const ck::MotorConfiguration_Motor_CurrentLimitConfiguration &statorCurrLimConfig = m.stator_current_limit_config();
+                switch (mType)
+                {
+                case MotorType::TALON_FX:
+                {
+                    TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
+                    ck::runTalonFunctionWithRetry([mCtrl, statorCurrLimConfig, tfx]() { return tfx->ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(statorCurrLimConfig.enable(), statorCurrLimConfig.current_limit(), statorCurrLimConfig.trigger_threshold_current(), statorCurrLimConfig.trigger_threshold_time()), ck::kCANTimeoutMs); }, id);
+                }
+                    break;
+                default:
+                    break;
+                }
+            });
+    });
 }
