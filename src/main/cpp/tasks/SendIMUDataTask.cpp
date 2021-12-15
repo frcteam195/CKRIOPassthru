@@ -7,8 +7,9 @@
 #include "google/protobuf/util/json_util.h"
 #include "utils/GlobalConfig.hpp"
 #include <string>
+#include "NavXManager.hpp"
 
-SendIMUDataTask::SendIMUDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mIMUData()
+SendIMUDataTask::SendIMUDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mIMUData(), mNavX(NavXManager::getInstance().getNavX())
 {
     mIMUDataBuf = malloc(IMU_DATA_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mIMUDataBuf, 0, IMU_DATA_MESSAGE_SIZE * sizeof(uint8_t));
@@ -28,7 +29,9 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
 
 void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll)
 {
+#ifdef CONSOLE_REPORTING
     static int count = 0;
+#endif
 
     mIMUData.Clear();
     ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
@@ -60,7 +63,7 @@ void SendIMUDataTask::sendIMUDataMessage()
     {
         if (mNavX.hasUpdated())
         {
-            doSendIMUUpdate(mNavX.getFusedHeading(), mNavX.getPitch(), mNavX.getRoll());
+            doSendIMUUpdate(mNavX.getRawYaw(), mNavX.getPitch(), mNavX.getRoll());
         }
     }
     else 

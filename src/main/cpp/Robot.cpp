@@ -2,6 +2,7 @@
 #include "utils/GlobalConfig.hpp"
 #include "utils/CKLogger.hpp"
 #include <iostream>
+#include "NavXManager.hpp"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -32,6 +33,8 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().start();
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
+
+	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::RobotPeriodic() {
 	// ckLogger << "Test message!!" << std::endl;
@@ -41,6 +44,7 @@ void Robot::RobotPeriodic() {
 void Robot::AutonomousInit()
 {
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
+	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::AutonomousPeriodic() {}
 
@@ -53,7 +57,6 @@ void Robot::TeleopPeriodic() {}
 void Robot::DisabledInit()
 {
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
-
 }
 void Robot::DisabledPeriodic() {}
 

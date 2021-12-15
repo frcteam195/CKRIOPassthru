@@ -6,6 +6,7 @@
 
 class TaskTimer {
 public:
+    TaskTimer();
     TaskTimer(std::string taskName);
     void start();
     float hasElapsedMs();

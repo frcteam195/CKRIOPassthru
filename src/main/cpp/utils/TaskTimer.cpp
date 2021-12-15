@@ -3,6 +3,11 @@
 #include <iostream>
 #include "utils/GlobalConfig.hpp"
 
+TaskTimer::TaskTimer()
+{
+    TaskTimer("");
+}
+
 TaskTimer::TaskTimer(std::string taskName) : mTaskName(taskName)
 {
     start();

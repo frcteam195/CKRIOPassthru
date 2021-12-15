@@ -26,5 +26,5 @@ private:
     void* mIMUDataBuf;
     void sendIMUDataMessage();
     void doSendIMUUpdate(double yaw, double pitch, double roll);
-    NavX mNavX;
+    NavX& mNavX;
 };
