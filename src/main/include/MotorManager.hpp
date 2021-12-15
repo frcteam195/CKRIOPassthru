@@ -7,6 +7,7 @@
 #include <map>
 #include <mutex>
 #include <functional>
+#include "IntellisenseDefs.h"
 #include "MotorConfiguration.pb.h"
 
 enum class MotorType : int

@@ -61,9 +61,10 @@ double NavX::getFusedHeading() {
 }
 
 bool NavX::hasUpdated() {
-    if (mRawSensorTimestampPrev < mAHRS.GetLastSensorTimestamp())
+    long currAHRSTimestamp = mAHRS.GetLastSensorTimestamp();
+    if (mRawSensorTimestampPrev < currAHRSTimestamp)
     {
-        mRawSensorTimestampPrev = mAHRS.GetLastSensorTimestamp();
+        mRawSensorTimestampPrev = currAHRSTimestamp;
         return true;
     }
     return false;
