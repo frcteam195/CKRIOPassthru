@@ -16,6 +16,7 @@ public:
     bool reset();
     void zeroYaw();
     double getYaw();
+    double getRawYaw();
     double getRoll();
     double getPitch();
     double getYawRateDegreesPerSec();

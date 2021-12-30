@@ -47,7 +47,7 @@ private:
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	SendRobotDataTask sendRobotDataTask;
-	SendRobotDataTask sendIMUDataTask;
+	SendIMUDataTask sendIMUDataTask;
 	SendSensorDataTask sendSensorDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;

@@ -28,6 +28,16 @@ void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorCo
     }
 }
 
+void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseMotorController*, MotorType, const ck::MotorConfiguration::Motor&)> func)
+{
+    std::scoped_lock<std::mutex> lock(motorLock);
+    const ck::MotorConfiguration::Motor& m = (const ck::MotorConfiguration::Motor&)msg;
+    if (mRegisteredMotorList.count(m.id()))
+    {
+        func((uint16_t)m.id(), mRegisteredMotorList[m.id()], mRegisteredMotorTypeList[m.id()], m);
+    }
+}
+
 void MotorManager::registerMotor(uint16_t id, MotorType motorType)
 {
     std::scoped_lock<std::mutex> lock(motorLock);
@@ -100,4 +110,10 @@ BaseMotorController* MotorManager::getMotor_unsafe(uint16_t id)
     {
         return nullptr;
     }
+}
+
+BaseMotorController* MotorManager::getMotor_threadsafe(uint16_t id)
+{
+    std::scoped_lock<std::mutex> lock(motorLock);
+    return getMotor_unsafe(id);
 }

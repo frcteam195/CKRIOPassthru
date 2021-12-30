@@ -19,8 +19,8 @@ void TaskTimingManager::displayTaskTiming()
     std::scoped_lock<std::mutex> lock(taskTimingLock);
     for (auto const& [key, val] : mTaskTimingList)
     {
-        ckLogger << key << ": " << val << "ms" << std::endl;
+        std::cout << key << ": " << val << "ms" << std::endl;
     }
-    ckLogger << "" << std::endl2;
+    std::cout << std::endl;
 #endif
 }

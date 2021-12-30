@@ -1,5 +1,8 @@
 #include "Robot.hpp"
+#include "utils/GlobalConfig.hpp"
 #include "utils/CKLogger.hpp"
+#include <iostream>
+#include "NavXManager.hpp"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -21,7 +24,6 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
-	TaskScheduler::getInstance().scheduleTask(ckLoggerTask);
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
@@ -29,6 +31,10 @@ void Robot::RobotInit()
 
 	//Start Scheduler
 	TaskScheduler::getInstance().start();
+
+	std::cout << "Initialized successfully. Entering run..." << std::endl;
+
+	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::RobotPeriodic() {
 	// ckLogger << "Test message!!" << std::endl;
@@ -38,6 +44,7 @@ void Robot::RobotPeriodic() {
 void Robot::AutonomousInit()
 {
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
+	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::AutonomousPeriodic() {}
 
@@ -50,7 +57,6 @@ void Robot::TeleopPeriodic() {}
 void Robot::DisabledInit()
 {
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
-
 }
 void Robot::DisabledPeriodic() {}
 
