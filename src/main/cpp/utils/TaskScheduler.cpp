@@ -30,9 +30,12 @@ void TaskScheduler::scheduleTask(Task &t, uint32_t taskRateMs)
 
 void TaskScheduler::start()
 {
-    threadActive = true;
-    rtTimer.start();
-    mThread = std::thread(std::bind(&TaskScheduler::run, this));
+    if (!mThread.joinable())
+    {
+        threadActive = true;
+        rtTimer.start();
+        mThread = std::thread(std::bind(&TaskScheduler::run, this));
+    }
 }
 
 void TaskScheduler::stop()
