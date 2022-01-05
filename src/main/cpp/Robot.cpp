@@ -42,7 +42,11 @@ void Robot::RobotPeriodic() {
 	// ckLogger << "Test message!!2" << std::endl2;
 	if (isExternalControl())
 	{
-		failoverActive = false;
+		if (failoverActive)
+		{
+			robotFailover.Reset();
+			failoverActive = false;
+		}
 	}
 	else
 	{

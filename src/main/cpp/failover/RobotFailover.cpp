@@ -28,5 +28,10 @@ void RobotFailover::DisabledFailoverInit() {}
 void RobotFailover::DisabledFailoverPeriodic() {}
 
 
+void RobotFailover::Reset()
+{
+    DrivetrainFailover::getInstance().SubsystemReset();
+}
+
 
 RobotFailover::RobotFailover() {}

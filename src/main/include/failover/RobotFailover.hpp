@@ -16,5 +16,7 @@ public:
 	void DisabledFailoverInit();
 	void DisabledFailoverPeriodic();
 
+	void Reset();
+
 private:
 };

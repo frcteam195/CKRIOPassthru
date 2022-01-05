@@ -8,14 +8,15 @@ class DrivetrainFailover : public Singleton<DrivetrainFailover>, public Failover
     friend Singleton;
 protected:
     void init() override;
+    void uninit() override;
     void run() override;
     void registerMotors() override;
 
 private:
-    DrivetrainFailover();
+    DrivetrainFailover() = default;
     ~DrivetrainFailover();
 
-    frc::Joystick mJoystick;
+    frc::Joystick* mJoystick;
 
     static constexpr int LEFT_MOTOR_ID = 1;
     static constexpr int RIGHT_MOTOR_ID = 4;
