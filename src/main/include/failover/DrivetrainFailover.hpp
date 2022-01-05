@@ -2,6 +2,7 @@
 #include "utils/Singleton.hpp"
 #include "failover/utils/FailoverSubsystem.hpp"
 #include "frc/Joystick.h"
+#include "MotorManager.hpp"
 
 class DrivetrainFailover : public Singleton<DrivetrainFailover>, public FailoverSubsystem
 {
@@ -18,6 +19,7 @@ private:
 
     frc::Joystick* mJoystick;
 
+    static constexpr MotorType DRIVE_MOTOR_TYPE = MotorType::TALON_FX;
     static constexpr int LEFT_MOTOR_ID = 1;
     static constexpr int RIGHT_MOTOR_ID = 4;
 

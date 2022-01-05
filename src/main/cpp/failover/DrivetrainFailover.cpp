@@ -1,5 +1,4 @@
 #include "failover/DrivetrainFailover.hpp"
-#include "MotorManager.hpp"
 #include "utils/PhoenixHelper.hpp"
 #include "utils/CKMath.hpp"
 
@@ -58,8 +57,8 @@ void DrivetrainFailover::run()
 void DrivetrainFailover::registerMotors()
 {
     //Place all motors used here. This will be called automatically as needed in the SubsystemRun and SubsystemInit methods
-    MotorManager::getInstance().registerMotor(LEFT_MOTOR_ID, MotorType::TALON_FX);
-    MotorManager::getInstance().registerMotor(RIGHT_MOTOR_ID, MotorType::TALON_FX);
+    MotorManager::getInstance().registerMotor(LEFT_MOTOR_ID, DRIVE_MOTOR_TYPE);
+    MotorManager::getInstance().registerMotor(RIGHT_MOTOR_ID, DRIVE_MOTOR_TYPE);
 }
 
 DrivetrainFailover::~DrivetrainFailover()
