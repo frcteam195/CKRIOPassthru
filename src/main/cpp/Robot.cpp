@@ -38,8 +38,6 @@ void Robot::RobotInit()
 	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::RobotPeriodic() {
-	// ckLogger << "Test message!!" << std::endl;
-	// ckLogger << "Test message!!2" << std::endl2;
 	if (isExternalControl())
 	{
 		if (failoverActive)
