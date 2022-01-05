@@ -32,6 +32,11 @@ void DrivetrainFailover::uninit()
     }
 }
 
+void DrivetrainFailover::periodic()
+{
+
+}
+
 void DrivetrainFailover::run()
 {
     //Motor Control code should be placed here

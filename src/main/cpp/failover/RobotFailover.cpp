@@ -9,6 +9,8 @@ void RobotFailover::RobotFailoverInit()
 
 void RobotFailover::RobotFailoverPeriodic()
 {
+    //Make sure this is called to keep motors registered
+    DrivetrainFailover::getInstance().SubsystemPeriodic();
 }
 
 void RobotFailover::AutonomousFailoverInit() {}

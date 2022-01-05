@@ -9,6 +9,7 @@ class DrivetrainFailover : public Singleton<DrivetrainFailover>, public Failover
     friend Singleton;
 protected:
     void init() override;
+    void periodic() override;
     void uninit() override;
     void run() override;
     void registerMotors() override;
