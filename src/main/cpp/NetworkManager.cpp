@@ -1,5 +1,6 @@
 #include "NetworkManager.hpp"
 #include <iostream>
+#include "ExternalControlManager.hpp"
 
 NetworkManager::NetworkManager() : zmqCtx(), zmqSendSockVec(), zmqRecvSock(zmqCtx, zmq::socket_type::dish), recvMsgMap()
 {
@@ -46,7 +47,7 @@ bool NetworkManager::receiveMessagePump()
             std::string msgGroup = msg.group();
             //TODO: verify that this vector is moved into map properly and not copied
             recvMsgMap[msgGroup] = std::move(buf);
-
+            ExternalControlManager::getInstance().externalControlMsgReceived();
             return true;
         }
         return false;
