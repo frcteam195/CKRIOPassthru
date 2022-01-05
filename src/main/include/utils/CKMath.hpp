@@ -77,5 +77,17 @@ namespace ck
             const K delta = (x - l->first) / (i->first - l->first);
             return delta * i->second + (1 - delta) * l->second;
         }
+
+        template <typename T>
+        T normalizeWithDeadband(T val, T deadband) {
+            val = (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+
+            if (val != 0)
+            {
+                val = signum(val) * ((std::fabs(val) - deadband) / (1.0 - deadband));
+            }
+
+            return (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+        }
     } // namespace math
 } // namespace ck

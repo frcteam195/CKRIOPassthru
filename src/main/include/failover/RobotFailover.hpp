@@ -4,20 +4,17 @@ class RobotFailover {
 public:
 	RobotFailover();
 
-	void RobotPeriodic() override;
+    void RobotFailoverInit();
+	void RobotFailoverPeriodic();
 	
-	void AutonomousInit() override;
-	void AutonomousPeriodic() override;
+	void AutonomousFailoverInit();
+	void AutonomousFailoverPeriodic();
 
-	void TeleopInit() override;
-	void TeleopPeriodic() override;
+	void TeleopFailoverInit();
+	void TeleopFailoverPeriodic();
 
-	void DisabledInit() override;
-	void DisabledPeriodic() override;
-
-	void TestInit() override;
-	void TestPeriodic() override;
+	void DisabledFailoverInit();
+	void DisabledFailoverPeriodic();
 
 private:
-
 };
