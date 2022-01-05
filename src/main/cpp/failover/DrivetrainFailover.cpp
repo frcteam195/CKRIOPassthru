@@ -38,8 +38,8 @@ void DrivetrainFailover::run()
     //Motor Control code should be placed here
     double x = 0;
     double y = 0;
-    //Check mJoystick is valid
-    if (mJoystick)
+    //Check mJoystick is valid and connected
+    if (mJoystick && mJoystick->IsConnected())
     {
         x = ck::math::normalizeWithDeadband(mJoystick->GetX(), DRIVE_JOYSTICK_DEADBAND);
         y = ck::math::normalizeWithDeadband(mJoystick->GetY(), DRIVE_JOYSTICK_DEADBAND);
