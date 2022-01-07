@@ -20,6 +20,7 @@ void DrivetrainFailover::init()
         //Simple example config. See tasks/ApplyMotorConfigTask.cpp for more advanced examples
         mCtrl->ConfigVoltageCompSaturation(12);
         mCtrl->EnableVoltageCompensation(true);
+        mCtrl->SetInverted(ctre::phoenix::motorcontrol::InvertType::InvertMotorOutput);
     });
 }
 
@@ -46,7 +47,7 @@ void DrivetrainFailover::run()
     if (mJoystick && mJoystick->IsConnected())
     {
         x = ck::math::normalizeWithDeadband(mJoystick->GetX(), DRIVE_JOYSTICK_DEADBAND);
-        y = ck::math::normalizeWithDeadband(mJoystick->GetY(), DRIVE_JOYSTICK_DEADBAND);
+        y = -ck::math::normalizeWithDeadband(mJoystick->GetY(), DRIVE_JOYSTICK_DEADBAND);
     }
 
     MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [x, y](uint16_t id, BaseMotorController* mCtrl, MotorType mType)

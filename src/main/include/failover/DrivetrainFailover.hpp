@@ -24,7 +24,7 @@ private:
     static constexpr int LEFT_MOTOR_ID = 1;
     static constexpr int RIGHT_MOTOR_ID = 4;
 
-    static constexpr int DRIVE_JOYSTICK_ID = 1;
+    static constexpr int DRIVE_JOYSTICK_ID = 0;
     static constexpr double DRIVE_JOYSTICK_DEADBAND = 0.05;
 
 

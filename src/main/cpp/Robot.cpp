@@ -4,6 +4,7 @@
 #include <iostream>
 #include "NavXManager.hpp"
 #include "ExternalControlManager.hpp"
+#include "frc/DriverStation.h"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -42,6 +43,11 @@ void Robot::RobotPeriodic() {
 	{
 		if (failoverActive)
 		{
+			if (frc::DriverStation::GetInstance().IsDSAttached())
+			{
+				frc::DriverStation::GetInstance().ReportError("ROS Connection Resumed");
+			}
+			//std::cout << "ROS Connection Resumed" << std::endl;
 			robotFailover.Reset();
 			failoverActive = false;
 		}
@@ -50,6 +56,11 @@ void Robot::RobotPeriodic() {
 	{
 		if (!failoverActive)
 		{
+			if (frc::DriverStation::GetInstance().IsDSAttached())
+			{
+				frc::DriverStation::GetInstance().ReportError("Failover Control Activated");
+			}
+			//std::cout << "Failover Control Activated" << std::endl;
 			robotFailover.RobotFailoverInit();
 			failoverActive = true;
 		}
