@@ -9,7 +9,7 @@ NavXCallback::NavXCallback(NavX *navX)
 void NavXCallback::timestampedDataReceived(long system_timestamp, long sensor_timestamp, AHRSProtocol::AHRSUpdateBase& sensor_data, void * context)
 {
     std::scoped_lock<std::mutex>lock(mNavX->mSyncLock);
-    // This handles the fact that the sensor is inverted from our coordinate conventions.
+    // // This handles the fact that the sensor is inverted from our coordinate conventions.
     if (mNavX->mLastSensorTimestampMs != NavX::kInvalidTimestamp && mNavX->mLastSensorTimestampMs < sensor_timestamp)
     {
         mNavX->mYawRateDegreesPerSecond = 1000.0 * (-mNavX->mYawDegrees - sensor_data.yaw) / (double) (sensor_timestamp - mNavX->mLastSensorTimestampMs);

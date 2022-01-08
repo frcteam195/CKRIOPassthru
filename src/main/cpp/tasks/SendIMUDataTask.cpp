@@ -27,7 +27,7 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
     mTaskTimer.reportElapsedTime();
 }
 
-void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll)
+void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll, double yawrate)
 {
 #ifdef CONSOLE_REPORTING
     static int count = 0;
@@ -38,6 +38,7 @@ void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll)
     imuSensorData->set_yaw(yaw);
     imuSensorData->set_pitch(pitch);
     imuSensorData->set_roll(roll);
+    imuSensorData->set_yawrate(yawrate);
     if (mIMUData.SerializeToArray(mIMUDataBuf, mIMUData.ByteSizeLong()))
     {
         NetworkManager::getInstance().sendMessage(IMU_DATA_MESSAGE_GROUP, mIMUDataBuf, mIMUData.ByteSizeLong());
@@ -63,11 +64,11 @@ void SendIMUDataTask::sendIMUDataMessage()
     {
         if (mNavX.hasUpdated())
         {
-            doSendIMUUpdate(mNavX.getRawYaw(), mNavX.getPitch(), mNavX.getRoll());
+            doSendIMUUpdate(mNavX.getYaw(), mNavX.getPitch(), mNavX.getRoll(), mNavX.getYawRateRadPerSec());
         }
     }
     else 
     {
-        doSendIMUUpdate(0, 0, 0);
+        doSendIMUUpdate(0, 0, 0, 0);
     }
 }

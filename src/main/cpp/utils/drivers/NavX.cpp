@@ -82,6 +82,10 @@ double NavX::getPitch() {
     return mAHRS.GetPitch();
 }
 
+double NavX::getYawRateRadPerSec() {
+    return getYawRateDegreesPerSec() / 180 * M_PI;
+}
+
 double NavX::getYawRateDegreesPerSec() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mYawRateDegreesPerSecond;
@@ -93,7 +97,7 @@ double NavX::getFusedHeading() {
 }
 
 bool NavX::hasUpdated() {
-    long currAHRSTimestamp = mAHRS.GetLastSensorTimestamp();
+    long currAHRSTimestamp = mLastSensorTimestampMs;
     if (mRawSensorTimestampPrev < currAHRSTimestamp)
     {
         mRawSensorTimestampPrev = currAHRSTimestamp;
