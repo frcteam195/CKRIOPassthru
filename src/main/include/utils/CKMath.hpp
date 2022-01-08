@@ -27,6 +27,18 @@ namespace ck
         }
 
         template <typename T>
+        inline double degToRad(T val)
+        {
+            return (val * M_PI / 180.0);
+        }
+
+        template <typename T>
+        inline double radToDeg(T val)
+        {
+            return (val * 180.0 / M_PI);
+        }
+
+        template <typename T>
         inline bool epsilonEquals(T const &a, T const &b, T epsilon)
         {
             return (a - epsilon <= b) && (a + epsilon >= b);

@@ -60,15 +60,15 @@ void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll, dou
 
 void SendIMUDataTask::sendIMUDataMessage()
 {
-    if (mNavX.isPresent())
-    {
-        if (mNavX.hasUpdated())
-        {
-            doSendIMUUpdate(mNavX.getFusedHeading(), mNavX.getPitch(), mNavX.getRoll(), mNavX.getYawRateRadPerSec());
-        }
-    }
-    else 
-    {
-        doSendIMUUpdate(0, 0, 0, 0);
-    }
+    // if (mNavX.isPresent())
+    // {
+    //     if (mNavX.hasUpdated())
+    //     {
+    doSendIMUUpdate(mNavX.getFusedHeadingRad(), mNavX.getPitchRad(), mNavX.getRollRad(), mNavX.getYawRateRadPerSec());
+    //     }
+    // }
+    // else 
+    // {
+    //     doSendIMUUpdate(0, 0, 0, 0);
+    // }
 }

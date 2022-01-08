@@ -2,6 +2,8 @@
 #include "utils/TimeoutTimer.hpp"
 #include <chrono>
 #include <thread>
+#include <iostream>
+#include "utils/CKMath.hpp"
 
 NavX::NavX() : NavX(frc::SPI::kMXP) {
     
@@ -78,12 +80,20 @@ double NavX::getRoll() {
     return mAHRS.GetRoll();
 }
 
+double NavX::getRollRad() {
+    return ck::math::degToRad(mAHRS.GetRoll());
+}
+
 double NavX::getPitch() {
     return mAHRS.GetPitch();
 }
 
+double NavX::getPitchRad() {
+    return ck::math::degToRad(mAHRS.GetPitch());
+}
+
 double NavX::getYawRateRadPerSec() {
-    return getYawRateDegreesPerSec() / 180 * M_PI;
+    return ck::math::degToRad(getYawRateDegreesPerSec());
 }
 
 double NavX::getYawRateDegreesPerSec() {
@@ -94,6 +104,11 @@ double NavX::getYawRateDegreesPerSec() {
 double NavX::getFusedHeading() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mFusedHeading;
+}
+
+double NavX::getFusedHeadingRad() {
+    std::scoped_lock<std::mutex>lock(mSyncLock);
+    return ck::math::degToRad(mFusedHeading);
 }
 
 bool NavX::hasUpdated() {

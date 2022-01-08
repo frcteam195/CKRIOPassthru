@@ -18,10 +18,13 @@ public:
     double getYaw();
     double getRawYaw();
     double getRoll();
+    double getRollRad();
     double getPitch();
+    double getPitchRad();
     double getYawRateRadPerSec();
     double getYawRateDegreesPerSec();
     double getFusedHeading();
+    double getFusedHeadingRad();
     bool hasUpdated();
 
 	double mYawDegrees;

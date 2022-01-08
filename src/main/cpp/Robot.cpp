@@ -4,13 +4,13 @@
 #include <iostream>
 #include "NavXManager.hpp"
 #include "ExternalControlManager.hpp"
-#include "frc/DriverStation.h"
+#include "frc/Errors.h"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
-	frc::LiveWindow::GetInstance()->DisableAllTelemetry();
+	frc::LiveWindow::DisableAllTelemetry();
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
 
@@ -43,9 +43,9 @@ void Robot::RobotPeriodic() {
 	{
 		if (failoverActive)
 		{
-			if (frc::DriverStation::GetInstance().IsDSAttached())
+			if (frc::DriverStation::IsDSAttached())
 			{
-				frc::DriverStation::GetInstance().ReportError("ROS Connection Resumed");
+				FRC_ReportError(1, "{}", "ROS Connection Resumed");
 			}
 			//std::cout << "ROS Connection Resumed" << std::endl;
 			robotFailover.Reset();
@@ -56,9 +56,9 @@ void Robot::RobotPeriodic() {
 	{
 		if (!failoverActive)
 		{
-			if (frc::DriverStation::GetInstance().IsDSAttached())
+			if (frc::DriverStation::IsDSAttached())
 			{
-				frc::DriverStation::GetInstance().ReportError("Failover Control Activated");
+				FRC_ReportError(1, "{}", "Failover Control Activated");
 			}
 			//std::cout << "Failover Control Activated" << std::endl;
 			robotFailover.RobotFailoverInit();

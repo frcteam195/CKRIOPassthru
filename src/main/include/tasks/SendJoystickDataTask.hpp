@@ -20,7 +20,6 @@ public:
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 20;
 private:
-    const frc::DriverStation* ds = &frc::DriverStation::GetInstance();
     bool mJoystickConnected[MAX_NUM_JOYSTICKS] = {false};
     std::vector<int> mConnectedJoysticks;
     ck::JoystickStatus robotJoystickStatusMsg;
