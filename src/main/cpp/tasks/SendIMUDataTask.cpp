@@ -64,7 +64,7 @@ void SendIMUDataTask::sendIMUDataMessage()
     {
         if (mNavX.hasUpdated())
         {
-            doSendIMUUpdate(mNavX.getYaw(), mNavX.getPitch(), mNavX.getRoll(), mNavX.getYawRateRadPerSec());
+            doSendIMUUpdate(mNavX.getFusedHeading(), mNavX.getPitch(), mNavX.getRoll(), mNavX.getYawRateRadPerSec());
         }
     }
     else 
