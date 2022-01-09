@@ -19,12 +19,12 @@ public:
     ~SendIMUDataTask();
     RTTimer rtTimer;
     void run(unsigned int timeSinceLastUpdateMs) override;
-    static constexpr uint32_t THREAD_RATE_MS = 2;
+    static constexpr uint32_t THREAD_RATE_MS = 10;
 private:
     ck::IMUData mIMUData;
     const size_t IMU_DATA_MESSAGE_SIZE = 1500;
     void* mIMUDataBuf;
     void sendIMUDataMessage();
-    void doSendIMUUpdate(double yaw, double pitch, double roll);
+    void doSendIMUUpdate(double yaw, double pitch, double roll, double yawrate);
     NavX& mNavX;
 };

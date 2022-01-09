@@ -25,6 +25,5 @@ private:
     ck::RobotStatus mRobotStatus;
     const size_t ROBOT_STATUS_MESSAGE_SIZE = 1500;
     void* mRobotStatusBuf;
-    const frc::DriverStation* ds = &frc::DriverStation::GetInstance();
     void sendRobotStatusMessage();
 };

@@ -21,6 +21,7 @@
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "tasks/TaskTimingReporterTask.hpp"
 #include "frc/livewindow/LiveWindow.h"
+#include "failover/RobotFailover.hpp"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -52,6 +53,9 @@ private:
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
 	CKLoggerTask ckLoggerTask;
+
+	RobotFailover robotFailover;
+	bool failoverActive;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;

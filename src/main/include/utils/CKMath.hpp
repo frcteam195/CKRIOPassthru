@@ -27,6 +27,18 @@ namespace ck
         }
 
         template <typename T>
+        inline double degToRad(T val)
+        {
+            return (val * M_PI / 180.0);
+        }
+
+        template <typename T>
+        inline double radToDeg(T val)
+        {
+            return (val * 180.0 / M_PI);
+        }
+
+        template <typename T>
         inline bool epsilonEquals(T const &a, T const &b, T epsilon)
         {
             return (a - epsilon <= b) && (a + epsilon >= b);
@@ -76,6 +88,18 @@ namespace ck
 
             const K delta = (x - l->first) / (i->first - l->first);
             return delta * i->second + (1 - delta) * l->second;
+        }
+
+        template <typename T>
+        T normalizeWithDeadband(T val, T deadband) {
+            val = (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+
+            if (val != 0)
+            {
+                val = signum(val) * ((std::fabs(val) - deadband) / (1.0 - deadband));
+            }
+
+            return (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
         }
     } // namespace math
 } // namespace ck
