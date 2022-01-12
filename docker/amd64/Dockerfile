@@ -1,5 +1,5 @@
 ARG UBUNTU=18.04
-ARG YEAR=2021
+ARG YEAR=2022
 FROM wpilib/roborio-cross-ubuntu:${YEAR}-${UBUNTU}
 ARG YEAR
 ARG GRADLERIOSRC=https://github.com/wpilibsuite/GradleRIO/archive/refs/tags/v2022.1.1.tar.gz
@@ -58,9 +58,41 @@ RUN cp -n /usr/include/X11/extensions/Xrandr.h /usr/local/arm-frc${YEAR}-linux-g
 
 RUN rm -Rf /tmp/*
 WORKDIR /tmp
-RUN wget ${GRADLERIOSRC}
-RUN tar -xzf *.tar.gz
-RUN cd GradleRIO* && cd examples/cpp && ./gradlew installRoboRioToolchain && ./gradlew wrapper
+
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz
+RUN tar -xzf protobuf-cpp-3.18.0.tar.gz
+WORKDIR /tmp/protobuf-3.18.0
+RUN ./configure
+RUN make -j4 && make install
 RUN rm -Rf /tmp/*
+RUN ldconfig
+
+WORKDIR /tmp
+RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4.3.4.tar.gz
+RUN tar -xzf zeromq-4.3.4.tar.gz
+WORKDIR /tmp/zeromq-4.3.4
+RUN ./configure --enable-drafts --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++
+RUN make -j4
+RUN chown -R `id -u`:`id -g` src/.libs/libzmq.so
+RUN arm-frc${YEAR}-linux-gnueabi-strip src/.libs/libzmq.so
+RUN cp src/.libs/libzmq.so /usr/local/arm-frc2022-linux-gnueabi/lib/libzmq.so
+
+WORKDIR /tmp
+RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz
+RUN tar -xzf protobuf-cpp-3.18.0.tar.gz
+WORKDIR /tmp/protobuf-3.18.0
+RUN ./configure --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++
+WORKDIR /tmp/protobuf-3.18.0/src
+RUN make -j4
+RUN chown -R `id -u`:`id -g` .libs/libprotobuf.so
+RUN arm-frc${YEAR}-linux-gnueabi-strip .libs/libprotobuf.so
+RUN cp .libs/libprotobuf.so /usr/local/arm-frc2022-linux-gnueabi/lib/libprotobuf.so
+
+WORKDIR /tmp
+RUN git clone https://github.com/frcteam195/CKRIOPassthru
+WORKDIR /tmp/CKRIOPassthru
+RUN ./gradlew
+RUN ./gradlew --stop
 
 WORKDIR /build
+RUN rm -Rf /tmp/*
