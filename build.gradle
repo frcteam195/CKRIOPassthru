@@ -35,11 +35,11 @@ task protoc {
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', '~/wpilib/2022/roborio/bin/arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
+            commandLine 'sh', '-c', 'arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', '~/wpilib/2022/roborio/bin/arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+            commandLine 'sh', '-c', 'arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
         }
     }
 }
