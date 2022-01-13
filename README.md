@@ -57,7 +57,7 @@ Specific versions required from the lib folder:
 
 #### Troubleshooting
 If you are trying to build using the VSCode Command Pallette, it will fail unless the system paths are setup properly in the VSCode configuration. In the command pallete, open `>Preferences: Open Settings (JSON)`
-then you can setup the path variable for your operating specific environment:
+then you can setup the path variable for your operating system specific environment:
 
 ```
 "terminal.integrated.env.osx": {
