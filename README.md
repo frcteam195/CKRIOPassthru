@@ -1,12 +1,12 @@
 # CKRIOPassthru
 To build this project for the RoboRIO, you must currently use a UNIX machine of some kind. Windows support is planned to be added in the future.
 
--
+---
 
 ### Dependencies
 Before continuing, Docker must be installed on your host computer. [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
 
--
+---
 
 ### Running The Container On UNIX
 Once Docker is installed, you can clone the repository and launch the docker container.
@@ -17,7 +17,7 @@ cd CKRIOPassthru
 ./docker/run_container.sh
 ```
 
--
+---
 
 ### Running The Container On Windows (NOT CURRENTLY SUPPORTED)
 Clone the repository using your git client of choice.
@@ -29,7 +29,7 @@ Once you have the repository cloned, open a command prompt and navigate to the r
 .\docker\run_container.cmd
 ```
 
--
+---
 
 ### Building and Deploying
 
@@ -42,7 +42,7 @@ Once the container is running, now you can use gradle like normal. To build and 
 
 Please note that deploying requires the computer to be connected to the robot, however, building the first time will require the computer to be connected to the internet to download the required dependencies. You can build first, while online, in order to download all required dependencies, then connect to the robot, in order to deploy.
 
--
+---
 
 ### <a name="alternate"></a> Alternate: Host Installation
 
