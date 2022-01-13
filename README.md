@@ -47,7 +47,7 @@ Please note that deploying requires the computer to be connected to the robot, h
 ### <a name="alternate"></a> Alternate: Host Installation
 
 #### Installation
-Alternatively, you can install the dependencies natively on your host machine rather than use our docker image to build and deploy for the RoboRIO. In order to build this project, you specifically need protobuf version 3.18.0 (protoc). This should be compiled by source and installed in the system path of your host computer. You will also need to copy the shared library objects from the lib folder of this repository and place them in your RoboRIO toolchain lib folder. Lastly, you will need the RoboRIO toolchain bin folder in your system path. 
+Alternatively, you can install the dependencies natively on your host machine rather than use our docker image to build and deploy for the RoboRIO. In order to build this project, you specifically need protobuf version 3.18.0 (protoc). This should be compiled by source and installed in the system path of your host computer. You will also need to copy the shared library objects from the lib folder of this repository and place them in your RoboRIO toolchain lib folder. Make sure to copy them, as they are still needed in the local lib folder. Lastly, you will need the RoboRIO toolchain bin folder in your system path. 
 
 Specific versions required from the lib folder:
 
