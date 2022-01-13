@@ -7,7 +7,7 @@ case "$OS_ARCH" in
 		DOCKER_ARCH=amd64
 		;;
 	*)
-		echo "Invalid architecture \"$OS_ARCH\" supported architectures are: x86_64 aarch64"
+		echo "Invalid architecture \"$OS_ARCH\" supported architectures are: x86_64"
 		exit
 		;;
 esac
