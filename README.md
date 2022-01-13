@@ -4,7 +4,7 @@ To build this project for the RoboRIO, you must currently use a UNIX machine of 
 -
 
 ### Dependencies
-Before continuing, Docker must be installed on your host computer. [Learn how to install Docker here](https://docs.docker.com/engine/install/)
+Before continuing, Docker must be installed on your host computer. [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
 
 -
 
@@ -44,10 +44,26 @@ Please note that deploying requires the computer to be connected to the robot, h
 
 -
 
-### Alternate Installation
-Alternatively, you can install the dependencies natively on your host machine rather than use our docker image to build and deploy for the RoboRIO. In order to build this project, you specifically need protobuf version 3.18.0 (protoc). This should be compiled by source and installed in the system path of your host computer. You will also need to copy the shared library objects from the lib folder of this repository and place them in your RoboRIO toolchain lib folder. Lastly, you will need the RoboRIO toolchain bin folder in your system path.
+### <a name="alternate"></a> Alternate: Host Installation
+
+#### Installation
+Alternatively, you can install the dependencies natively on your host machine rather than use our docker image to build and deploy for the RoboRIO. In order to build this project, you specifically need protobuf version 3.18.0 (protoc). This should be compiled by source and installed in the system path of your host computer. You will also need to copy the shared library objects from the lib folder of this repository and place them in your RoboRIO toolchain lib folder. Lastly, you will need the RoboRIO toolchain bin folder in your system path. 
 
 Specific versions required from the lib folder:
 
 * protobuf 3.18.0
 * ZMQ 4.3.4 built with drafts enabled
+
+
+#### Troubleshooting
+If you are trying to build using the VSCode Command Pallette, it will fail unless the system paths are setup properly in the VSCode configuration. In the command pallete, open `>Preferences: Open Settings (JSON)`
+then you can setup the path variable for your operating specific environment:
+
+```
+"terminal.integrated.env.osx": {
+  "JAVA_HOME": "/Users/macos/wpilib/2022/jdk",
+  "PATH": "/Users/macos/wpilib/2022/jdk/bin:${env:PATH}:/usr/local/bin:/Users/macos/wpilib/2022/roborio/bin"
+},
+```
+
+Please make sure to change the line `terminal.integrated.env.<platform>` for your specific platform
