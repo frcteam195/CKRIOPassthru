@@ -6,7 +6,7 @@ ExternalControlManager::~ExternalControlManager() {}
 void ExternalControlManager::externalControlMsgReceived()
 {
     //50 ticks per second
-    mLastConnectionTime = 100;  //Two second timeout
+    mLastConnectionTime = 25;  //500ms timeout
 }
 
 bool ExternalControlManager::isExternalControlConnected()
