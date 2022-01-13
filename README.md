@@ -41,3 +41,13 @@ Once the container is running, now you can use gradle like normal. To build and 
 ```
 
 Please note that deploying requires the computer to be connected to the robot, however, building the first time will require the computer to be connected to the internet to download the required dependencies. You can build first, while online, in order to download all required dependencies, then connect to the robot, in order to deploy.
+
+-
+
+### Alternate Installation
+Alternatively, you can install the dependencies natively on your host machine rather than use our docker image to build and deploy for the RoboRIO. In order to build this project, you specifically need protobuf version 3.18.0 (protoc). This should be compiled by source and installed in the system path of your host computer. You will also need to copy the shared library objects from the lib folder of this repository and place them in your RoboRIO toolchain lib folder. Lastly, you will need the RoboRIO toolchain bin folder in your system path.
+
+Specific versions required from the lib folder:
+
+* protobuf 3.18.0
+* ZMQ 4.3.4 built with drafts enabled

@@ -26,7 +26,7 @@ task protoc {
     doFirst {
         exec {
             workingDir "$projectDir/src/main/proto"
-            commandLine 'sh', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; /usr/local/bin/protoc --cpp_out=../protogen/ *.proto'
+            commandLine 'sh', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
