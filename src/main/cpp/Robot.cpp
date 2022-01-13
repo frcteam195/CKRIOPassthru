@@ -5,11 +5,13 @@
 #include "NavXManager.hpp"
 #include "ExternalControlManager.hpp"
 #include "frc/Errors.h"
+#include "frc/RobotController.h"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
