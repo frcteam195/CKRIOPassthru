@@ -2,7 +2,6 @@ ARG UBUNTU=18.04
 ARG YEAR=2022
 FROM wpilib/roborio-cross-ubuntu:${YEAR}-${UBUNTU}
 ARG YEAR
-ARG GRADLERIOSRC=https://github.com/wpilibsuite/GradleRIO/archive/refs/tags/v2022.1.1.tar.gz
 
 RUN apt-get update && apt-get install -y \
     autoconf \
@@ -96,3 +95,4 @@ RUN ./gradlew --stop
 
 WORKDIR /build
 RUN rm -Rf /tmp/*
+SHELL ["/bin/bash", "-c"]
