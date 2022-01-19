@@ -1,4 +1,7 @@
 # CKRIOPassthru
+
+![RoboRIO Build](https://github.com/frcteam195/CKRIOPassthru/.github/workflows/main.yml/badge.svg)
+
 To build this project for the RoboRIO, you must currently use a UNIX machine of some kind. Windows support is planned to be added in the future.
 
 ---
