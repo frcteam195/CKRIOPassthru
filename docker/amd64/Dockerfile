@@ -81,7 +81,7 @@ RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4
 WORKDIR /tmp
 RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
 	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
-	&& /tmp/protobuf-3.18.0 \
+	&& cd /tmp/protobuf-3.18.0 \
 	&& ./configure --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++ \
 	&& cd /tmp/protobuf-3.18.0/src \
 	&& make -j4 \
