@@ -26,15 +26,15 @@ task protoc {
     doFirst {
         exec {
             workingDir "$projectDir/src/main/proto"
-            commandLine 'sh', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
+            commandLine 'bash', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', 'arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
+            commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
-            commandLine 'sh', '-c', 'arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+            commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
         }
     }
 }
