@@ -34,7 +34,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /tmp
 RUN wget https://github.com/wpilibsuite/frc-openjdk-roborio/raw/2022/arm-x11-files.tar.xz \
-	&& cat arm-x11-files.tar.xz | sh -c "cd /usr/local/arm-frc${YEAR}-linux-gnueabi && tar xJf -"
+	&& cat arm-x11-files.tar.xz | sh -c "cd /usr/local/arm-frc${YEAR}-linux-gnueabi && tar xJf -" \
+	&& rm -Rf arm-x11-files.tar.xz
 
 RUN wget \
     https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/alsa-lib-dev_1.1.5-r0.6_cortexa9-vfpv3.ipk \
@@ -55,44 +56,48 @@ RUN wget \
 RUN cp -n /usr/include/X11/extensions/Xrandr.h /usr/local/arm-frc${YEAR}-linux-gnueabi/usr/include/X11/extensions/ \
 	&& cp -n /usr/include/X11/extensions/randr.h /usr/local/arm-frc${YEAR}-linux-gnueabi/usr/include/X11/extensions/
 
-RUN rm -Rf /tmp/*
 WORKDIR /tmp
-
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz
-RUN tar -xzf protobuf-cpp-3.18.0.tar.gz
-WORKDIR /tmp/protobuf-3.18.0
-RUN ./configure
-RUN make -j4 && make install
-RUN rm -Rf /tmp/*
-RUN ldconfig
-
-WORKDIR /tmp
-RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4.3.4.tar.gz
-RUN tar -xzf zeromq-4.3.4.tar.gz
-WORKDIR /tmp/zeromq-4.3.4
-RUN ./configure --enable-drafts --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++
-RUN make -j4
-RUN chown -R `id -u`:`id -g` src/.libs/libzmq.so
-RUN arm-frc${YEAR}-linux-gnueabi-strip src/.libs/libzmq.so
-RUN cp src/.libs/libzmq.so /usr/local/arm-frc2022-linux-gnueabi/lib/libzmq.so
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
+	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
+	&& cd /tmp/protobuf-3.18.0 \
+	&& ./configure \
+	&& make -j4 && make install \
+	&& cd /tmp \
+	&& rm -Rf /tmp/* \
+	&& ldconfig
 
 WORKDIR /tmp
-RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz
-RUN tar -xzf protobuf-cpp-3.18.0.tar.gz
-WORKDIR /tmp/protobuf-3.18.0
-RUN ./configure --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++
-WORKDIR /tmp/protobuf-3.18.0/src
-RUN make -j4
-RUN chown -R `id -u`:`id -g` .libs/libprotobuf.so
-RUN arm-frc${YEAR}-linux-gnueabi-strip .libs/libprotobuf.so
-RUN cp .libs/libprotobuf.so /usr/local/arm-frc2022-linux-gnueabi/lib/libprotobuf.so
+RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4.3.4.tar.gz \
+	&& tar -xzf zeromq-4.3.4.tar.gz \
+	&& cd /tmp/zeromq-4.3.4 \
+	&& ./configure --enable-drafts --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++ \
+	&& make -j4 \
+	&& chown -R `id -u`:`id -g` src/.libs/libzmq.so \
+	&& arm-frc${YEAR}-linux-gnueabi-strip src/.libs/libzmq.so \
+	&& cp src/.libs/libzmq.so /usr/local/arm-frc2022-linux-gnueabi/lib/libzmq.so \
+	&& cd /tmp \
+	&& rm -Rf /tmp/* 
 
 WORKDIR /tmp
-RUN git clone https://github.com/frcteam195/CKRIOPassthru
-WORKDIR /tmp/CKRIOPassthru
-RUN ./gradlew
-RUN ./gradlew --stop
+RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
+	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
+	&& /tmp/protobuf-3.18.0 \
+	&& ./configure --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++ \
+	&& cd /tmp/protobuf-3.18.0/src \
+	&& make -j4 \
+	&& chown -R `id -u`:`id -g` .libs/libprotobuf.so \
+	&& arm-frc${YEAR}-linux-gnueabi-strip .libs/libprotobuf.so \
+	&& cp .libs/libprotobuf.so /usr/local/arm-frc2022-linux-gnueabi/lib/libprotobuf.so \
+	&& cd /tmp \
+	&& rm -Rf /tmp/*
+
+WORKDIR /tmp
+RUN git clone https://github.com/frcteam195/CKRIOPassthru \
+	&& cd /tmp/CKRIOPassthru \
+	&& ./gradlew \
+	&& ./gradlew --stop \
+	&& cd /tmp \
+	&& rm -Rf /tmp/*
 
 WORKDIR /build
-RUN rm -Rf /tmp/*
 SHELL ["/bin/bash", "-c"]
