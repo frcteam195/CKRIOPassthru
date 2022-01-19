@@ -1,6 +1,6 @@
 # CKRIOPassthru
 
-![RoboRIO Build](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml/badge.svg)
+[![RoboRIO Build Status](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml/badge.svg)](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml)
 
 To build this project for the RoboRIO, you must currently use a UNIX machine of some kind. Windows support is planned to be added in the future.
 
