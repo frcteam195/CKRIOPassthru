@@ -2,7 +2,7 @@
 
 [![RoboRIO Build Status](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml/badge.svg)](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml)
 
-To build this project for the RoboRIO, you must currently use a UNIX machine of some kind. Windows support is planned to be added in the future.
+To build this project for the RoboRIO, we recommend using one of our docker images.
 
 ---
 
@@ -22,14 +22,27 @@ cd CKRIOPassthru
 
 ---
 
-### Running The Container On Windows (NOT CURRENTLY SUPPORTED)
-Clone the repository using your git client of choice.
+### Running The Container On Windows
+Start by installing WSL2 according to [this link](https://docs.microsoft.com/en-us/windows/wsl/install).
+Now, install the [Ubuntu distro from the Microsoft store](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab)
+Open the Ubuntu app from the start menu to finish installation and setup your user account and password.
+Set the Ubuntu distro as your default distro in WSL using the command `wsl --setdefault Ubuntu`
+Once WSL2 and the Ubuntu distro are installed, install Docker Desktop.
+Inside Docker Desktop Settings, under Resources > WSL Integration, enable WSL Integration for your Ubuntu installation.
+
+Launch the WSL Ubuntu instance and clone the repository inside a repository folder inside your home directory. We recommend ${HOME}/repos. Make sure to clone the submodules, as well.
 [https://github.com/frcteam195/CKRIOPassthru](https://github.com/frcteam195/CKRIOPassthru)
 
-Once you have the repository cloned, open a command prompt and navigate to the repository folder. When you are in the root folder of the repository (CKRIOPassthru), you can run the following command to launch the container:
+```
+mkdir repos
+cd repos
+git clone --recurse-submodules https://github.com/frcteam195/CKRIOPassthru
+```
+
+Once you have the repository cloned, navigate to the repository folder `cd CKRIOPassthru`. When you are in the root folder of the repository (CKRIOPassthru), you can run the following command to launch the container:
 
 ```
-.\docker\run_container.cmd
+./docker/run_container.sh
 ```
 
 ---
