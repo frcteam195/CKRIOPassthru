@@ -7,7 +7,7 @@ To build this project for the RoboRIO, we recommend using one of our docker imag
 ---
 
 ### Dependencies
-Before continuing, Docker must be installed on your host computer. [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
+Before continuing, Docker must be installed on your host computer as the first step (unless using Windows, in which case, you should follow the Windows guide, below). [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
 
 ---
 
