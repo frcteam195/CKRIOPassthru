@@ -1,17 +1,5 @@
 #!/bin/bash
 
-OS_ARCH=$(arch)
-
-case "$OS_ARCH" in
-	"x86_64")
-		DOCKER_ARCH=amd64
-		;;
-	*)
-		echo "Invalid architecture \"$OS_ARCH\" supported architectures are: x86_64"
-		exit
-		;;
-esac
-
 GID=$(id -g)
 umask 0002
 mkdir -p ${HOME}/.gradle
@@ -25,7 +13,7 @@ docker run -it --rm --net=host \
 	--volume="${HOME}/.gradle:${HOME}/.gradle:rw" \
 	--volume="${HOME}:${HOME}:ro" \
 	--volume="$(realpath $(dirname ${0})/..):/build/CKRIOPassthru" \
-	 guitar24t/ck-roborio-buildenv:${DOCKER_ARCH} \
+	 guitar24t/ck-roborio-buildenv:latest \
 	/bin/bash -c '\
 	cd CKRIOPassthru \
 	&& bash	\
