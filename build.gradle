@@ -26,14 +26,17 @@ task protoc {
     doFirst {
         exec {
             workingDir "$projectDir/src/main/proto"
+            project.logger.lifecycle('Generating C++ Code from .proto files')
             commandLine 'bash', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
+            project.logger.lifecycle('Compiling generated source...')
             commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
+            project.logger.lifecycle('Linking compiled source into static lib...')
             commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
         }
     }
