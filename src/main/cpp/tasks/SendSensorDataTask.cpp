@@ -3,6 +3,7 @@
 #include <functional>
 #include "MotorManager.hpp"
 #include "NetworkManager.hpp"
+#include "MotorConfigManager.hpp"
 
 SendSensorDataTask::SendSensorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMotorStatusMsg()
 {
@@ -20,32 +21,38 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
 
     MotorManager::getInstance().forEach([&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
     {
-        ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
-        m->set_id(id);
-        m->set_sensor_position(mCtrl->GetSelectedSensorPosition());
-        m->set_sensor_velocity(mCtrl->GetSelectedSensorVelocity());
-        m->set_bus_voltage(mCtrl->GetBusVoltage());
-        switch (mType)
+        ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
+        
+        if (mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER
+            || mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER)
         {
-        case MotorType::TALON_FX:
-        {
-            TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
-            m->set_bus_current(tfx->GetSupplyCurrent());
-            m->set_stator_current(tfx->GetStatorCurrent());
-        }
-            break;
-        case MotorType::TALON_SRX:
-        {
-            TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
-            m->set_bus_current(tsrx->GetSupplyCurrent());
-            m->set_stator_current(tsrx->GetStatorCurrent());
-        }
-            break;
-        default:
-        {
+            ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
+            m->set_id(id);
+            m->set_sensor_position(mCtrl->GetSelectedSensorPosition());
+            m->set_sensor_velocity(mCtrl->GetSelectedSensorVelocity());
+            m->set_bus_voltage(mCtrl->GetBusVoltage());
+            switch (mType)
+            {
+            case MotorType::TALON_FX:
+            {
+                TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
+                m->set_bus_current(tfx->GetSupplyCurrent());
+                m->set_stator_current(tfx->GetStatorCurrent());
+            }
+                break;
+            case MotorType::TALON_SRX:
+            {
+                TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
+                m->set_bus_current(tsrx->GetSupplyCurrent());
+                m->set_stator_current(tsrx->GetStatorCurrent());
+            }
+                break;
+            default:
+            {
 
-        }
-            break;
+            }
+                break;
+            }
         }
     });
 

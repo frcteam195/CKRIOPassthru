@@ -8,6 +8,7 @@
 #include "ctre/Phoenix.h"
 #include "NetworkManager.hpp"
 #include "utils/PhoenixHelper.hpp"
+#include "MotorConfigManager.hpp"
 
 ApplyMotorConfigTask::ApplyMotorConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
@@ -27,47 +28,49 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
     {
         ck::MotorConfiguration motorsUpdate;
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
-
-        if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg))
+        if (MotorConfigManager::getInstance().try_lock())
         {
-            if (motorsUpdate.motors().size() == mPrevMotorsMsg.motors().size())
+            ck::MotorConfiguration& mPrevMotorsConfigMsg = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
+            if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsConfigMsg))
             {
-                for (int i = 0; i < motorsUpdate.motors().size(); i++)
+                if (motorsUpdate.motors().size() == mPrevMotorsConfigMsg.motors().size())
                 {
-                    const ck::MotorConfiguration::Motor &m = motorsUpdate.motors()[i];
-                    const ck::MotorConfiguration::Motor &mPrev = mPrevMotorsMsg.motors()[i];
-
-                    if (m.id() != mPrev.id())
+                    for (int i = 0; i < motorsUpdate.motors().size(); i++)
                     {
-                        //Make sure all motors are fully initiallized if array size stays the same but IDs change
-                        fullUpdate(motorsUpdate);
-                        break;
-                    }
+                        const ck::MotorConfiguration::Motor &m = motorsUpdate.motors()[i];
+                        const ck::MotorConfiguration::Motor &mPrev = mPrevMotorsConfigMsg.motors()[i];
 
-                    //If we're here motor should be already registered? Needs testing
-                    //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
-                    mDiff.Compare(mPrev, m);  //Make sure the current update is message2 for our implementation
+                        if (m.id() != mPrev.id())
+                        {
+                            //Make sure all motors are fully initiallized if array size stays the same but IDs change
+                            fullUpdate(motorsUpdate);
+                            break;
+                        }
+
+                        //If we're here motor should be already registered? Needs testing
+                        //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
+                        mDiff.Compare(mPrev, m);  //Make sure the current update is message2 for our implementation
+                    }
+                }
+                else
+                {
+                    fullUpdate(motorsUpdate);
                 }
             }
-            else
+
+            //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
+            //Maybe look into reportdifferencesto function
+            
+            /*
+            if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg))
             {
                 fullUpdate(motorsUpdate);
             }
-            
-            
-        }
+            */
 
-        //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
-        //Maybe look into reportdifferencesto function
-        
-        /*
-        if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg))
-        {
-            fullUpdate(motorsUpdate);
+            MotorConfigManager::getInstance().setPrevMotorsConfigMsg(motorsUpdate);
+            MotorConfigManager::getInstance().unlock();
         }
-        */
-
-        mPrevMotorsMsg = motorsUpdate;
     }
     mTaskTimer.reportElapsedTime();
 }
@@ -151,6 +154,14 @@ void ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
             }
                 break;
             }
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_4_AinTempVbat_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_6_Misc_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_7_CommStatus_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_10_MotionMagic_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_12_Feedback1_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_14_Turn_PIDF1_, 255); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_17_Targets1_, 255); }, id);
         });
     }
 }

@@ -19,7 +19,6 @@ public:
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 100;
 private:
-    ck::MotorConfiguration mPrevMotorsMsg;
     DifferentialUpdateReporter mDiffReporter;
     google::protobuf::util::MessageDifferencer mDiff;
 
@@ -35,7 +34,7 @@ private:
     };
     static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 20};
     static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 20};
-    static constexpr StatusFrameConfig SLAVE_CONFIG = {10, 100, 100};
+    static constexpr StatusFrameConfig SLAVE_CONFIG = {255, 255, 255};
 
     google::protobuf::FieldDescriptor* ID_FD;
     google::protobuf::FieldDescriptor* CONTROLLER_TYPE_FD;
