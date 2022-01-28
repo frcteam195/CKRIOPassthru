@@ -14,7 +14,7 @@ public:
     SendSensorDataTask();
     ~SendSensorDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
-    static constexpr uint32_t THREAD_RATE_MS = 10;
+    static constexpr uint32_t THREAD_RATE_MS = 20;
 private:
     ck::MotorStatus mMotorStatusMsg;
     const size_t MOTOR_STATUS_MESSAGE_SIZE = 1500;

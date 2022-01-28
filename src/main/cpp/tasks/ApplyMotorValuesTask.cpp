@@ -2,6 +2,7 @@
 #include "utils/TaskScheduler.hpp"
 #include <functional>
 #include <map>
+#include <iostream>
 #include <vector>
 #include "DataStructures.hpp"
 #include "MotorManager.hpp"

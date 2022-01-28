@@ -2,12 +2,12 @@
 
 [![RoboRIO Build Status](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml/badge.svg)](https://github.com/frcteam195/CKRIOPassthru/actions/workflows/main.yml)
 
-To build this project for the RoboRIO, you must currently use a UNIX machine of some kind. Windows support is planned to be added in the future.
+To build this project for the RoboRIO, we recommend using one of our docker images.
 
 ---
 
 ### Dependencies
-Before continuing, Docker must be installed on your host computer. [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
+Before continuing, Docker must be installed on your host computer as the first step (unless using Windows, in which case, you should follow the Windows guide, below). [Learn how to install Docker here.](https://docs.docker.com/engine/install/) If you do not wish to install Docker, skip to the section on [host installation](#alternate)
 
 ---
 
@@ -22,14 +22,22 @@ cd CKRIOPassthru
 
 ---
 
-### Running The Container On Windows (NOT CURRENTLY SUPPORTED)
-Clone the repository using your git client of choice.
-[https://github.com/frcteam195/CKRIOPassthru](https://github.com/frcteam195/CKRIOPassthru)
-
-Once you have the repository cloned, open a command prompt and navigate to the repository folder. When you are in the root folder of the repository (CKRIOPassthru), you can run the following command to launch the container:
-
+### Running The Container On Windows
+1. Start by installing WSL2 according to [this link](https://docs.microsoft.com/en-us/windows/wsl/install).
+2. Now, install the [Ubuntu distro from the Microsoft store](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab).
+3. Open the Ubuntu app from the start menu to finish installation and setup your user account and password.
+4. Set the Ubuntu distro as your default distro in WSL using the command `wsl --setdefault Ubuntu`
+5. Once WSL2 and the Ubuntu distro are installed, install Docker Desktop.
+6. Inside Docker Desktop Settings, under Resources > WSL Integration, enable WSL Integration for your Ubuntu installation.
+7. Launch the WSL Ubuntu instance and clone the repository inside a repository folder inside your home directory. We recommend ${HOME}/repos. Make sure to clone the submodules, as well. [https://github.com/frcteam195/CKRIOPassthru](https://github.com/frcteam195/CKRIOPassthru)
 ```
-.\docker\run_container.cmd
+mkdir repos
+cd repos
+git clone --recurse-submodules https://github.com/frcteam195/CKRIOPassthru
+```
+8. Once you have the repository cloned, navigate to the repository folder `cd CKRIOPassthru`. When you are in the root folder of the repository (CKRIOPassthru), you can run the following command to launch the container:
+```
+./docker/run_container.sh
 ```
 
 ---
