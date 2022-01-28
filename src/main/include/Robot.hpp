@@ -11,12 +11,14 @@
 #include "utils/TaskScheduler.hpp"
 #include "utils/ThreadPriorityHelper.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
+#include "tasks/ApplySolenoidValuesTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/CKLoggerTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
 #include "tasks/SendSensorDataTask.hpp"
+#include "tasks/SendSolenoidDataTask.hpp"
 #include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "tasks/TaskTimingReporterTask.hpp"
@@ -47,9 +49,11 @@ private:
 	ReceiveMessagesTask receiveMessagesTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
+	ApplySolenoidValuesTask applySolenoidValuesTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
 	SendSensorDataTask sendSensorDataTask;
+	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
 	CKLoggerTask ckLoggerTask;
