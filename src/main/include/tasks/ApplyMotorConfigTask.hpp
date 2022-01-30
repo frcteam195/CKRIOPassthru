@@ -64,5 +64,8 @@ private:
     google::protobuf::FieldDescriptor* CLOSED_LOOP_RAMP_FD;
     google::protobuf::FieldDescriptor* SUPPLY_CURRENT_LIMIT_CONFIG_FD;
     google::protobuf::FieldDescriptor* STATOR_CURRENT_LIMIT_CONFIG_FD;
-
+    google::protobuf::FieldDescriptor* FORWARD_LIMIT_SWITCH_SOURCE_FD;
+    google::protobuf::FieldDescriptor* FORWARD_LIMIT_SWITCH_NORMAL_FD;
+    google::protobuf::FieldDescriptor* REVERSE_LIMIT_SWITCH_SOURCE_FD;
+    google::protobuf::FieldDescriptor* REVERSE_LIMIT_SWITCH_NORMAL_FD;
 };

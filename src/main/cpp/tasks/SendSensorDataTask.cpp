@@ -38,6 +38,8 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
                 TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
                 m->set_bus_current(tfx->GetSupplyCurrent());
                 m->set_stator_current(tfx->GetStatorCurrent());
+                m->set_forward_limit_closed(tfx->GetSensorCollection().IsFwdLimitSwitchClosed());
+                m->set_reverse_limit_closed(tfx->GetSensorCollection().IsRevLimitSwitchClosed());
             }
                 break;
             case MotorType::TALON_SRX:
@@ -45,6 +47,8 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
                 TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
                 m->set_bus_current(tsrx->GetSupplyCurrent());
                 m->set_stator_current(tsrx->GetStatorCurrent());
+                m->set_forward_limit_closed(tsrx->GetSensorCollection().IsFwdLimitSwitchClosed());
+                m->set_reverse_limit_closed(tsrx->GetSensorCollection().IsRevLimitSwitchClosed());
             }
                 break;
             default:

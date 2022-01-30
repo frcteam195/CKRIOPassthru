@@ -109,7 +109,8 @@ void ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
             ck::runTalonFunctionWithRetry([&]() { mCtrl->SetNeutralMode((NeutralMode)m.neutral_mode()); return mCtrl->GetLastError(); }, id);
             ck::runTalonFunctionWithRetry([&]() { return mCtrl->ConfigOpenloopRamp(m.open_loop_ramp(), ck::kCANTimeoutMs); }, id);
             ck::runTalonFunctionWithRetry([&]() { return mCtrl->ConfigClosedloopRamp(m.closed_loop_ramp(), ck::kCANTimeoutMs); }, id);
-            
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->ConfigForwardLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.forward_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.forward_limit_switch_normal(), ck::kCANTimeoutMs); }, id);
+            ck::runTalonFunctionWithRetry([&]() { return mCtrl->ConfigReverseLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.reverse_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.reverse_limit_switch_normal(), ck::kCANTimeoutMs); }, id);
             const ck::MotorConfiguration_Motor_CurrentLimitConfiguration &supplyCurrLimConfig = m.supply_current_limit_config();
             
             switch (mType)
@@ -199,6 +200,10 @@ void ApplyMotorConfigTask::initFieldDescriptors()
     CLOSED_LOOP_RAMP_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(26);
     SUPPLY_CURRENT_LIMIT_CONFIG_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(27);
     STATOR_CURRENT_LIMIT_CONFIG_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(28);
+    FORWARD_LIMIT_SWITCH_SOURCE_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(29);
+    FORWARD_LIMIT_SWITCH_NORMAL_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(30);
+    REVERSE_LIMIT_SWITCH_SOURCE_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(31);
+    REVERSE_LIMIT_SWITCH_NORMAL_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(32);
 }
 
 void ApplyMotorConfigTask::initUpdateFunctions()
@@ -408,5 +413,33 @@ void ApplyMotorConfigTask::initUpdateFunctions()
                     break;
                 }
             });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(FORWARD_LIMIT_SWITCH_SOURCE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.forward_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.forward_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(FORWARD_LIMIT_SWITCH_NORMAL_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.forward_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.forward_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(REVERSE_LIMIT_SWITCH_SOURCE_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.reverse_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.reverse_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(REVERSE_LIMIT_SWITCH_NORMAL_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.reverse_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.reverse_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
     });
 }
