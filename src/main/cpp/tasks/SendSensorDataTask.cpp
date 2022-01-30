@@ -30,6 +30,8 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
             m->set_id(id);
             m->set_sensor_position(mCtrl->GetSelectedSensorPosition());
             m->set_sensor_velocity(mCtrl->GetSelectedSensorVelocity());
+            m->set_control_mode((ck::MotorStatus::Motor::ControlMode)mCtrl->GetControlMode());
+            m->set_commanded_output(mCtrl->GetClosedLoopTarget());
             m->set_bus_voltage(mCtrl->GetBusVoltage());
             switch (mType)
             {
