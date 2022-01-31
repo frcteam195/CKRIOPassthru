@@ -30,8 +30,31 @@ void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
             m->set_id(id);
             m->set_sensor_position(mCtrl->GetSelectedSensorPosition());
             m->set_sensor_velocity(mCtrl->GetSelectedSensorVelocity());
-            m->set_control_mode((ck::MotorStatus::Motor::ControlMode)mCtrl->GetControlMode());
-            m->set_commanded_output(mCtrl->GetClosedLoopTarget());
+            ControlMode cm = mCtrl->GetControlMode();
+            m->set_control_mode((ck::MotorStatus::Motor::ControlMode)cm);
+            switch (cm)
+            {
+            case ControlMode::PercentOutput:
+            {
+                m->set_commanded_output(mCtrl->GetMotorOutputPercent());
+            }
+                break;
+            case ControlMode::Position:
+            case ControlMode::Velocity:
+            case ControlMode::Current:
+            case ControlMode::MotionProfile:
+            case ControlMode::MotionMagic:
+            case ControlMode::MotionProfileArc:
+            {
+                m->set_commanded_output(mCtrl->GetClosedLoopTarget());
+            }
+                break;
+            case ControlMode::Follower:
+            case ControlMode::MusicTone:
+            case ControlMode::Disabled:
+                break;
+            }
+            
             m->set_bus_voltage(mCtrl->GetBusVoltage());
             switch (mType)
             {
