@@ -34,7 +34,7 @@ private:
     };
     static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 20};
     static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 20};
-    static constexpr StatusFrameConfig SLAVE_CONFIG = {255, 255, 255};
+    static constexpr StatusFrameConfig SLAVE_CONFIG = {20, 20, 50};
 
     google::protobuf::FieldDescriptor* ID_FD;
     google::protobuf::FieldDescriptor* CONTROLLER_TYPE_FD;
@@ -68,4 +68,6 @@ private:
     google::protobuf::FieldDescriptor* FORWARD_LIMIT_SWITCH_NORMAL_FD;
     google::protobuf::FieldDescriptor* REVERSE_LIMIT_SWITCH_SOURCE_FD;
     google::protobuf::FieldDescriptor* REVERSE_LIMIT_SWITCH_NORMAL_FD;
+    google::protobuf::FieldDescriptor* PEAK_OUTPUT_FORWARD_FD;
+    google::protobuf::FieldDescriptor* PEAK_OUTPUT_REVERSE_FD;
 };
