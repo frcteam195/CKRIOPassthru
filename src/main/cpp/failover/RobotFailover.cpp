@@ -5,6 +5,9 @@
 void RobotFailover::RobotFailoverInit()
 {
     DrivetrainFailover::getInstance().SubsystemInit();
+    lCtrl = new CKLEDController(1);
+    lCtrl->setColor(RGBColor{0, 128, 200, 255});
+    lCtrl->setLEDsOn();
 }
 
 void RobotFailover::RobotFailoverPeriodic()

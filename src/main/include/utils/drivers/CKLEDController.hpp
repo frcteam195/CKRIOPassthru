@@ -28,6 +28,7 @@ class CKLEDController : public CKCANDevice
         DEFAULT = 0,
         SET_COLOR = 1,
         SET_BLINK = 2,
+        FLOAT_PIXEL = 3,
         ///////////////////////////////////////////
         //Support up to a 32 character sequenced morse string, 8 chars per packet
         MORSE_MESSAGE_1 = 1,
@@ -49,6 +50,7 @@ public:
     void setLEDsMorse(std::string msg);
     void setDriverSignal();
     void setEndgame();
+    void setFloatPixel(RGBColor pixelColor, int pixelCount, int pixelRepeatSpacing = 0);
     void setColor(RGBColor rgbColor);
     void configureBlink(int blinkRate, int blinkRateMs);
 

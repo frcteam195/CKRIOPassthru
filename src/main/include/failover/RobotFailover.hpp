@@ -1,5 +1,8 @@
 #pragma once
 
+#include "utils/drivers/CKLEDController.hpp"
+
+
 class RobotFailover {
 public:
 	RobotFailover();
@@ -19,4 +22,6 @@ public:
 	void Reset();
 
 private:
+	CKLEDController* lCtrl;
+
 };

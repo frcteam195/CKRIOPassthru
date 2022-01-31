@@ -73,6 +73,15 @@ void CKLEDController::setLEDsMorse(std::string msg)
     }
 }
 
+void CKLEDController::setFloatPixel(RGBColor pixelColor, int pixelCount, int pixelRepeatSpacing)
+{
+    std::vector<uint8_t> buf = {pixelColor.white, pixelColor.red, pixelColor.green, pixelColor.blue,
+        (uint8_t)(pixelCount & 0xFF), (uint8_t)((pixelCount >> 8) & 0xFF),
+        (uint8_t)(pixelRepeatSpacing & 0xFF), (uint8_t)((pixelRepeatSpacing >> 8) & 0xFF)};
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::FIXED_ON, (int)APIIndex::FLOAT_PIXEL), buf};
+    CKCANServer::getInstance().sendPacket(canPacket);
+}
+
 void CKLEDController::setColor(RGBColor rgbColor)
 {
     std::vector<uint8_t> buf = {rgbColor.white, rgbColor.red, rgbColor.green, rgbColor.blue};
