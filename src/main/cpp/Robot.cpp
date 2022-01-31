@@ -6,6 +6,7 @@
 #include "ExternalControlManager.hpp"
 #include "frc/Errors.h"
 #include "frc/RobotController.h"
+#include "CKCANServer.hpp"
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -36,7 +37,14 @@ void Robot::RobotInit()
 #endif 
 
 	//Start Scheduler
+	std::cout << "Starting Task Scheduler..." << std::endl;
 	TaskScheduler::getInstance().start();
+	std::cout << "Task Scheduler started!" << std::endl;
+
+	//Initialize the CAN Server
+	std::cout << "Starting CK CAN Server..." << std::endl;
+	CKCANServer::getInstance();
+	std::cout << "CK CAN Server started!" << std::endl;
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
