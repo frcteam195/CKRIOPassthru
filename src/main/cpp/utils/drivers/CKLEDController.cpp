@@ -80,10 +80,10 @@ void CKLEDController::setColor(RGBColor rgbColor)
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setBlinkRateMs(int blinkRateMs)
+void CKLEDController::configureBlink(int blinkCount, int blinkRateMs)
 {
-    //Support blink_rate as a uint16_t, max value 65535 milliseconds
-    std::vector<uint8_t> buf = {(uint8_t)(blinkRateMs & 0xFF), (uint8_t)((blinkRateMs >> 8) & 0xFF)};
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_BLINK_RATE_MS), buf};
+    //Support blink_rate as a uint16_t, max value 65535 milliseconds, blink count as a uint8
+    std::vector<uint8_t> buf = {(uint8_t)(blinkRateMs & 0xFF), (uint8_t)((blinkRateMs >> 8) & 0xFF), (uint8_t)(blinkCount & 0xFF)};
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_BLINK), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }

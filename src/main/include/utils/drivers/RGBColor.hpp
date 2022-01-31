@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-union RGBColor
+struct RGBColor
 {
     uint8_t white;
     uint8_t red;

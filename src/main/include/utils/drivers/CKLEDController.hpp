@@ -27,7 +27,7 @@ class CKLEDController : public CKCANDevice
     {
         DEFAULT = 0,
         SET_COLOR = 1,
-        SET_BLINK_RATE_MS = 2,
+        SET_BLINK = 2,
         ///////////////////////////////////////////
         //Support up to a 32 character sequenced morse string, 8 chars per packet
         MORSE_MESSAGE_1 = 1,
@@ -50,7 +50,7 @@ public:
     void setDriverSignal();
     void setEndgame();
     void setColor(RGBColor rgbColor);
-    void setBlinkRateMs(int blinkRateMs);
+    void configureBlink(int blinkRate, int blinkRateMs);
 
 private:
     int mDeviceID;
