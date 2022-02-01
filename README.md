@@ -72,8 +72,8 @@ then you can setup the path variable for your operating system specific environm
 
 ```
 "terminal.integrated.env.osx": {
-  "JAVA_HOME": "/Users/macos/wpilib/2022/jdk",
-  "PATH": "/Users/macos/wpilib/2022/jdk/bin:${env:PATH}:/usr/local/bin:/Users/macos/wpilib/2022/roborio/bin"
+  "JAVA_HOME": "/Users/<USERNAME>/wpilib/2022/jdk",
+  "PATH": "/Users/<USERNAME>/wpilib/2022/jdk/bin:${env:PATH}:/usr/local/bin:/Users/<USERNAME>/wpilib/2022/roborio/bin"
 },
 ```
 
