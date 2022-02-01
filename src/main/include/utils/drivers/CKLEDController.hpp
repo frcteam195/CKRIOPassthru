@@ -29,7 +29,8 @@ class CKLEDController : public CKCANDevice
         SET_COLOR = 1,
         SET_BRIGHTNESS = 2,
         SET_BLINK = 3,
-        FLOAT_PIXEL = 4,
+        SET_DEFAULT_STATE = 4,
+        FLOAT_PIXEL = 5,
         ///////////////////////////////////////////
         //Support up to a 32 character sequenced morse string, 8 chars per packet
         MORSE_MESSAGE_1 = 1,
@@ -38,22 +39,31 @@ class CKLEDController : public CKCANDevice
         MORSE_MESSAGE_4 = 4
         ///////////////////////////////////////////
     };
-
+    
 public:
+    enum class LEDState
+    {
+        OFF,
+        FIXED_ON,
+        BLINK,
+        MORSE
+    };
+
     CKLEDController(int deviceID);
     ~CKLEDController();
 
-    void setLEDsOn();
-    void setLEDsOff();
-    void setLEDsBlink();
-    void setLEDsCommLoss();
-    void setLEDsCommRestored();
-    void setLEDsMorse(std::string msg);
+    void setOn();
+    void setOff();
+    void setBlink();
+    void setCommLoss();
+    void setCommRestored();
+    void setMorse(std::string msg);
     void setDriverSignal();
     void setEndgame();
     void setFloatPixel(RGBColor pixelColor, int pixelCount, int pixelRepeatSpacing = 0);
     void setColor(RGBColor rgbColor);
     void setBrightness(int brightness);
+    void setDefaultState(LEDState defaultState);
     void configureBlink(int blinkCount, int blinkRateMs);
 
 private:

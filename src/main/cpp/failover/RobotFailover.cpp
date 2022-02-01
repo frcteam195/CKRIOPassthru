@@ -1,7 +1,6 @@
 #include "failover/RobotFailover.hpp"
 #include "failover/DrivetrainFailover.hpp"
 
-
 void RobotFailover::RobotFailoverInit()
 {
     DrivetrainFailover::getInstance().SubsystemInit();
@@ -9,11 +8,12 @@ void RobotFailover::RobotFailoverInit()
     lCtrl->setColor(RGBColor{0, 128, 0, 255});
     lCtrl->setBrightness(255);
     lCtrl->configureBlink(10, 500);
-    lCtrl->setLEDsCommLoss();
-    // lCtrl->setLEDsCommRestored();
-    // lCtrl->setLEDsBlink();
-    // lCtrl->setLEDsMorse("SOS");
-    // lCtrl->setLEDsOn();
+    lCtrl->setCommLoss();
+    // lCtrl->setDefaultState(CKLEDController::LEDState::FIXED_ON);
+    // lCtrl->setCommRestored();
+    // lCtrl->setBlink();
+    // lCtrl->setMorse("SOS");
+    // lCtrl->setOn();
 }
 
 void RobotFailover::RobotFailoverPeriodic()

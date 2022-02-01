@@ -13,42 +13,42 @@ CKLEDController::CKLEDController(int deviceID)
 
 CKLEDController::~CKLEDController() {}
 
-void CKLEDController::setLEDsOn()
+void CKLEDController::setOn()
 {
     std::vector<uint8_t> buf = { 0 };
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::FIXED_ON, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setLEDsOff()
+void CKLEDController::setOff()
 {
     std::vector<uint8_t> buf = { 0 };
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::OFF, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setLEDsBlink()
+void CKLEDController::setBlink()
 {
     std::vector<uint8_t> buf = { 0 };
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::BLINK, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setLEDsCommLoss()
+void CKLEDController::setCommLoss()
 {
     std::vector<uint8_t> buf = { 0 };
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_LOSS, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setLEDsCommRestored()
+void CKLEDController::setCommRestored()
 {
     std::vector<uint8_t> buf = { 0 };
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_RESTORED, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
-void CKLEDController::setLEDsMorse(std::string msg)
+void CKLEDController::setMorse(std::string msg)
 {
     //Check if string is empty or whitespace and return
     if (msg.empty() || std::all_of(msg.begin(), msg.end(), [](char c){return std::isspace(c);}))
@@ -98,6 +98,13 @@ void CKLEDController::setBrightness(int brightness)
 {
     std::vector<uint8_t> buf = {(uint8_t) brightness};
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_BRIGHTNESS), buf};
+    CKCANServer::getInstance().sendPacket(canPacket);
+}
+
+void CKLEDController::setDefaultState(LEDState defaultState)
+{
+    std::vector<uint8_t> buf = {(uint8_t) defaultState};
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_DEFAULT_STATE), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
