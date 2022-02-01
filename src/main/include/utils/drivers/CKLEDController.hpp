@@ -10,7 +10,7 @@
 
 class CKLEDController : public CKCANDevice
 {
-    enum class APIClass : int
+    enum class APIClass
     {
         IDLE = 0,
         OFF = 1,
@@ -20,15 +20,16 @@ class CKLEDController : public CKCANDevice
         COMM_RESTORED = 5,
         MORSE = 6,
         DRIVER_SIGNAL = 7,
-        ENDGAME =8
+        ENDGAME = 8
     };
 
-    enum class APIIndex : int
+    enum class APIIndex
     {
         DEFAULT = 0,
         SET_COLOR = 1,
-        SET_BLINK = 2,
-        FLOAT_PIXEL = 3,
+        SET_BRIGHTNESS = 2,
+        SET_BLINK = 3,
+        FLOAT_PIXEL = 4,
         ///////////////////////////////////////////
         //Support up to a 32 character sequenced morse string, 8 chars per packet
         MORSE_MESSAGE_1 = 1,
@@ -52,7 +53,8 @@ public:
     void setEndgame();
     void setFloatPixel(RGBColor pixelColor, int pixelCount, int pixelRepeatSpacing = 0);
     void setColor(RGBColor rgbColor);
-    void configureBlink(int blinkRate, int blinkRateMs);
+    void setBrightness(int brightness);
+    void configureBlink(int blinkCount, int blinkRateMs);
 
 private:
     int mDeviceID;

@@ -21,7 +21,7 @@ public:
 
     virtual int getAPIID(int apiClass, int apiIndex)
     {
-        return ((((int)apiClass) << 6) & 0x3F0) | (((int)apiIndex) & 0x00F);
+        return ((((int)apiClass) << 4) & 0x3F0) | (((int)apiIndex) & 0x00F);
     };
 
     virtual uint32_t getDeviceID(int apiID)

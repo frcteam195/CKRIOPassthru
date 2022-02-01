@@ -15,31 +15,36 @@ CKLEDController::~CKLEDController() {}
 
 void CKLEDController::setLEDsOn()
 {
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::FIXED_ON, (int)APIIndex::DEFAULT), std::vector<uint8_t>()};
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::FIXED_ON, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
 void CKLEDController::setLEDsOff()
 {
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::OFF, (int)APIIndex::DEFAULT), std::vector<uint8_t>()};
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::OFF, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
 void CKLEDController::setLEDsBlink()
 {
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::BLINK, (int)APIIndex::DEFAULT), std::vector<uint8_t>()};
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::BLINK, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
 void CKLEDController::setLEDsCommLoss()
 {
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_LOSS, (int)APIIndex::DEFAULT), std::vector<uint8_t>()};
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_LOSS, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
 void CKLEDController::setLEDsCommRestored()
 {
-    CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_RESTORED, (int)APIIndex::DEFAULT), std::vector<uint8_t>()};
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::COMM_RESTORED, (int)APIIndex::DEFAULT), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
@@ -86,6 +91,13 @@ void CKLEDController::setColor(RGBColor rgbColor)
 {
     std::vector<uint8_t> buf = {rgbColor.white, rgbColor.red, rgbColor.green, rgbColor.blue};
     CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_COLOR), buf};
+    CKCANServer::getInstance().sendPacket(canPacket);
+}
+
+void CKLEDController::setBrightness(int brightness)
+{
+    std::vector<uint8_t> buf = {(uint8_t) brightness};
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::IDLE, (int)APIIndex::SET_BRIGHTNESS), buf};
     CKCANServer::getInstance().sendPacket(canPacket);
 }
 
