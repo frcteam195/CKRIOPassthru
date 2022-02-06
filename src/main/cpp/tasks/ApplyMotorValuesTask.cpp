@@ -53,5 +53,14 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
 
         mPrevMotorsMsg = motorsUpdate;
     }
+
+    if (RobotControlModeHelper::getInstance().getControlMode() == CONTROL_MODE::DISABLED)
+    {
+        MotorManager::getInstance().forEach([&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+        {
+            mCtrl->Set(ControlMode::Disabled, 0);
+        });
+    }
+
     mTaskTimer.reportElapsedTime();
 }

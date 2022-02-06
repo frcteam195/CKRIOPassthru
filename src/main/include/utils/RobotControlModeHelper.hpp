@@ -10,6 +10,7 @@ enum class CONTROL_MODE : int
     TELEOP = 1,
     AUTONOMOUS = 2,
     TEST = 3,
+    INVALID = 4
 };
 
 class RobotControlModeHelper : public Singleton<RobotControlModeHelper>

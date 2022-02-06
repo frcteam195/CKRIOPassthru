@@ -8,6 +8,7 @@
 #include "MotorControl.pb.h"
 #include "google/protobuf/util/message_differencer.h"
 #include "utils/RTTimer.hpp"
+#include "utils/RobotControlModeHelper.hpp"
 
 class ApplyMotorValuesTask : public Task
 {
@@ -21,6 +22,7 @@ public:
 private:
     ck::MotorControl mPrevMotorsMsg;
     RTTimer rtTimer;
+
     static constexpr unsigned int kMandatoryUpdatePerioduS = 200000;
     static constexpr bool MANDATORY_UPDATE_ENABLED = true;
 };
