@@ -1,21 +1,21 @@
-#include "tasks/SendSensorDataTask.hpp"
+#include "tasks/SendMotorDataTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include <functional>
 #include "MotorManager.hpp"
 #include "NetworkManager.hpp"
 #include "MotorConfigManager.hpp"
 
-SendSensorDataTask::SendSensorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMotorStatusMsg()
+SendMotorDataTask::SendMotorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMotorStatusMsg()
 {
     mMotorStatusBuf = malloc(MOTOR_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mMotorStatusBuf, 0, MOTOR_STATUS_MESSAGE_SIZE * sizeof(uint8_t));
 }
-SendSensorDataTask::~SendSensorDataTask()
+SendMotorDataTask::~SendMotorDataTask()
 {
     free(mMotorStatusBuf);
 }
 
-void SendSensorDataTask::run(uint32_t timeSinceLastUpdateMs)
+void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     mMotorStatusMsg.Clear();
 

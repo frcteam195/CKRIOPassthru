@@ -5,14 +5,14 @@
 #include "IntellisenseDefs.h"
 #include "MotorStatus.pb.h"
 
-class SendSensorDataTask : public Task
+class SendMotorDataTask : public Task
 {
 public:
     inline const static std::string MOTOR_STATUS_MESSAGE_GROUP = "motorstatus";
-    inline const static std::string TASK_NAME = "SendSensorDataTask";
+    inline const static std::string TASK_NAME = "SendMotorDataTask";
 
-    SendSensorDataTask();
-    ~SendSensorDataTask();
+    SendMotorDataTask();
+    ~SendMotorDataTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 20;
 private:

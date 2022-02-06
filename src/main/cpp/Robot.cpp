@@ -27,7 +27,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
-	TaskScheduler::getInstance().scheduleTask(sendSensorDataTask);
+	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);

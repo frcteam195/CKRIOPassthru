@@ -17,7 +17,7 @@
 #include "tasks/CKLoggerTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
-#include "tasks/SendSensorDataTask.hpp"
+#include "tasks/SendMotorDataTask.hpp"
 #include "tasks/SendSolenoidDataTask.hpp"
 #include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
@@ -52,7 +52,7 @@ private:
 	ApplySolenoidValuesTask applySolenoidValuesTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
-	SendSensorDataTask sendSensorDataTask;
+	SendMotorDataTask sendMotorDataTask;
 	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
