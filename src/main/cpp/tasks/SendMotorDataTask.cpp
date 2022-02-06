@@ -19,8 +19,8 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     mMotorStatusMsg.Clear();
 
-    MotorManager::getInstance().forEach([&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
-    {
+    MotorManager::getInstance().forEach([&](uint16_t id, BaseTalon *mCtrl, MotorType mType)
+                                        {
         ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
         
         if (mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER
@@ -34,33 +34,37 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             m->set_control_mode((ck::MotorStatus::Motor::ControlMode)cm);
             switch (cm)
             {
-            case ControlMode::PercentOutput:
-            {
-                m->set_commanded_output(mCtrl->GetMotorOutputPercent());
+                case ControlMode::PercentOutput:
+                {
+                    m->set_commanded_output(mCtrl->GetMotorOutputPercent());
+                    break;
+                }
+                case ControlMode::MotionProfile:
+                case ControlMode::MotionMagic:
+                case ControlMode::MotionProfileArc:
+                {
+                    m->set_active_trajectory_arbff(mCtrl->GetActiveTrajectoryArbFeedFwd());
+                    m->set_active_trajectory_position(mCtrl->GetActiveTrajectoryPosition());
+                    m->set_active_trajectory_velocity(mCtrl->GetActiveTrajectoryVelocity());
+                    [[fallthrough]]; //Fall through on the above cases so we also set closed loop data
+                }
+                case ControlMode::Position:
+                case ControlMode::Velocity:
+                case ControlMode::Current:
+                {
+                    m->set_commanded_output(mCtrl->GetClosedLoopTarget());
+                    m->set_raw_closed_loop_error(mCtrl->GetClosedLoopError());
+                    m->set_raw_integral_accum(mCtrl->GetIntegralAccumulator());
+                    m->set_raw_error_derivative(mCtrl->GetErrorDerivative());
+                    break;
+                }
+                case ControlMode::Follower:
+                case ControlMode::MusicTone:
+                case ControlMode::Disabled:
+                {
+                    break;
+                }
             }
-                break;
-            case ControlMode::Position:
-            case ControlMode::Velocity:
-            case ControlMode::Current:
-            case ControlMode::MotionProfile:
-            case ControlMode::MotionMagic:
-            case ControlMode::MotionProfileArc:
-            {
-                m->set_commanded_output(mCtrl->GetClosedLoopTarget());
-            }
-                break;
-            case ControlMode::Follower:
-            case ControlMode::MusicTone:
-            case ControlMode::Disabled:
-                break;
-            }
-
-            m->set_active_trajectory_arbff(mCtrl->GetActiveTrajectoryArbFeedFwd());
-            m->set_active_trajectory_position(mCtrl->GetActiveTrajectoryPosition());
-            m->set_active_trajectory_velocity(mCtrl->GetActiveTrajectoryVelocity());
-            m->set_raw_closed_loop_error(mCtrl->GetClosedLoopError());
-            m->set_raw_integral_accum(mCtrl->GetIntegralAccumulator());
-            m->set_raw_error_derivative(mCtrl->GetErrorDerivative());
             m->set_raw_output_percent(mCtrl->GetMotorOutputPercent());
             m->set_bus_voltage(mCtrl->GetBusVoltage());
             m->set_bus_current(mCtrl->GetSupplyCurrent());
@@ -88,8 +92,7 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             }
                 break;
             }
-        }
-    });
+        } });
 
     if (mMotorStatusMsg.SerializeToArray(mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong()))
     {
