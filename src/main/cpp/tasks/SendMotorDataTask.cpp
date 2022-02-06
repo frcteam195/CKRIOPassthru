@@ -54,15 +54,23 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             case ControlMode::Disabled:
                 break;
             }
-            
+
+            m->set_active_trajectory_arbff(mCtrl->GetActiveTrajectoryArbFeedFwd());
+            m->set_active_trajectory_position(mCtrl->GetActiveTrajectoryPosition());
+            m->set_active_trajectory_velocity(mCtrl->GetActiveTrajectoryVelocity());
+            m->set_raw_closed_loop_error(mCtrl->GetClosedLoopError());
+            m->set_raw_integral_accum(mCtrl->GetIntegralAccumulator());
+            m->set_raw_error_derivative(mCtrl->GetErrorDerivative());
+            m->set_raw_output_percent(mCtrl->GetMotorOutputPercent());
             m->set_bus_voltage(mCtrl->GetBusVoltage());
+            m->set_bus_current(mCtrl->GetSupplyCurrent());
+            m->set_stator_current(mCtrl->GetStatorCurrent());
+            
             switch (mType)
             {
             case MotorType::TALON_FX:
             {
                 TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
-                m->set_bus_current(tfx->GetSupplyCurrent());
-                m->set_stator_current(tfx->GetStatorCurrent());
                 m->set_forward_limit_closed(tfx->GetSensorCollection().IsFwdLimitSwitchClosed());
                 m->set_reverse_limit_closed(tfx->GetSensorCollection().IsRevLimitSwitchClosed());
             }
@@ -70,8 +78,6 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             case MotorType::TALON_SRX:
             {
                 TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
-                m->set_bus_current(tsrx->GetSupplyCurrent());
-                m->set_stator_current(tsrx->GetStatorCurrent());
                 m->set_forward_limit_closed(tsrx->GetSensorCollection().IsFwdLimitSwitchClosed());
                 m->set_reverse_limit_closed(tsrx->GetSensorCollection().IsRevLimitSwitchClosed());
             }
