@@ -78,3 +78,7 @@ then you can setup the path variable for your operating system specific environm
 ```
 
 Please make sure to change the line `terminal.integrated.env.<platform>` for your specific platform
+
+
+## DISCLAIMER
+No guarantees are made on the function of this software. This project is under ongoing development. Use at your own risk!

@@ -33,6 +33,7 @@ body:
       description: What version of our software are you running?
       options:
         - 2022.1.13a (Default)
+        - tip
     validations:
       required: true
   - type: dropdown
