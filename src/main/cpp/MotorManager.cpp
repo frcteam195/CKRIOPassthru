@@ -10,7 +10,7 @@ MotorManager::~MotorManager()
     }
 }
 
-void MotorManager::forEach(std::function<void(uint16_t, BaseMotorController*, MotorType)> func)
+void MotorManager::forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> func)
 {
     std::scoped_lock<std::mutex> lock(motorLock);
     for (auto const& [key, val] : mRegisteredMotorList)
@@ -19,7 +19,7 @@ void MotorManager::forEach(std::function<void(uint16_t, BaseMotorController*, Mo
     }
 }
 
-void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func)
+void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*, MotorType)> func)
 {
     std::scoped_lock<std::mutex> lock(motorLock);
     if (mRegisteredMotorList.count(id))
@@ -28,7 +28,7 @@ void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorCo
     }
 }
 
-void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseMotorController*, MotorType, const ck::MotorConfiguration::Motor&)> func)
+void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func)
 {
     std::scoped_lock<std::mutex> lock(motorLock);
     const ck::MotorConfiguration::Motor& m = (const ck::MotorConfiguration::Motor&)msg;
@@ -100,7 +100,7 @@ void MotorManager::processHeartbeat()
     }
 }
 
-BaseMotorController* MotorManager::getMotor_unsafe(uint16_t id)
+BaseTalon* MotorManager::getMotor_unsafe(uint16_t id)
 {
     if (mRegisteredMotorList.count(id))
     {
@@ -112,7 +112,7 @@ BaseMotorController* MotorManager::getMotor_unsafe(uint16_t id)
     }
 }
 
-BaseMotorController* MotorManager::getMotor_threadsafe(uint16_t id)
+BaseTalon* MotorManager::getMotor_threadsafe(uint16_t id)
 {
     std::scoped_lock<std::mutex> lock(motorLock);
     return getMotor_unsafe(id);

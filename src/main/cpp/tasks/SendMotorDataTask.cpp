@@ -19,7 +19,7 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
     mMotorStatusMsg.Clear();
 
-    MotorManager::getInstance().forEach([&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+    MotorManager::getInstance().forEach([&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
         

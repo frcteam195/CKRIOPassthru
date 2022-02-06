@@ -8,14 +8,14 @@ void DrivetrainFailover::init()
     mJoystick = new frc::Joystick(DRIVE_JOYSTICK_ID);
 
     //Motor Configuration code should be placed here
-    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [](uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         //Simple example config. See tasks/ApplyMotorConfigTask.cpp for more advanced examples
         mCtrl->ConfigVoltageCompSaturation(12);
         mCtrl->EnableVoltageCompensation(true);
     });
 
-    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [](uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         //Simple example config. See tasks/ApplyMotorConfigTask.cpp for more advanced examples
         mCtrl->ConfigVoltageCompSaturation(12);
@@ -50,11 +50,11 @@ void DrivetrainFailover::run()
         y = -ck::math::normalizeWithDeadband(mJoystick->GetY(), DRIVE_JOYSTICK_DEADBAND);
     }
 
-    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [x, y](uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [x, y](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         mCtrl->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, std::max(std::min(y + x, 1.0), -1.0));
     });
-    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [x, y](uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [x, y](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         mCtrl->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, std::max(std::min(y - x, 1.0), -1.0));
     });

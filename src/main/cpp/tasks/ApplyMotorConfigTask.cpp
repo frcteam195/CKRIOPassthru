@@ -82,7 +82,7 @@ void ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
     {
         MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
         //TODO: Implement per command differential set only if value is changed
-        MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+        MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
         {
             ck::runTalonFunctionWithRetry([&]() { return mCtrl->ConfigFactoryDefault(); }, id);
             ck::runTalonFunctionWithRetry([&]() { return mCtrl->ClearStickyFaults(); }, id);
@@ -216,168 +216,168 @@ void ApplyMotorConfigTask::initUpdateFunctions()
     mDiffReporter.RegisterUpdateFunction(KP_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kP(0, m.kp(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(KI_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kI(0, m.ki(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(KD_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kD(0, m.kd(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(KF_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kF(0, m.kf(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(IZONE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_IntegralZone(0, m.izone(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(MAX_I_ACCUM_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMaxIntegralAccumulator(0, m.max_i_accum(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(ALLOWED_CLOSED_LOOP_ERROR_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigAllowableClosedloopError(0, m.allowed_closed_loop_error(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(MAX_CLOSED_LOOP_PEAK_OUTPUT_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigClosedLoopPeakOutput(0, m.max_closed_loop_peak_output(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(MOTION_CRUISE_VELOCITY_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionCruiseVelocity(m.motion_cruise_velocity(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(MOTION_ACCELERATION_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionAcceleration(m.motion_acceleration(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(MOTION_S_CURVE_STRENGTH_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigMotionSCurveStrength(m.motion_s_curve_strength(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(FORWARD_SOFT_LIMIT_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardSoftLimitThreshold(m.forward_soft_limit(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(FORWARD_SOFT_LIMIT_ENABLE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardSoftLimitEnable(m.forward_soft_limit_enable(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(REVERSE_SOFT_LIMIT_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseSoftLimitThreshold(m.reverse_soft_limit(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(REVERSE_SOFT_LIMIT_ENABLE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseSoftLimitEnable(m.reverse_soft_limit_enable(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(FEEDBACK_SENSOR_COEFFICIENT_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigSelectedFeedbackCoefficient(m.feedback_sensor_coefficient(), 0, ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(VOLTAGE_COMPENSATION_SATURATION_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigVoltageCompSaturation(m.voltage_compensation_saturation(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(VOLTAGE_COMPENSATION_ENABLED_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->EnableVoltageCompensation(m.voltage_compensation_enabled()); return mCtrl->GetLastError(); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(INVERT_TYPE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetInverted((InvertType)m.invert_type()); return mCtrl->GetLastError(); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(SENSOR_PHASE_INVERTED_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetSensorPhase(m.sensor_phase_inverted()); return mCtrl->GetLastError(); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(NEUTRAL_MODE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { mCtrl->SetNeutralMode((NeutralMode)m.neutral_mode()); return mCtrl->GetLastError(); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(OPEN_LOOP_RAMP_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigOpenloopRamp(m.open_loop_ramp(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(CLOSED_LOOP_RAMP_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigClosedloopRamp(m.closed_loop_ramp(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(SUPPLY_CURRENT_LIMIT_CONFIG_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             {
                 const ck::MotorConfiguration_Motor_CurrentLimitConfiguration &supplyCurrLimConfig = m.supply_current_limit_config();
                 switch (mType)
@@ -403,7 +403,7 @@ void ApplyMotorConfigTask::initUpdateFunctions()
     mDiffReporter.RegisterUpdateFunction(STATOR_CURRENT_LIMIT_CONFIG_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { 
                 const ck::MotorConfiguration_Motor_CurrentLimitConfiguration &statorCurrLimConfig = m.stator_current_limit_config();
                 switch (mType)
@@ -423,42 +423,42 @@ void ApplyMotorConfigTask::initUpdateFunctions()
     mDiffReporter.RegisterUpdateFunction(FORWARD_LIMIT_SWITCH_SOURCE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.forward_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.forward_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(FORWARD_LIMIT_SWITCH_NORMAL_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigForwardLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.forward_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.forward_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(REVERSE_LIMIT_SWITCH_SOURCE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.reverse_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.reverse_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(REVERSE_LIMIT_SWITCH_NORMAL_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigReverseLimitSwitchSource((ctre::phoenix::motorcontrol::LimitSwitchSource)m.reverse_limit_switch_source(), (ctre::phoenix::motorcontrol::LimitSwitchNormal)m.reverse_limit_switch_normal(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(PEAK_OUTPUT_FORWARD_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigPeakOutputForward(m.peak_output_forward() < 0.04 ? 1.0 : m.peak_output_forward(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(PEAK_OUTPUT_REVERSE_FD, [](const google::protobuf::Message &msg)
     {
         MotorManager::getInstance().onMotor(msg,
-            [](uint16_t id, BaseMotorController* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runTalonFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigPeakOutputReverse(m.peak_output_reverse() > -0.04 ? -1.0 : m.peak_output_reverse(), ck::kCANTimeoutMs); }, id); });
     });
 }

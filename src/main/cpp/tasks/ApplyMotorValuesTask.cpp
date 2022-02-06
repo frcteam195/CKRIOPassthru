@@ -31,7 +31,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
             for (ck::MotorControl_Motor const& m : motorsUpdate.motors())
             {
                 MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
-                MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+                MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
                 {
                     //TODO: Implement per motor differential set.
                     if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
@@ -40,7 +40,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                     }
                     else
                     {
-                        BaseMotorController* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
+                        BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
                         if (motorMaster)
                         {
                             mCtrl->Follow(*motorMaster);
@@ -56,7 +56,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
 
     if (RobotControlModeHelper::getInstance().getControlMode() == CONTROL_MODE::DISABLED)
     {
-        MotorManager::getInstance().forEach([&] (uint16_t id, BaseMotorController* mCtrl, MotorType mType)
+        MotorManager::getInstance().forEach([&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
         {
             //Disable all master motors in disabled mode to fix motion magic bug: https://github.com/frcteam195/CKRIOPassthru/issues/7
             if (mCtrl->GetControlMode() != ControlMode::Follower)

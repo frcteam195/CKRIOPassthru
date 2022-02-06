@@ -22,18 +22,18 @@ class MotorManager : public Singleton<MotorManager>
 public:
     void registerMotor(uint16_t id, MotorType motorType);
     void deleteMotor(uint16_t id);
-    void onMotor(uint16_t id, std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
-    void onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseMotorController*, MotorType, const ck::MotorConfiguration::Motor&)> func);
-    void forEach(std::function<void(uint16_t, BaseMotorController*, MotorType)> func);
+    void onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*, MotorType)> func);
+    void onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func);
+    void forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> func);
     void processHeartbeat();
     //getMotor_threadsafe will lock the data structures before accessing, however, it can still return nullptr if motor does not exist
-    BaseMotorController* getMotor_threadsafe(uint16_t id);
+    BaseTalon* getMotor_threadsafe(uint16_t id);
     //UNSAFE Methods will not lock the data structures before accessing. Be careful with usage
-    BaseMotorController* getMotor_unsafe(uint16_t id);
+    BaseTalon* getMotor_unsafe(uint16_t id);
 private:
     MotorManager();
     ~MotorManager();
-    std::map<uint16_t, BaseMotorController*> mRegisteredMotorList;
+    std::map<uint16_t, BaseTalon*> mRegisteredMotorList;
     std::map<uint16_t, MotorType> mRegisteredMotorTypeList;
     std::map<uint16_t, int> mRegisteredMotorHeartbeatList;
 
