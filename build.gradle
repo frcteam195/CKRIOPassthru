@@ -138,7 +138,7 @@ model {
                 lib library: 'libprotobuf', linkage: 'shared'
                 lib library: 'librosproto', linkage: 'static'
                 binaries.all {
-                    //cppCompiler.args << "-std=c++11"
+                    cppCompiler.args << "-Werror"
                     linker.args << "-lzmq"
                     linker.args << "-lprotobuf"
                 }

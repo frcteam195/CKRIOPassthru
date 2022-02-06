@@ -28,9 +28,9 @@ private:
 
     struct StatusFrameConfig
     {
-        int CONTROL_FRAME_PERIOD_MS;
-		int STATUS_FRAME_GENERAL_1_MS;
-		int STATUS_FRAME_FEEDBACK0_2_MS;
+        int CONTROL_FRAME_PERIOD_MS = 0;
+		int STATUS_FRAME_GENERAL_1_MS = 0;
+		int STATUS_FRAME_FEEDBACK0_2_MS = 0;
     };
     static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 20};
     static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 20};

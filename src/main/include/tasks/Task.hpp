@@ -8,9 +8,9 @@
 
 class Task {
 public:
-    uint32_t mTaskRateMs;
-    uint64_t timeNextUpdateuS;
-    uint64_t timeLastUpdateuS;
+    uint32_t mTaskRateMs = 0;
+    uint64_t timeNextUpdateuS = 0;
+    uint64_t timeLastUpdateuS = 0;
     Task(uint32_t taskRateMs, std::string taskName) : mTaskRateMs(taskRateMs), mTaskTimer(taskName) {};
     virtual void run(unsigned int timeSinceLastUpdateMs) = 0;
 protected:

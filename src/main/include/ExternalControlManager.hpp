@@ -14,7 +14,7 @@ private:
     ExternalControlManager();
     ~ExternalControlManager();
 
-    std::atomic<int> mLastConnectionTime;
+    std::atomic<int> mLastConnectionTime = 0;
 };
 
 extern bool isExternalControl();

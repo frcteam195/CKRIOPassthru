@@ -14,8 +14,8 @@ public:
 private:
     const HAL_NotifierHandle m_notifier;
     TaskTimer eTimer;
-    double prevDtCalcTime;
-    bool started;
-    int m_notifierStatus;
+    double prevDtCalcTime = 0;
+    bool started = false;
+    int m_notifierStatus = 0;
 
 };

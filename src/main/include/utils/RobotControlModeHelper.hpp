@@ -25,5 +25,5 @@ private:
     ~RobotControlModeHelper();
     std::mutex lockMutex;
 
-    CONTROL_MODE mControlMode;
+    CONTROL_MODE mControlMode = CONTROL_MODE::DISABLED;
 };

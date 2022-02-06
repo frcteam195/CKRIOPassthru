@@ -11,8 +11,8 @@ public:
     double getTimeoutPeriod() const;
 
 private:
-    double timeoutMs;
-    bool firstRun;
+    double timeoutMs = 0;
+    bool firstRun = true;
     TaskTimer taskTimer;
 
     std::mutex mtx; 

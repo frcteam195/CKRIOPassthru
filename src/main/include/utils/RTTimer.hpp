@@ -8,5 +8,5 @@ public:
     void start();
     uint64_t hasElapseduS();
 private:
-    uint64_t startTimeuS;
+    uint64_t startTimeuS = 0;
 };

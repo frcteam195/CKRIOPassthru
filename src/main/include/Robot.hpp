@@ -59,7 +59,7 @@ private:
 	CKLoggerTask ckLoggerTask;
 
 	RobotFailover robotFailover;
-	bool failoverActive;
+	bool failoverActive = true;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;

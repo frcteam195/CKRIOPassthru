@@ -27,11 +27,11 @@ public:
     double getFusedHeadingRad();
     bool hasUpdated();
 
-	double mYawDegrees;
-	double mFusedHeading;
-	double mYawRateDegreesPerSecond;
+	double mYawDegrees = 0;
+	double mFusedHeading = 0;
+	double mYawRateDegreesPerSecond = 0;
 	static constexpr long kInvalidTimestamp = -1;
-	long mLastSensorTimestampMs;
+	long mLastSensorTimestampMs = 0;
     
     long mRawSensorTimestampPrev = -1;  //Init to -1 to force an update the first time
 

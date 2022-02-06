@@ -12,6 +12,6 @@ public:
     float hasElapsedMs();
     void reportElapsedTime();
 private:
-    uint64_t startTimeuS;
+    uint64_t startTimeuS = 0;
     std::string mTaskName;
 };

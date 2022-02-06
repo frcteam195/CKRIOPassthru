@@ -6,6 +6,6 @@
 struct CKCANPacket
 {
     CKCANDevice* canDev;
-    int apiID;
+    int apiID = 0;
     std::vector<uint8_t> data;
 };
