@@ -22,8 +22,8 @@ void Robot::RobotInit()
 
 	//Register Tasks
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
-	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
+	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);

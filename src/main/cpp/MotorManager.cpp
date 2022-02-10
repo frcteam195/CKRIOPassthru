@@ -12,7 +12,7 @@ MotorManager::~MotorManager()
 
 void MotorManager::forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> func)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     for (auto const& [key, val] : mRegisteredMotorList)
     {
         func(key, val, mRegisteredMotorTypeList[key]);
@@ -21,7 +21,7 @@ void MotorManager::forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> 
 
 void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*, MotorType)> func)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (mRegisteredMotorList.count(id))
     {
         func(id, mRegisteredMotorList[id], mRegisteredMotorTypeList[id]);
@@ -30,7 +30,7 @@ void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*,
 
 void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     const ck::MotorConfiguration::Motor& m = (const ck::MotorConfiguration::Motor&)msg;
     if (mRegisteredMotorList.count(m.id()))
     {
@@ -40,7 +40,7 @@ void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<v
 
 void MotorManager::registerMotor(uint16_t id, MotorType motorType)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (!mRegisteredMotorList.count(id))
     {
         switch (motorType)
@@ -69,7 +69,7 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType)
 
 void MotorManager::deleteMotor(uint16_t id)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     deleteMotor_internal_unsafe(id);
 }
 
@@ -86,7 +86,7 @@ void MotorManager::deleteMotor_internal_unsafe(uint16_t id)
 
 void MotorManager::processHeartbeat()
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     for (auto it = mRegisteredMotorHeartbeatList.cbegin(); it != mRegisteredMotorHeartbeatList.cend(); it++)
     {
         mRegisteredMotorHeartbeatList[it->first]--;
@@ -98,6 +98,12 @@ void MotorManager::processHeartbeat()
             std::cout << "Motor deleted, id: " << currMotor << std::endl << std::endl;
         }
     }
+}
+
+bool MotorManager::motorExists(uint16_t id)
+{
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
+    return mRegisteredMotorList.count(id);
 }
 
 BaseTalon* MotorManager::getMotor_unsafe(uint16_t id)
@@ -114,6 +120,6 @@ BaseTalon* MotorManager::getMotor_unsafe(uint16_t id)
 
 BaseTalon* MotorManager::getMotor_threadsafe(uint16_t id)
 {
-    std::scoped_lock<std::mutex> lock(motorLock);
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     return getMotor_unsafe(id);
 }

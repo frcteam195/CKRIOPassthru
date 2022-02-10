@@ -26,6 +26,7 @@ public:
     void onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func);
     void forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> func);
     void processHeartbeat();
+    bool motorExists(uint16_t id);
     //getMotor_threadsafe will lock the data structures before accessing, however, it can still return nullptr if motor does not exist
     BaseTalon* getMotor_threadsafe(uint16_t id);
     //UNSAFE Methods will not lock the data structures before accessing. Be careful with usage
@@ -37,7 +38,7 @@ private:
     std::map<uint16_t, MotorType> mRegisteredMotorTypeList;
     std::map<uint16_t, int> mRegisteredMotorHeartbeatList;
 
-    std::mutex motorLock;
+    std::recursive_mutex motorLock;
 
     void deleteMotor_internal_unsafe(uint16_t id);
 
