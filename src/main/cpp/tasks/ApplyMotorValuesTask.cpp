@@ -43,8 +43,20 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                         BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
                         if (motorMaster)
                         {
+                            for (ck::MotorControl_Motor const& mInt : motorsUpdate.motors())
+                            {
+                                if (mInt.id() == (int)m.output_value())
+                                {
+                                    MotorManager::getInstance().registerMotor(mInt.id(), (MotorType)mInt.controller_type());
+                                    break;
+                                }
+                            }
                             mCtrl->Follow(*motorMaster);
                         }
+                        // else
+                        // {
+                        //     mCtrl->Set(ControlMode::Disabled, 0);
+                        // }
                     }
                 });
             }

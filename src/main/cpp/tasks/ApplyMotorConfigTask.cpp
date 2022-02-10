@@ -25,6 +25,7 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
 {
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
+    bool updateSuccessful = true;
     if (NetworkManager::getInstance().getMessage(MOTOR_CONFIG_MESSAGE_GROUP, buf))
     {
         ck::MotorConfiguration motorsUpdate;
@@ -44,7 +45,7 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
                         if (m.id() != mPrev.id())
                         {
                             //Make sure all motors are fully initiallized if array size stays the same but IDs change
-                            fullUpdate(motorsUpdate);
+                            updateSuccessful = fullUpdate(motorsUpdate);
                             break;
                         }
 
@@ -55,7 +56,7 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
                 }
                 else
                 {
-                    fullUpdate(motorsUpdate);
+                    updateSuccessful = fullUpdate(motorsUpdate);
                 }
             }
 
@@ -69,17 +70,37 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
             }
             */
 
-            MotorConfigManager::getInstance().setPrevMotorsConfigMsg(motorsUpdate);
+            (void)updateSuccessful;
+            if (updateSuccessful)
+            {
+                MotorConfigManager::getInstance().setPrevMotorsConfigMsg(motorsUpdate);
+            }
             MotorConfigManager::getInstance().unlock();
         }
     }
     mTaskTimer.reportElapsedTime();
 }
 
-void ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
+bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
 {
     for (ck::MotorConfiguration_Motor const& m : motorMsg.motors())
     {
+        if (m.controller_mode() == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE)
+        {
+            BaseTalon* t = MotorManager::getInstance().getMotor_threadsafe(m.id());
+            if (t)
+            {
+                if (t->GetControlMode() != ControlMode::Follower)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
         //TODO: Implement per command differential set only if value is changed
         MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
@@ -171,6 +192,7 @@ void ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
             ck::runTalonFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_17_Targets1_, 255); }, id);
         });
     }
+    return true;
 }
 
 void ApplyMotorConfigTask::initFieldDescriptors()
