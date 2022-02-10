@@ -23,6 +23,8 @@ void SendJoystickDataTask::run(uint32_t timeSinceLastUpdateMs)
         if(frc::DriverStation::IsJoystickConnected(i)) {
             ck::JoystickStatus_Joystick* protoJoystick = robotJoystickStatusMsg.add_joysticks();
 
+            protoJoystick->set_index(i);
+
             HAL_JoystickAxes rawAxes;
             HAL_GetJoystickAxes(i, &rawAxes);
             for (int j = 0; j < rawAxes.count; j++) {

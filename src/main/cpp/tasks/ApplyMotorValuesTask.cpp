@@ -61,7 +61,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
             //Disable all master motors in disabled mode to fix motion magic bug: https://github.com/frcteam195/CKRIOPassthru/issues/7
             if (mCtrl->GetControlMode() != ControlMode::Follower)
             {
-                mCtrl->Set(ControlMode::Disabled, 0);
+                mCtrl->Set(ControlMode::PercentOutput, 0);
             }
         });
     }
