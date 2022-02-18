@@ -4,12 +4,12 @@
 void RobotFailover::RobotFailoverInit()
 {
     DrivetrainFailover::getInstance().SubsystemInit();
-    lCtrl = new CKLEDController(1);
-    lCtrl->setColor(RGBColor{0, 128, 0, 255});
-    lCtrl->setBrightness(255);
-    lCtrl->configureBlink(10, 500);
-    lCtrl->setCommLoss();
-    // lCtrl->setDefaultState(CKLEDController::LEDState::FIXED_ON);
+    // lCtrl = new CKLEDController(1);
+    // lCtrl->setColor(RGBColor{0, 128, 0, 255});
+    // lCtrl->setBrightness(255);
+    //lCtrl->configureBlink(10, 500);
+    // lCtrl->setCommLoss();
+    // lCtrl->setDefaultState(CKLEDController::LEDState::BLINK);
     // lCtrl->setCommRestored();
     // lCtrl->setBlink();
     // lCtrl->setMorse("SOS");

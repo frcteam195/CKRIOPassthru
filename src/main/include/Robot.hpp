@@ -57,9 +57,9 @@ private:
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
 	CKLoggerTask ckLoggerTask;
-
+ 
 	RobotFailover robotFailover;
-	bool failoverActive = true;
+	bool failoverActive = false;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;
