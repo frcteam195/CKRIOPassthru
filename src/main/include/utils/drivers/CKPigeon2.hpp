@@ -7,7 +7,7 @@
 class CKPigeon2 : public CKIMU
 {
 public:
-    CKPigeon2(int deviceNumber, std::string const &canbus = "");
+    CKPigeon2(int deviceNumber = 0, std::string const &canbus = "");
     bool setYaw(double yaw) override;
     bool getQuaternion(double quaternion[4]) override;
     bool configMountPose(AxisDirection forward, AxisDirection up) override;
