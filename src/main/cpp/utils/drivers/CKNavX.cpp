@@ -1,15 +1,15 @@
-#include "utils/drivers/NavX.hpp"
+#include "utils/drivers/CKNavX.hpp"
 #include "utils/TimeoutTimer.hpp"
 #include <chrono>
 #include <thread>
 #include <iostream>
 #include "utils/CKMath.hpp"
 
-NavX::NavX() : NavX(frc::SPI::kMXP) {
+CKNavX::CKNavX() : CKNavX(frc::SPI::kMXP) {
     
 }
 
-NavX::NavX(frc::SPI::Port spi_port_id) : mAHRS(spi_port_id, 200) {
+CKNavX::CKNavX(frc::SPI::Port spi_port_id) : mAHRS(spi_port_id, 200) {
     resetState();
     mNavXCallback = new NavXCallback(this);
     mAHRS.RegisterCallback(mNavXCallback, nullptr);
@@ -39,79 +39,99 @@ NavX::NavX(frc::SPI::Port spi_port_id) : mAHRS(spi_port_id, 200) {
     zeroYaw();
 }
 
-NavX::~NavX() {
+CKNavX::~CKNavX() {
     delete mNavXCallback;
 }
 
-bool NavX::isPresent() {
+bool CKNavX::setYaw(double yaw)
+{
+    zeroYaw();
+    return true;
+}
+
+bool CKNavX::getQuaternion(double quaternion[4])
+{
+    quaternion[0] = mAHRS.GetQuaternionW();
+    quaternion[1] = mAHRS.GetQuaternionX();
+    quaternion[2] = mAHRS.GetQuaternionY();
+    quaternion[3] = mAHRS.GetQuaternionZ();
+    return true;
+}
+
+bool CKNavX::configMountPose(AxisDirection forward, AxisDirection up)
+{
+    return false;
+}
+
+bool CKNavX::isPresent() {
     return mAHRS.IsConnected();
 }
 
-bool NavX::reset() {
+bool CKNavX::reset() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     mAHRS.Reset();
     resetState();
 	return true;
 }
 
-void NavX::zeroYaw() {
+void CKNavX::zeroYaw() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     mAHRS.ZeroYaw();
 	resetState();
 }
 
-void NavX::resetState() {
+void CKNavX::resetState() {
     mLastSensorTimestampMs = kInvalidTimestamp;
     mFusedHeading = 0.0;
     mYawDegrees = 0.0;
     mYawRateDegreesPerSecond = 0.0;
 }
 
-double NavX::getYaw() {
+double CKNavX::getYaw() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mYawDegrees;
 }
 
-double NavX::getRawYaw() {
+double CKNavX::getRawYaw() {
     return mAHRS.GetYaw();
 }
 
-double NavX::getRoll() {
+double CKNavX::getRoll() {
     return mAHRS.GetRoll();
 }
 
-double NavX::getRollRad() {
+double CKNavX::getRollRad() {
     return ck::math::degToRad(mAHRS.GetRoll());
 }
 
-double NavX::getPitch() {
+double CKNavX::getPitch() {
     return mAHRS.GetPitch();
 }
 
-double NavX::getPitchRad() {
+double CKNavX::getPitchRad() {
     return ck::math::degToRad(mAHRS.GetPitch());
 }
 
-double NavX::getYawRateRadPerSec() {
+double CKNavX::getYawRateRadPerSec() {
     return ck::math::degToRad(getYawRateDegreesPerSec());
 }
 
-double NavX::getYawRateDegreesPerSec() {
+double CKNavX::getYawRateDegreesPerSec() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mYawRateDegreesPerSecond;
 }
 
-double NavX::getFusedHeading() {
+double CKNavX::getFusedHeading() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return mFusedHeading;
 }
 
-double NavX::getFusedHeadingRad() {
+double CKNavX::getFusedHeadingRad() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
     return ck::math::degToRad(mFusedHeading);
 }
 
-bool NavX::hasUpdated() {
+bool CKNavX::hasUpdated() {
     long currAHRSTimestamp = mLastSensorTimestampMs;
     if (mRawSensorTimestampPrev < currAHRSTimestamp)
     {

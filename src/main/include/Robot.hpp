@@ -12,6 +12,7 @@
 #include "utils/ThreadPriorityHelper.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/ApplySolenoidValuesTask.hpp"
+#include "tasks/ApplyIMUConfigTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/CKLoggerTask.hpp"
@@ -47,6 +48,7 @@ public:
 private:
 	//Declare tasks as member variables in Robot cpp so they never go out of scope
 	ReceiveMessagesTask receiveMessagesTask;
+	ApplyIMUConfigTask applyIMUConfigTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	ApplySolenoidValuesTask applySolenoidValuesTask;

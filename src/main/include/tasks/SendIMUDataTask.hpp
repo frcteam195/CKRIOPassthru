@@ -7,7 +7,6 @@
 #include "IntellisenseDefs.h"
 #include "IMUData.pb.h"
 #include <string>
-#include "utils/drivers/NavX.hpp"
 
 class SendIMUDataTask : public Task
 {
@@ -24,7 +23,4 @@ private:
     ck::IMUData mIMUData;
     const size_t IMU_DATA_MESSAGE_SIZE = 1500;
     void* mIMUDataBuf;
-    void sendIMUDataMessage();
-    void doSendIMUUpdate(double yaw, double pitch, double roll, double yawrate);
-    NavX& mNavX;
 };

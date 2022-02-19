@@ -3,14 +3,20 @@
 #include <AHRS.h>
 #include <mutex>
 #include "NavXCallback.hpp"
+#include "CKIMU.hpp"
 
 class NavXCallback;
 
-class NavX {
+class CKNavX : public CKIMU
+{
 public:
-    NavX();
-    ~NavX();
-    NavX(frc::SPI::Port spi_port_id);
+    CKNavX();
+    ~CKNavX();
+    CKNavX(frc::SPI::Port spi_port_id);
+
+    bool setYaw(double yaw) override;
+    bool getQuaternion(double quaternion[4]) override;
+    bool configMountPose(AxisDirection forward, AxisDirection up) override;
 
     bool isPresent();
     bool reset();

@@ -6,8 +6,8 @@
 
 namespace ck
 {
-    static constexpr int kTalonRetryCount = 3;
+    static constexpr int kPhoenixRetryCount = 3;
     static constexpr int kCANTimeoutMs = 30;
 
-    bool runTalonFunctionWithRetry(std::function<ErrorCode()> func, int id = -1);
+    bool runPhoenixFunctionWithRetry(std::function<ErrorCode()> func, int id = -1);
 }

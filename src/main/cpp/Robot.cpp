@@ -2,7 +2,6 @@
 #include "utils/GlobalConfig.hpp"
 #include "utils/CKLogger.hpp"
 #include <iostream>
-#include "NavXManager.hpp"
 #include "ExternalControlManager.hpp"
 #include "frc/Errors.h"
 #include "frc/RobotController.h"
@@ -22,6 +21,7 @@ void Robot::RobotInit()
 
 	//Register Tasks
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
+	TaskScheduler::getInstance().scheduleTask(applyIMUConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
@@ -48,7 +48,6 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
-	NavXManager::getInstance().getNavX().zeroYaw();
 }
 void Robot::RobotPeriodic() {
 	if (isExternalControl())
@@ -84,7 +83,6 @@ void Robot::RobotPeriodic() {
 void Robot::AutonomousInit()
 {
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
-	NavXManager::getInstance().getNavX().zeroYaw();
 	if (!isExternalControl())
 	{
 		robotFailover.AutonomousFailoverInit();

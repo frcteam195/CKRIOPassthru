@@ -7,9 +7,9 @@
 #include "google/protobuf/util/json_util.h"
 #include "utils/GlobalConfig.hpp"
 #include <string>
-#include "NavXManager.hpp"
+#include "CKIMUManager.hpp"
 
-SendIMUDataTask::SendIMUDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mIMUData(), mNavX(NavXManager::getInstance().getNavX())
+SendIMUDataTask::SendIMUDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mIMUData()
 {
     mIMUDataBuf = malloc(IMU_DATA_MESSAGE_SIZE * sizeof(uint8_t));
     memset(mIMUDataBuf, 0, IMU_DATA_MESSAGE_SIZE * sizeof(uint8_t));
@@ -20,25 +20,35 @@ SendIMUDataTask::~SendIMUDataTask()
     free(mIMUDataBuf);
 }
 
-
 void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
-{
-    sendIMUDataMessage();
-    mTaskTimer.reportElapsedTime();
-}
-
-void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll, double yawrate)
 {
 #ifdef CONSOLE_REPORTING
     static int count = 0;
 #endif
 
     mIMUData.Clear();
-    ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
-    imuSensorData->set_yaw(yaw);
-    imuSensorData->set_pitch(pitch);
-    imuSensorData->set_roll(roll);
-    imuSensorData->set_yawrate(yawrate);
+
+    CKIMUManager::getInstance().forEach([&](uint16_t id, CKIMU* imu, IMUType imuType)
+    {
+        ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
+        imuSensorData->set_id(id);
+        double quaternion[4];
+        if (imu->getQuaternion(quaternion))
+        {
+            imuSensorData->set_w(quaternion[0]);
+            imuSensorData->set_x(quaternion[1]);
+            imuSensorData->set_y(quaternion[2]);
+            imuSensorData->set_z(quaternion[3]);
+        }
+        else
+        {
+            imuSensorData->set_w(0);
+            imuSensorData->set_x(0);
+            imuSensorData->set_y(0);
+            imuSensorData->set_z(0);
+        }
+    });
+
     if (mIMUData.SerializeToArray(mIMUDataBuf, mIMUData.ByteSizeLong()))
     {
         NetworkManager::getInstance().sendMessage(IMU_DATA_MESSAGE_GROUP, mIMUDataBuf, mIMUData.ByteSizeLong());
@@ -56,19 +66,5 @@ void SendIMUDataTask::doSendIMUUpdate(double yaw, double pitch, double roll, dou
         std::cout << s << std::endl;
     }
 #endif
-}
-
-void SendIMUDataTask::sendIMUDataMessage()
-{
-    // if (mNavX.isPresent())
-    // {
-    //     if (mNavX.hasUpdated())
-    //     {
-    doSendIMUUpdate(mNavX.getFusedHeadingRad(), mNavX.getPitchRad(), mNavX.getRollRad(), mNavX.getYawRateRadPerSec());
-    //     }
-    // }
-    // else 
-    // {
-    //     doSendIMUUpdate(0, 0, 0, 0);
-    // }
+    mTaskTimer.reportElapsedTime();
 }
