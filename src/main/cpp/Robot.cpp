@@ -25,6 +25,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
+	TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
@@ -36,25 +37,28 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
 #endif 
 
-	//Start Scheduler
-	std::cout << "Starting Task Scheduler..." << std::endl;
-	TaskScheduler::getInstance().start();
-	std::cout << "Task Scheduler started!" << std::endl;
-
 	//Initialize the CAN Server
 	std::cout << "Starting CK CAN Server..." << std::endl;
 	CKCANServer::getInstance();
 	std::cout << "CK CAN Server started!" << std::endl;
 
+	//Start Scheduler
+	std::cout << "Starting Task Scheduler..." << std::endl;
+	TaskScheduler::getInstance().start();
+	std::cout << "Task Scheduler started!" << std::endl;
+
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
 }
 void Robot::RobotPeriodic() {
+
+	RobotControlModeHelper::getInstance().setDSAttached(frc::DriverStation::IsDSAttached());
+
 	if (isExternalControl())
 	{
 		if (failoverActive)
 		{
-			if (frc::DriverStation::IsDSAttached())
+			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
 				FRC_ReportError(16, "{}", "ROS Connection Resumed");
 			}
@@ -67,7 +71,7 @@ void Robot::RobotPeriodic() {
 	{
 		if (!failoverActive)
 		{
-			if (frc::DriverStation::IsDSAttached())
+			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
 				FRC_ReportError(16, "{}", "Failover Control Activated");
 			}

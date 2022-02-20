@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Singleton.hpp"
-#include <mutex>
+#include <atomic>
 
 enum class CONTROL_MODE : int
 {
@@ -18,12 +18,14 @@ class RobotControlModeHelper : public Singleton<RobotControlModeHelper>
     friend Singleton;
 public:
     void setControlMode(CONTROL_MODE controlMode);
+    void setDSAttached(bool attached);
     CONTROL_MODE getControlMode();
+    bool isDSAttached();
     
 private:
     RobotControlModeHelper();
     ~RobotControlModeHelper();
-    std::mutex lockMutex;
 
-    CONTROL_MODE mControlMode = CONTROL_MODE::DISABLED;
+    std::atomic<bool> mDSAttached;
+    std::atomic<CONTROL_MODE> mControlMode { CONTROL_MODE::DISABLED };
 };

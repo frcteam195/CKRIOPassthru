@@ -20,7 +20,8 @@ class CKLEDController : public CKCANDevice
         COMM_RESTORED = 5,
         MORSE = 6,
         DRIVER_SIGNAL = 7,
-        ENDGAME = 8
+        ENDGAME = 8,
+        FADE = 9
     };
 
     enum class APIIndex
@@ -46,7 +47,8 @@ public:
         OFF,
         FIXED_ON,
         BLINK,
-        MORSE
+        MORSE,
+        FADE
     };
 
     CKLEDController(int deviceID);
@@ -57,6 +59,7 @@ public:
     void setBlink();
     void setCommLoss();
     void setCommRestored();
+    void setFade();
     void setMorse(std::string msg);
     void setDriverSignal();
     void setEndgame();

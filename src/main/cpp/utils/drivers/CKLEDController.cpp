@@ -78,6 +78,13 @@ void CKLEDController::setMorse(std::string msg)
     }
 }
 
+void CKLEDController::setFade()
+{
+    std::vector<uint8_t> buf = { 0 };
+    CKCANPacket canPacket = {this, getAPIID((int)APIClass::FADE, (int)APIIndex::DEFAULT), buf};
+    CKCANServer::getInstance().sendPacket(canPacket);
+}
+
 void CKLEDController::setFloatPixel(RGBColor pixelColor, int pixelCount, int pixelRepeatSpacing)
 {
     std::vector<uint8_t> buf = {pixelColor.white, pixelColor.red, pixelColor.green, pixelColor.blue,

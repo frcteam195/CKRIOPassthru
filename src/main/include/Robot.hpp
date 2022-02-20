@@ -16,6 +16,7 @@
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/CKLoggerTask.hpp"
+#include "tasks/SendLEDOutputTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
 #include "tasks/SendMotorDataTask.hpp"
@@ -52,6 +53,7 @@ private:
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	ApplySolenoidValuesTask applySolenoidValuesTask;
+	SendLEDOutputTask sendLEDOutputTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
 	SendMotorDataTask sendMotorDataTask;
