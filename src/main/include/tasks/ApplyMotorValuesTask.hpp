@@ -4,6 +4,7 @@
 #include "DataStructures.hpp"
 #include "Task.hpp"
 #include <stdint.h>
+#include <map>
 #include "IntellisenseDefs.h"
 #include "MotorControl.pb.h"
 #include "google/protobuf/util/message_differencer.h"
@@ -20,7 +21,6 @@ public:
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 5;
 private:
-    ck::MotorControl mPrevMotorsMsg;
     RTTimer rtTimer;
 
     static constexpr unsigned int kMandatoryUpdatePerioduS = 200000;

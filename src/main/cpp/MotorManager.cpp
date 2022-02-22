@@ -1,4 +1,5 @@
 #include "MotorManager.hpp"
+#include "utils/PhoenixHelper.hpp"
 
 MotorManager::MotorManager() {}
 MotorManager::~MotorManager()
@@ -38,7 +39,7 @@ void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<v
     }
 }
 
-void MotorManager::registerMotor(uint16_t id, MotorType motorType)
+void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface canInterface)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (!mRegisteredMotorList.count(id))
@@ -47,7 +48,7 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType)
         {
         case MotorType::TALON_FX:
         {
-            mRegisteredMotorList[id] = new TalonFX(id);
+            mRegisteredMotorList[id] = new TalonFX(id, ck::getCANInterfaceName(canInterface));
         }
             break;
         case MotorType::TALON_SRX:

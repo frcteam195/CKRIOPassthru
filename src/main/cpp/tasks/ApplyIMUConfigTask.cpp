@@ -24,7 +24,7 @@ void ApplyIMUConfigTask::run(uint32_t timeSinceLastUpdateMs)
 
         for (auto imu_config_msg : imuUpdate.imu_config())
         {
-            CKIMUManager::getInstance().registerIMU(imu_config_msg.id(), (IMUType)imu_config_msg.imu_type());
+            CKIMUManager::getInstance().registerIMU(imu_config_msg.id(), (IMUType)imu_config_msg.imu_type(), (CANInterface)imu_config_msg.can_network());
             if (mPrevIMUMsg.count(imu_config_msg.id()))
             {
                 if (!google::protobuf::util::MessageDifferencer::Equivalent(imu_config_msg, mPrevIMUMsg[imu_config_msg.id()]))

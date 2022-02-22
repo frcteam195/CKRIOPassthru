@@ -6,6 +6,8 @@
 #include <map>
 #include <mutex>
 #include <functional>
+#include "utils/drivers/CANInterface.hpp"
+
 
 enum class IMUType : int
 {
@@ -17,7 +19,7 @@ class CKIMUManager : public Singleton<CKIMUManager>
 {
     friend Singleton;
 public:
-    void registerIMU(uint16_t id, IMUType imuType);
+    void registerIMU(uint16_t id, IMUType imuType, CANInterface canInterface);
     void deleteIMU(uint16_t id);
     void onIMU(uint16_t id, std::function<void(uint16_t, CKIMU*, IMUType)> func);
     void forEach(std::function<void(uint16_t, CKIMU*, IMUType)> func);

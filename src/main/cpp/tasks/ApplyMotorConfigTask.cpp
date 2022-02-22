@@ -32,49 +32,29 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
         if (MotorConfigManager::getInstance().try_lock())
         {
-            ck::MotorConfiguration& mPrevMotorsConfigMsg = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
-            if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsConfigMsg))
+            MotorConfigManager::getInstance().setMotorsConfigMsg(motorsUpdate);
+            std::map<uint16_t, ck::MotorConfiguration_Motor>& mPrevMotorsConfigMsgMap = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
+            for (ck::MotorConfiguration_Motor m : motorsUpdate.motors())
             {
-                if (motorsUpdate.motors().size() == mPrevMotorsConfigMsg.motors().size())
+                if (MotorManager::getInstance().motorExists(m.id()))
                 {
-                    for (int i = 0; i < motorsUpdate.motors().size(); i++)
+                    if ((size_t)motorsUpdate.motors().size() == mPrevMotorsConfigMsgMap.size())
                     {
-                        const ck::MotorConfiguration::Motor &m = motorsUpdate.motors()[i];
-                        const ck::MotorConfiguration::Motor &mPrev = mPrevMotorsConfigMsg.motors()[i];
+                        mDiff.Compare(mPrevMotorsConfigMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
+                    }
+                    else
+                    {
+                        updateSuccessful = fullUpdate(motorsUpdate);
+                    }
 
-                        if (m.id() != mPrev.id())
-                        {
-                            //Make sure all motors are fully initiallized if array size stays the same but IDs change
-                            updateSuccessful = fullUpdate(motorsUpdate);
-                            break;
-                        }
-
-                        //If we're here motor should be already registered? Needs testing
-                        //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
-                        mDiff.Compare(mPrev, m);  //Make sure the current update is message2 for our implementation
+                    (void)updateSuccessful;
+                    if (updateSuccessful)
+                    {
+                        MotorConfigManager::getInstance().setPrevMotorConfigMsg(m.id(), m);
                     }
                 }
-                else
-                {
-                    updateSuccessful = fullUpdate(motorsUpdate);
-                }
             }
 
-            //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
-            //Maybe look into reportdifferencesto function
-            
-            /*
-            if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg))
-            {
-                fullUpdate(motorsUpdate);
-            }
-            */
-
-            (void)updateSuccessful;
-            if (updateSuccessful)
-            {
-                MotorConfigManager::getInstance().setPrevMotorsConfigMsg(motorsUpdate);
-            }
             MotorConfigManager::getInstance().unlock();
         }
     }
@@ -101,7 +81,7 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
             }
         }
 
-        MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
+        //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
         //TODO: Implement per command differential set only if value is changed
         MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
         {

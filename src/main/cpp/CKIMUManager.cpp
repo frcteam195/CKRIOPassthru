@@ -2,6 +2,7 @@
 #include "utils/drivers/CKPigeon2.hpp"
 #include "utils/drivers/CKNavX.hpp"
 #include <iostream>
+#include "utils/PhoenixHelper.hpp"
 
 CKIMUManager::CKIMUManager() {}
 CKIMUManager::~CKIMUManager()
@@ -31,28 +32,27 @@ void CKIMUManager::onIMU(uint16_t id, std::function<void(uint16_t, CKIMU*, IMUTy
     }
 }
 
-void CKIMUManager::registerIMU(uint16_t id, IMUType imuType)
+void CKIMUManager::registerIMU(uint16_t id, IMUType imuType, CANInterface canInterface)
 {
     std::scoped_lock<std::recursive_mutex> lock(imuLock);
     if (!mRegisteredIMUList.count(id))
     {
         switch (imuType)
         {
-        case IMUType::PIGEON2:
-        {
-            mRegisteredIMUList[id] = new CKPigeon2(id);
-        }
-            break;
-        case IMUType::NAVX:
-        {
-            mRegisteredIMUList[id] = new CKNavX();
-        }
-            break;
-        default:
-        {
-
-        }
-            break;
+            case IMUType::PIGEON2:
+            {
+                mRegisteredIMUList[id] = new CKPigeon2(id, ck::getCANInterfaceName(canInterface));
+                break;
+            }
+            case IMUType::NAVX:
+            {
+                mRegisteredIMUList[id] = new CKNavX();
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
         std::cout << "IMU " << id << " created with type " << (int)imuType << std::endl;
     }

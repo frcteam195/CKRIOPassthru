@@ -10,26 +10,35 @@ void MotorConfigManager::unlock()
     mConfigLock.unlock();
 }
 
-ck::MotorConfiguration& MotorConfigManager::getPrevMotorsConfigMsg()
+std::map<uint16_t, ck::MotorConfiguration_Motor>& MotorConfigManager::getPrevMotorsConfigMsg()
 {
-    return mPrevMotorsMsg;
+    return mPrevMotorMsgs;
 }
 
-void MotorConfigManager::setPrevMotorsConfigMsg(ck::MotorConfiguration& motorsConfigMsg)
+void MotorConfigManager::setPrevMotorConfigMsg(uint16_t id, ck::MotorConfiguration_Motor& motorConfigMsg)
 {
-    mPrevMotorsMsg = motorsConfigMsg;
+    mPrevMotorMsgs[id] = motorConfigMsg;
+}
+
+std::map<uint16_t, ck::MotorConfiguration_Motor>& MotorConfigManager::getMotorsConfigMsg()
+{
+    return mMotorMsgs;
+}
+
+void MotorConfigManager::setMotorsConfigMsg(ck::MotorConfiguration& motorConfigMsg)
+{
+    for (ck::MotorConfiguration_Motor m : motorConfigMsg.motors())
+    {
+        mMotorMsgs[m.id()] = m;
+    }
 }
 
 ck::MotorConfiguration::Motor::ControllerMode MotorConfigManager::getControllerMode(uint16_t id)
 {
-    std::lock_guard<std::mutex> lock(mConfigLock);
-    for (int i = 0; i < mPrevMotorsMsg.motors().size(); i++)
+    std::lock_guard<std::recursive_mutex> lock(mConfigLock);
+    if (mPrevMotorMsgs.count(id))
     {
-        const ck::MotorConfiguration::Motor& m = mPrevMotorsMsg.motors()[i];
-        if (m.id() == id)
-        {
-            return m.controller_mode();
-        }
+        return mPrevMotorMsgs[id].controller_mode();
     }
     return ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_INVALID;
 }

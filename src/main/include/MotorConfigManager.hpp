@@ -3,6 +3,7 @@
 #include "utils/Singleton.hpp"
 #include "MotorConfiguration.pb.h"
 #include <mutex>
+#include <map>
 
 class MotorConfigManager : public Singleton<MotorConfigManager>
 {
@@ -10,14 +11,18 @@ class MotorConfigManager : public Singleton<MotorConfigManager>
 public:
     bool try_lock();
     void unlock();
-    ck::MotorConfiguration& getPrevMotorsConfigMsg();
-    void setPrevMotorsConfigMsg(ck::MotorConfiguration& motorsConfigMsg);
+    std::map<uint16_t, ck::MotorConfiguration_Motor>& getPrevMotorsConfigMsg();
+    void setPrevMotorConfigMsg(uint16_t id, ck::MotorConfiguration_Motor& motorConfigMsg);
+    std::map<uint16_t, ck::MotorConfiguration_Motor>& getMotorsConfigMsg();
+    void setMotorsConfigMsg(ck::MotorConfiguration& motorConfigMsg);
     ck::MotorConfiguration::Motor::ControllerMode getControllerMode(uint16_t id);
 
 private:
-    ck::MotorConfiguration mPrevMotorsMsg;
+    // ck::MotorConfiguration mPrevMotorsMsg;
+    std::map<uint16_t, ck::MotorConfiguration_Motor> mMotorMsgs;
+    std::map<uint16_t, ck::MotorConfiguration_Motor> mPrevMotorMsgs;
 
-    std::mutex mConfigLock;
+    std::recursive_mutex mConfigLock;
 
     MotorConfigManager();
     ~MotorConfigManager();

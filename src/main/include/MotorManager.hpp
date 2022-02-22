@@ -9,6 +9,7 @@
 #include <functional>
 #include "IntellisenseDefs.h"
 #include "MotorConfiguration.pb.h"
+#include "utils/drivers/CANInterface.hpp"
 
 enum class MotorType : int
 {
@@ -20,7 +21,7 @@ class MotorManager : public Singleton<MotorManager>
 {
     friend Singleton;
 public:
-    void registerMotor(uint16_t id, MotorType motorType);
+    void registerMotor(uint16_t id, MotorType motorType, CANInterface canInterface);
     void deleteMotor(uint16_t id);
     void onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*, MotorType)> func);
     void onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func);
@@ -36,6 +37,7 @@ private:
     ~MotorManager();
     std::map<uint16_t, BaseTalon*> mRegisteredMotorList;
     std::map<uint16_t, MotorType> mRegisteredMotorTypeList;
+    std::map<uint16_t, CANInterface> mRegisteredMotorCANIntList;
     std::map<uint16_t, int> mRegisteredMotorHeartbeatList;
 
     std::recursive_mutex motorLock;

@@ -21,4 +21,28 @@ namespace ck
 
 		return true;
     }
+
+    std::string getCANInterfaceName(CANInterface canInterface)
+    {
+        std::string canString = "rio";
+        switch (canInterface)
+        {
+            case CANInterface::RIO_INTERNAL_CAN:
+            {
+                canString = "rio";
+                break;
+            }
+            case CANInterface::RIO_CANIVORE:
+            {
+                canString = "canivore1";
+                break;
+            }
+            case CANInterface::COPROCESSOR_CAN:
+            {
+                canString = "rio";
+                break;
+            }
+        }
+        return canString;
+    }
 }

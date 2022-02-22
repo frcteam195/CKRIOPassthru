@@ -6,6 +6,7 @@
 #include <vector>
 #include "DataStructures.hpp"
 #include "MotorManager.hpp"
+#include "MotorConfigManager.hpp"
 #include "ctre/Phoenix.h"
 #include "NetworkManager.hpp"
 #include "utils/PhoenixHelper.hpp"
@@ -24,46 +25,35 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
         ck::MotorControl motorsUpdate;
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
 
-        //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
-        //Maybe look into reportdifferencesto function
-        if (!google::protobuf::util::MessageDifferencer::Equivalent(motorsUpdate, mPrevMotorsMsg) || (rtTimer.hasElapseduS() > kMandatoryUpdatePerioduS && MANDATORY_UPDATE_ENABLED))
+        std::map<uint16_t, ck::MotorConfiguration_Motor>& mMotorConfigMsg = MotorConfigManager::getInstance().getMotorsConfigMsg();
+        for (ck::MotorControl_Motor const& m : motorsUpdate.motors())
         {
-            for (ck::MotorControl_Motor const& m : motorsUpdate.motors())
+            if (mMotorConfigMsg.count(m.id()))
             {
-                MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
-                MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
+                if ((m.control_mode() == ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower
+                    && MotorManager::getInstance().motorExists(m.output_value()) && mMotorConfigMsg.count(m.output_value()))
+                    || m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                 {
-                    //TODO: Implement per motor differential set.
-                    if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
+                    MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type(), (CANInterface)mMotorConfigMsg[m.id()].can_network());
+                    MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
                     {
-                        mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
-                    }
-                    else
-                    {
-                        BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
-                        if (motorMaster)
+                        if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                         {
-                            for (ck::MotorControl_Motor const& mInt : motorsUpdate.motors())
-                            {
-                                if (mInt.id() == (int)m.output_value())
-                                {
-                                    MotorManager::getInstance().registerMotor(mInt.id(), (MotorType)mInt.controller_type());
-                                    break;
-                                }
-                            }
-                            mCtrl->Follow(*motorMaster);
+                            mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
                         }
-                        // else
-                        // {
-                        //     mCtrl->Set(ControlMode::Disabled, 0);
-                        // }
-                    }
-                });
+                        else
+                        {
+                            BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
+                            if (motorMaster && mCtrl->GetControlMode() != ControlMode::Follower)
+                            {
+                                mCtrl->Follow(*motorMaster);
+                            }
+                        }
+                    });
+                }
             }
-            rtTimer.start();
         }
-
-        mPrevMotorsMsg = motorsUpdate;
+        rtTimer.start();
     }
 
     if (RobotControlModeHelper::getInstance().getControlMode() == CONTROL_MODE::DISABLED)
