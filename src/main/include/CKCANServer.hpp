@@ -13,8 +13,8 @@ class CKCANServer : public Singleton<CKCANServer>
 {
     friend Singleton;
 public:
-    void sendPacket(CKCANPacket& canPacket);
-    void sendPacket(CKCANDevice* canDev, uint8_t* data, int dataLength, int apiID);
+    bool sendPacket(CKCANPacket& canPacket);
+    bool sendPacket(CKCANDevice* canDev, uint8_t* data, int dataLength, int apiID);
 
 private:
     CKCANServer();

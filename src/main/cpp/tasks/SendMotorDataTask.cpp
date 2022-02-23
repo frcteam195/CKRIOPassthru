@@ -17,15 +17,16 @@ SendMotorDataTask::~SendMotorDataTask()
 
 void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     mMotorStatusMsg.Clear();
 
     MotorManager::getInstance().forEach([&](uint16_t id, BaseTalon *mCtrl, MotorType mType)
                                         {
-        ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
+        //ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
         
-        if (mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER
-            || mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER)
-        {
+        // if (mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER
+        //     || mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER)
+        // {
             ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
             m->set_id(id);
             m->set_sensor_position(mCtrl->GetSelectedSensorPosition());
@@ -92,7 +93,8 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             }
                 break;
             }
-        } });
+        //}
+        });
 
     if (mMotorStatusMsg.SerializeToArray(mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong()))
     {

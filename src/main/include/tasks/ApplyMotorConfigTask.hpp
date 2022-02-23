@@ -31,10 +31,11 @@ private:
         int CONTROL_FRAME_PERIOD_MS = 0;
 		int STATUS_FRAME_GENERAL_1_MS = 0;
 		int STATUS_FRAME_FEEDBACK0_2_MS = 0;
+		int STATUS_FRAME_AINTTEMPVBAT = 0;
     };
-    static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 20};
-    static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 20};
-    static constexpr StatusFrameConfig SLAVE_CONFIG = {20, 20, 50};
+    static constexpr StatusFrameConfig FAST_MASTER_CONFIG = {5, 5, 10, 10};
+    static constexpr StatusFrameConfig NORMAL_MASTER_CONFIG = {10, 10, 10, 10};
+    static constexpr StatusFrameConfig SLAVE_CONFIG = {10, 10, 10, 10};
 
     google::protobuf::FieldDescriptor* ID_FD;
     google::protobuf::FieldDescriptor* CONTROLLER_TYPE_FD;

@@ -20,6 +20,7 @@ SendRobotDataTask::~SendRobotDataTask()
 
 void SendRobotDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     sendRobotStatusMessage();
     mTaskTimer.reportElapsedTime();
 }

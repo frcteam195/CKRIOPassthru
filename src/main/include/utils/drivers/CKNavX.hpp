@@ -19,7 +19,7 @@ public:
     bool configMountPose(AxisDirection forward, AxisDirection up) override;
 
     bool isPresent();
-    bool reset();
+    bool reset() override;
     void zeroYaw();
     double getYaw();
     double getRawYaw();

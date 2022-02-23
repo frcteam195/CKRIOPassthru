@@ -5,6 +5,7 @@
 #include <vector>
 #include "utils/PhoenixHelper.hpp"
 #include "CKIMUManager.hpp"
+#include "utils/drivers/CKPigeon2.hpp"
 #include "NetworkManager.hpp"
 #include <iostream>
 
@@ -15,6 +16,7 @@ ApplyIMUConfigTask::ApplyIMUConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
 
 void ApplyIMUConfigTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
     if (NetworkManager::getInstance().getMessage(IMU_CONFIG_MESSAGE_GROUP, buf))
@@ -24,6 +26,7 @@ void ApplyIMUConfigTask::run(uint32_t timeSinceLastUpdateMs)
 
         for (auto imu_config_msg : imuUpdate.imu_config())
         {
+            bool success = true;
             CKIMUManager::getInstance().registerIMU(imu_config_msg.id(), (IMUType)imu_config_msg.imu_type(), (CANInterface)imu_config_msg.can_network());
             if (mPrevIMUMsg.count(imu_config_msg.id()))
             {
@@ -31,11 +34,28 @@ void ApplyIMUConfigTask::run(uint32_t timeSinceLastUpdateMs)
                 {
                     CKIMUManager::getInstance().onIMU(imu_config_msg.id(), [&](uint16_t id, CKIMU* imu, IMUType imu_type)
                     {
-                        imu->configMountPose((AxisDirection)imu_config_msg.mount_pose_axis_forward(), (AxisDirection)imu_config_msg.mount_pose_axis_up());
+                        success &= imu->configMountPose((AxisDirection)imu_config_msg.mount_pose_axis_forward(), (AxisDirection)imu_config_msg.mount_pose_axis_up());
+                        success &= imu->reset();
+                        switch (imu_type)
+                        {
+                            case IMUType::PIGEON2:
+                            {
+                                // CKPigeon2* ckpigeon2 = dynamic_cast<CKPigeon2*>(imu);
+                                // Pigeon2 pigeon2 = ckpigeon2->getRawPigeon2();
+                                break;
+                            }
+                            case IMUType::NAVX:
+                            {
+                                break;
+                            }
+                        }
                     });
                 }
             }
-            mPrevIMUMsg[imu_config_msg.id()] = imu_config_msg;
+            if (success)
+            {
+                mPrevIMUMsg[imu_config_msg.id()] = imu_config_msg;
+            }
         }
     }
 

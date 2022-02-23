@@ -13,6 +13,7 @@ ApplySolenoidValuesTask::ApplySolenoidValuesTask() : Task(THREAD_RATE_MS, TASK_N
 
 void ApplySolenoidValuesTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
     if (NetworkManager::getInstance().getMessage(SOLENOID_CONTROL_MESSAGE_GROUP, buf))

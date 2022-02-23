@@ -18,6 +18,7 @@ ApplyMotorValuesTask::ApplyMotorValuesTask() : Task(THREAD_RATE_MS, TASK_NAME)
 
 void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
     if (NetworkManager::getInstance().getMessage(MOTOR_CONTROL_MESSAGE_GROUP, buf))
@@ -25,33 +26,37 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
         ck::MotorControl motorsUpdate;
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
 
-        std::map<uint16_t, ck::MotorConfiguration_Motor>& mMotorConfigMsg = MotorConfigManager::getInstance().getMotorsConfigMsg();
-        for (ck::MotorControl_Motor const& m : motorsUpdate.motors())
+        if (MotorConfigManager::getInstance().try_lock())
         {
-            if (mMotorConfigMsg.count(m.id()))
+            std::map<uint16_t, ck::MotorConfiguration_Motor>& mMotorConfigMsg = MotorConfigManager::getInstance().getMotorsConfigMsg();
+            for (ck::MotorControl_Motor const& m : motorsUpdate.motors())
             {
-                if ((m.control_mode() == ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower
-                    && MotorManager::getInstance().motorExists(m.output_value()) && mMotorConfigMsg.count(m.output_value()))
-                    || m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
+                if (mMotorConfigMsg.count(m.id()))
                 {
-                    MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type(), (CANInterface)mMotorConfigMsg[m.id()].can_network());
-                    MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
+                    if ((m.control_mode() == ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower
+                        && MotorManager::getInstance().motorExists(m.output_value()) && mMotorConfigMsg.count(m.output_value()))
+                        || m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                     {
-                        if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
+                        MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type(), (CANInterface)mMotorConfigMsg[m.id()].can_network());
+                        MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
                         {
-                            mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
-                        }
-                        else
-                        {
-                            BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
-                            if (motorMaster && mCtrl->GetControlMode() != ControlMode::Follower)
+                            if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                             {
-                                mCtrl->Follow(*motorMaster);
+                                mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
                             }
-                        }
-                    });
+                            else
+                            {
+                                BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
+                                if (motorMaster && mCtrl->GetControlMode() != ControlMode::Follower)
+                                {
+                                    mCtrl->Follow(*motorMaster);
+                                }
+                            }
+                        });
+                    }
                 }
             }
+            MotorConfigManager::getInstance().unlock();
         }
         rtTimer.start();
     }

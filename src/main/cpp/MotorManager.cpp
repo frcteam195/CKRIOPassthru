@@ -44,11 +44,12 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface 
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (!mRegisteredMotorList.count(id))
     {
+        std::string canNetwork = ck::getCANInterfaceName(canInterface);
         switch (motorType)
         {
         case MotorType::TALON_FX:
         {
-            mRegisteredMotorList[id] = new TalonFX(id, ck::getCANInterfaceName(canInterface));
+            mRegisteredMotorList[id] = new TalonFX(id, canNetwork);
         }
             break;
         case MotorType::TALON_SRX:
@@ -62,7 +63,7 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface 
         }
             break;
         }
-        std::cout << "Motor " << id << " created with type " << (int)motorType << std::endl;
+        std::cout << "Motor " << id << " created with type " << (int)motorType << " on bus " << canNetwork << std::endl;
     }
     mRegisteredMotorTypeList[id] = motorType;
     mRegisteredMotorHeartbeatList[id] = kMaxHeartbeatTicks;

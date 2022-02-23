@@ -5,6 +5,7 @@
 TaskTimingReporterTask::TaskTimingReporterTask() : Task(THREAD_RATE_MS, TASK_NAME) {}
 void TaskTimingReporterTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     TaskTimingManager::getInstance().displayTaskTiming();
     mTaskTimer.reportElapsedTime();
 }

@@ -6,6 +6,7 @@
 ProcessHeartbeatTask::ProcessHeartbeatTask() : Task(THREAD_RATE_MS, TASK_NAME) {}
 void ProcessHeartbeatTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     MotorManager::getInstance().processHeartbeat();
     ExternalControlManager::getInstance().processHeartbeat();
     mTaskTimer.reportElapsedTime();

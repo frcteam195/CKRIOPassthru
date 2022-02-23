@@ -12,16 +12,21 @@ CKCANServer::~CKCANServer()
     }
 }
 
-void CKCANServer::sendPacket(CKCANPacket& canPacket)
+bool CKCANServer::sendPacket(CKCANPacket& canPacket)
 {
-    std::lock_guard<std::mutex> lock(mPacketMutex);
-    mPacketList.push_back(canPacket);
+    bool lockAcquired = mPacketMutex.try_lock();
+    if (lockAcquired)
+    {
+        mPacketList.push_back(canPacket);
+        mPacketMutex.unlock();
+    }
+    return lockAcquired;
 }
 
-void CKCANServer::sendPacket(CKCANDevice* canDev, uint8_t* data, int dataLength, int apiID)
+bool CKCANServer::sendPacket(CKCANDevice* canDev, uint8_t* data, int dataLength, int apiID)
 {
     CKCANPacket canPacket = { canDev, apiID, std::vector<uint8_t>(data, data + dataLength) };
-    sendPacket(canPacket);
+    return sendPacket(canPacket);
 }
 
 void CKCANServer::runCANSendThread()

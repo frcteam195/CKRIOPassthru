@@ -23,6 +23,7 @@ ApplyMotorConfigTask::ApplyMotorConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
 
 void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     //TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
     bool updateSuccessful = true;
@@ -54,7 +55,6 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
                     }
                 }
             }
-
             MotorConfigManager::getInstance().unlock();
         }
     }
@@ -144,6 +144,7 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetControlFramePeriod(ControlFrame::Control_3_General, FAST_MASTER_CONFIG.CONTROL_FRAME_PERIOD_MS); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_1_General_, FAST_MASTER_CONFIG.STATUS_FRAME_GENERAL_1_MS, ck::kCANTimeoutMs); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_2_Feedback0_, FAST_MASTER_CONFIG.STATUS_FRAME_FEEDBACK0_2_MS, ck::kCANTimeoutMs); }, id);
+                ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_4_AinTempVbat_, FAST_MASTER_CONFIG.STATUS_FRAME_AINTTEMPVBAT, ck::kCANTimeoutMs); }, id);
             }
                 break;
             case ck::MotorConfiguration_Motor_ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE:
@@ -151,6 +152,7 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetControlFramePeriod(ControlFrame::Control_3_General, SLAVE_CONFIG.CONTROL_FRAME_PERIOD_MS); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_1_General_, SLAVE_CONFIG.STATUS_FRAME_GENERAL_1_MS, ck::kCANTimeoutMs); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_2_Feedback0_, SLAVE_CONFIG.STATUS_FRAME_FEEDBACK0_2_MS, ck::kCANTimeoutMs); }, id);
+                ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_4_AinTempVbat_, SLAVE_CONFIG.STATUS_FRAME_AINTTEMPVBAT, ck::kCANTimeoutMs); }, id);
             }
                 break;
             case ck::MotorConfiguration_Motor_ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER:
@@ -159,17 +161,17 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration &motorMsg)
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetControlFramePeriod(ControlFrame::Control_3_General, NORMAL_MASTER_CONFIG.CONTROL_FRAME_PERIOD_MS); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_1_General_, NORMAL_MASTER_CONFIG.STATUS_FRAME_GENERAL_1_MS, ck::kCANTimeoutMs); }, id);
                 ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_2_Feedback0_, NORMAL_MASTER_CONFIG.STATUS_FRAME_FEEDBACK0_2_MS, ck::kCANTimeoutMs); }, id);
+                ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_4_AinTempVbat_, NORMAL_MASTER_CONFIG.STATUS_FRAME_AINTTEMPVBAT, ck::kCANTimeoutMs); }, id);
             }
                 break;
             }
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_4_AinTempVbat_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_6_Misc_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_7_CommStatus_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_10_MotionMagic_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_12_Feedback1_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_14_Turn_PIDF1_, 255); }, id);
-            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_17_Targets1_, 255); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_6_Misc_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_7_CommStatus_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_10_MotionMagic_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_12_Feedback1_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_14_Turn_PIDF1_, 255, ck::kCANTimeoutMs); }, id);
+            // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetStatusFramePeriod(StatusFrame::Status_17_Targets1_, 255, ck::kCANTimeoutMs); }, id);
         });
     }
     return true;

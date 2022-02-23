@@ -22,6 +22,7 @@ SendIMUDataTask::~SendIMUDataTask()
 
 void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
 #ifdef CONSOLE_REPORTING
     static int count = 0;
 #endif

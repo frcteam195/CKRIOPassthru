@@ -18,6 +18,7 @@ SendJoystickDataTask::~SendJoystickDataTask()
 
 void SendJoystickDataTask::run(uint32_t timeSinceLastUpdateMs)
 {  
+    mTaskTimer.start();
     robotJoystickStatusMsg.Clear();
     for (int i = 0; i < MAX_NUM_JOYSTICKS; i++) {
         if(frc::DriverStation::IsJoystickConnected(i)) {

@@ -18,6 +18,7 @@ public:
     ApplyIMUConfigTask();
     void run(unsigned int timeSinceLastUpdateMs) override;
     static constexpr uint32_t THREAD_RATE_MS = 100;
+
 private:
     std::map<uint16_t, ck::IMUConfig::IMUConfigData> mPrevIMUMsg;
 };

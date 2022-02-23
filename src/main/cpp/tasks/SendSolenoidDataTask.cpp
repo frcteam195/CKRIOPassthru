@@ -16,6 +16,7 @@ SendSolenoidDataTask::~SendSolenoidDataTask()
 
 void SendSolenoidDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
+    mTaskTimer.start();
     mSolenoidStatusMsg.Clear();
 
     SolenoidManager::getInstance().forEach([&] (uint16_t id, CKSolenoid* sCtrl, ck::SolenoidControl::Solenoid::SolenoidType sType)
