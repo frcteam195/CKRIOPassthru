@@ -34,7 +34,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                 if (mMotorConfigMsg.count(m.id()))
                 {
                     if ((m.control_mode() == ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower
-                        && MotorManager::getInstance().motorExists(m.output_value()) && mMotorConfigMsg.count(m.output_value()))
+                        && MotorManager::getInstance().motorExists(m.output_value()))
                         || m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                     {
                         MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type(), (CANInterface)mMotorConfigMsg[m.id()].can_network());

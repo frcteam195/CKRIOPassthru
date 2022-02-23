@@ -22,7 +22,7 @@ private:
     DifferentialUpdateReporter mDiffReporter;
     google::protobuf::util::MessageDifferencer mDiff;
 
-    bool fullUpdate(ck::MotorConfiguration &motorMsg);
+    bool fullUpdate(ck::MotorConfiguration_Motor& m);
     void initFieldDescriptors();
     void initUpdateFunctions();
 
