@@ -6,6 +6,9 @@
 #include "frc/Errors.h"
 #include "frc/RobotController.h"
 #include "CKCANServer.hpp"
+#include "ctre/phoenix/unmanaged/Unmanaged.h"
+#include <thread>
+#include <chrono>
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -13,6 +16,7 @@ void Robot::RobotInit()
 {
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
+	ctre::phoenix::unmanaged::Unmanaged::LoadPhoenix();
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
 
