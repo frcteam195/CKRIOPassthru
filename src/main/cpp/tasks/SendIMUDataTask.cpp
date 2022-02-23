@@ -33,21 +33,36 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
     {
         ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
         imuSensorData->set_id(id);
-        double quaternion[4];
-        if (imu->getQuaternion(quaternion))
+        double ypr[3] = {};
+
+        if (imu->getYPR(ypr))
         {
-            imuSensorData->set_w(quaternion[0]);
-            imuSensorData->set_x(quaternion[1]);
-            imuSensorData->set_y(quaternion[2]);
-            imuSensorData->set_z(quaternion[3]);
+            imuSensorData->set_x(ypr[0]);
+            imuSensorData->set_y(ypr[1]);
+            imuSensorData->set_z(ypr[2]);
         }
         else
         {
-            imuSensorData->set_w(0);
             imuSensorData->set_x(0);
             imuSensorData->set_y(0);
             imuSensorData->set_z(0);
         }
+        
+        // double quaternion[4];
+        // if (imu->getQuaternion(quaternion))
+        // {
+        //     imuSensorData->set_w(quaternion[0]);
+        //     imuSensorData->set_x(quaternion[1]);
+        //     imuSensorData->set_y(quaternion[2]);
+        //     imuSensorData->set_z(quaternion[3]);
+        // }
+        // else
+        // {
+        //     imuSensorData->set_w(0);
+        //     imuSensorData->set_x(0);
+        //     imuSensorData->set_y(0);
+        //     imuSensorData->set_z(0);
+        // }
     });
 
     if (mIMUData.SerializeToArray(mIMUDataBuf, mIMUData.ByteSizeLong()))

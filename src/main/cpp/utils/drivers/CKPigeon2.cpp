@@ -4,6 +4,7 @@
 CKPigeon2::CKPigeon2(int deviceNumber, std::string const &canbus)
 : mPigeon(deviceNumber, canbus)
 {
+    // ck::runPhoenixFunctionWithRetry([&]() { return mPigeon.ConfigFactoryDefault(ck::kCANTimeoutMs); });
     ck::runPhoenixFunctionWithRetry([&]() { return mPigeon.SetStatusFramePeriod(PigeonIMU_StatusFrame::PigeonIMU_RawStatus_4_Mag, FAST_GYRO_CONFIG.RawStatus_4_Mag, ck::kCANTimeoutMs); });
     ck::runPhoenixFunctionWithRetry([&]() { return mPigeon.SetStatusFramePeriod(PigeonIMU_StatusFrame::PigeonIMU_CondStatus_6_SensorFusion, FAST_GYRO_CONFIG.CondStatus_6_SensorFusion, ck::kCANTimeoutMs); });
     ck::runPhoenixFunctionWithRetry([&]() { return mPigeon.SetStatusFramePeriod(PigeonIMU_StatusFrame::PigeonIMU_CondStatus_9_SixDeg_YPR, FAST_GYRO_CONFIG.CondStatus_9_SixDeg_YPR, ck::kCANTimeoutMs); });
@@ -27,6 +28,17 @@ bool CKPigeon2::reset()
 bool CKPigeon2::getQuaternion(double quaternion[4])
 {
     return mPigeon.Get6dQuaternion(quaternion) == ErrorCode::OK;
+}
+
+bool CKPigeon2::getYPR(double ypr[3])
+{
+    double yprDeg[3] = {};
+    bool success = mPigeon.GetYawPitchRoll(yprDeg) == ErrorCode::OK;
+    for (int i = 0; i < 3; i++)
+    {
+        ypr[i] = yprDeg[i] * M_PI / 180.0;
+    }
+    return success;
 }
 
 bool CKPigeon2::configMountPose(AxisDirection forward, AxisDirection up)

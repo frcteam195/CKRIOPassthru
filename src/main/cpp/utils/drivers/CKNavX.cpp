@@ -58,6 +58,14 @@ bool CKNavX::getQuaternion(double quaternion[4])
     return true;
 }
 
+bool CKNavX::getYPR(double ypr[3])
+{
+    ypr[0] = getFusedHeadingRad();
+    ypr[1] = getPitchRad();
+    ypr[2] = getRollRad();
+    return true;
+}
+
 bool CKNavX::configMountPose(AxisDirection forward, AxisDirection up)
 {
     return false;

@@ -7,14 +7,15 @@ template <typename T>
 class CachedValue
 {
 public:
-    CachedValue(double updateTimeoutMs, std::function<T(void)>& updateFunction) : mTimeoutTimer(updateTimeoutMs)
+    CachedValue(double updateTimeoutMs, const std::function<T(void)>& updateFunction) : mTimeoutTimer(updateTimeoutMs)
     {
         mUpdateFunction = updateFunction;
         mCachedValue = mUpdateFunction();
     }
 
-    T& getValue() {
-        std::scoped_lock<std::mutex> lock(mCacheMutex);
+    T getValue()
+    {
+        std::scoped_lock<std::recursive_mutex> lock(mCacheMutex);
         
         if (mTimeoutTimer.isTimedOut()) {
             mCachedValue = mUpdateFunction();
@@ -28,5 +29,5 @@ private:
     TimeoutTimer mTimeoutTimer;
     T mCachedValue;
     std::function<T(void)> mUpdateFunction;
-    std::mutex mCacheMutex;
+    std::recursive_mutex mCacheMutex;
 };
