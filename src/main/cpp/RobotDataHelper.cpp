@@ -25,13 +25,11 @@ void RobotDataHelper::runThread()
     {
         mAlliance = mCachedAlliance.getValue();
         mMatchTime = mCachedMatchTime.getValue();
+        if (mCacheTimerMsg.isTimedOut())
         {
             std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
-            if (mCacheTimerMsg.isTimedOut())
-            {
-                mGameSpecificMsg = frc::DriverStation::GetGameSpecificMessage();
-                mCacheTimerMsg.reset();
-            }
+            mGameSpecificMsg = frc::DriverStation::GetGameSpecificMessage();
+            mCacheTimerMsg.reset();
         }
         mRateControl.doRateControl(RBDATAHELPER_THREAD_RATE_MS);
     }
