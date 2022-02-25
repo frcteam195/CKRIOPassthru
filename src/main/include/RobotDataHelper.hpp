@@ -38,5 +38,5 @@ private:
     ThreadRateControl mRateControl;
     TimeoutTimer mCacheTimerMsg;
 
-    static constexpr int RBDATAHELPER_THREAD_RATE_MS = 20;
+    static constexpr int RBDATAHELPER_THREAD_RATE_MS = 100;
 };

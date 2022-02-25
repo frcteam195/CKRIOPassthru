@@ -1,11 +1,12 @@
 #include "RobotDataHelper.hpp"
+#include "utils/RobotControlModeHelper.hpp"
 #include <iostream>
 
 RobotDataHelper::RobotDataHelper() :
 mThreadActive(true),
 mThread(&RobotDataHelper::runThread, this),
 mCachedAlliance(250, []() {
-    if (frc::DriverStation::IsDSAttached())
+    if (RobotControlModeHelper::getInstance().isDSAttached())
     {
         return frc::DriverStation::GetAlliance();
     }
@@ -15,7 +16,7 @@ mCachedAlliance(250, []() {
     }
 } ),
 mCachedMatchTime(500, []() {
-    if (frc::DriverStation::IsDSAttached())
+    if (RobotControlModeHelper::getInstance().isDSAttached())
     {
         return (float)frc::DriverStation::GetMatchTime();
     }

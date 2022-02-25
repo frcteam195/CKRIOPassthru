@@ -15,7 +15,6 @@
 #include "tasks/ApplyIMUConfigTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
-#include "tasks/CKLoggerTask.hpp"
 #include "tasks/SendLEDOutputTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
@@ -60,7 +59,6 @@ private:
 	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
-	CKLoggerTask ckLoggerTask;
  
 	RobotFailover robotFailover;
 	bool failoverActive = false;
