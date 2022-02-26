@@ -9,7 +9,7 @@
 #include <iostream>
 #include "utils/RobotControlModeHelper.hpp"
 #include "utils/TaskScheduler.hpp"
-#include "utils/ThreadPriorityHelper.hpp"
+#include "utils/SystemHelper.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/ApplySolenoidValuesTask.hpp"
 #include "tasks/ApplyIMUConfigTask.hpp"

@@ -46,6 +46,9 @@ void Robot::RobotInit()
 	CKCANServer::getInstance();
 	std::cout << "CK CAN Server started!" << std::endl;
 
+	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
+	ck::resetCANivore();
+
 	//Start Scheduler
 	std::cout << "Starting Task Scheduler..." << std::endl;
 	TaskScheduler::getInstance().start();

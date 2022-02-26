@@ -3,7 +3,7 @@
 #include "units/time.h"
 #include "hal/Notifier.h"
 #include "hal/HAL.h"
-#include "utils/ThreadPriorityHelper.hpp"
+#include "utils/SystemHelper.hpp"
 
 #define DEBUG
 

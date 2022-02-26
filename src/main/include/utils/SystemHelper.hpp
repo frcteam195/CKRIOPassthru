@@ -17,4 +17,5 @@ namespace ck
     bool configureSystemPriority();
     bool configureThreadPriority(int priority);
     std::string s_exec(const char* cmd);
+    bool resetCANivore();
 }

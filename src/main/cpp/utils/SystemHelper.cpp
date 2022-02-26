@@ -1,4 +1,4 @@
-#include "utils/ThreadPriorityHelper.hpp"
+#include "utils/SystemHelper.hpp"
 
 namespace ck
 {
@@ -68,6 +68,12 @@ namespace ck
             result += buffer.data();
         }
         return result;
+    }
+
+    bool resetCANivore()
+    {
+        int retval = system("caniv --any --reset");
+        return retval == 0;
     }
 
 }
