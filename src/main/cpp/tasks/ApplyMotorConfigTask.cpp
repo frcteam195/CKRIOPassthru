@@ -11,6 +11,8 @@
 #include "MotorConfigManager.hpp"
 #include <iostream>
 
+// #define DEBUG
+
 ApplyMotorConfigTask::ApplyMotorConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     NetworkManager::getInstance().joinGroup(MOTOR_CONFIG_MESSAGE_GROUP.c_str());
@@ -68,12 +70,12 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
     //TODO: Implement per command differential set only if value is changed
     MotorManager::getInstance().onMotor(m.id(), [&] (uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
-        ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigFactoryDefault(); }, id);
+        // ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigFactoryDefault(); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ClearStickyFaults(); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigVoltageCompSaturation(m.voltage_compensation_saturation(), ck::kCANTimeoutMs); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { mCtrl->EnableVoltageCompensation(m.voltage_compensation_enabled()); return mCtrl->GetLastError(); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { mCtrl->SetInverted((InvertType)m.invert_type()); return mCtrl->GetLastError(); }, id);
-        ck::runPhoenixFunctionWithRetry([&]() { mCtrl->SetSensorPhase(m.sensor_phase_inverted()); return mCtrl->GetLastError(); }, id);
+        // ck::runPhoenixFunctionWithRetry([&]() { mCtrl->SetSensorPhase(m.sensor_phase_inverted()); return mCtrl->GetLastError(); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { mCtrl->SetNeutralMode((NeutralMode)m.neutral_mode()); return mCtrl->GetLastError(); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigOpenloopRamp(m.open_loop_ramp(), ck::kCANTimeoutMs); }, id);
         ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigClosedloopRamp(m.closed_loop_ramp(), ck::kCANTimeoutMs); }, id);

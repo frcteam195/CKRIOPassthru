@@ -15,6 +15,7 @@ public:
     void setPrevMotorConfigMsg(uint16_t id, ck::MotorConfiguration_Motor& motorConfigMsg);
     std::map<uint16_t, ck::MotorConfiguration_Motor>& getMotorsConfigMsg();
     void setMotorsConfigMsg(ck::MotorConfiguration& motorConfigMsg);
+    void deleteMotor(uint16_t id);
     ck::MotorConfiguration::Motor::ControllerMode getControllerMode(uint16_t id);
 
 private:

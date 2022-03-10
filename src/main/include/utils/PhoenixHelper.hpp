@@ -8,7 +8,7 @@
 namespace ck
 {
     static constexpr int kPhoenixRetryCount = 3;
-    static constexpr int kCANTimeoutMs = 30;
+    static constexpr int kCANTimeoutMs = 100;
 
     bool runPhoenixFunctionWithRetry(std::function<ErrorCode()> func, int id = -1);
     std::string getCANInterfaceName(CANInterface canInterface);

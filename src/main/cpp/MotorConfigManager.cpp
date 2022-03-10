@@ -43,6 +43,12 @@ ck::MotorConfiguration::Motor::ControllerMode MotorConfigManager::getControllerM
     return ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_INVALID;
 }
 
+void MotorConfigManager::deleteMotor(uint16_t id)
+{
+    std::lock_guard<std::recursive_mutex> lock(mConfigLock);
+    mMotorMsgs.erase(id);
+    mPrevMotorMsgs.erase(id);
+}
 
 MotorConfigManager::MotorConfigManager(){}
 MotorConfigManager::~MotorConfigManager(){}

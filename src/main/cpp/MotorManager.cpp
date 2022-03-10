@@ -1,4 +1,5 @@
 #include "MotorManager.hpp"
+#include "MotorConfigManager.hpp"
 #include "utils/PhoenixHelper.hpp"
 
 MotorManager::MotorManager() {}
@@ -83,6 +84,7 @@ void MotorManager::deleteMotor_internal_unsafe(uint16_t id)
         mRegisteredMotorList.erase(id);
         mRegisteredMotorTypeList.erase(id);
         mRegisteredMotorHeartbeatList.erase(id);
+        MotorConfigManager::getInstance().deleteMotor(id);
     }
 }
 
