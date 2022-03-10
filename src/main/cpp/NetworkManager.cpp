@@ -1,6 +1,7 @@
 #include "NetworkManager.hpp"
 #include <iostream>
 #include "ExternalControlManager.hpp"
+#include <frc/Timer.h>
 
 NetworkManager::NetworkManager() : zmqCtx(), zmqSendSockVec(), zmqRecvSock(zmqCtx, zmq::socket_type::dish), recvMsgMap()
 {
@@ -40,7 +41,8 @@ bool NetworkManager::receiveMessagePump()
     try {
         zmq::message_t msg(BUF_SIZE);
         zmq::recv_result_t retVal = zmqRecvSock.recv(msg, zmq::recv_flags::dontwait);
-        if (retVal.has_value() && retVal.value_or(0) > 0)
+        bool readSuccessful = retVal.has_value() && (retVal.value() != EAGAIN);
+        while (retVal.has_value() && (retVal.value() != EAGAIN))
         {
             std::vector<uint8_t> buf(msg.size(), 0);
             memcpy(&buf[0], msg.data(), msg.size());
@@ -48,9 +50,12 @@ bool NetworkManager::receiveMessagePump()
             //TODO: verify that this vector is moved into map properly and not copied
             recvMsgMap[msgGroup] = std::move(buf);
             ExternalControlManager::getInstance().externalControlMsgReceived();
-            return true;
+
+            //Clear any buffered msgs
+            retVal = zmqRecvSock.recv(msg, zmq::recv_flags::dontwait);
         }
-        return false;
+
+        return readSuccessful;
     }
     catch (std::exception &e) {
         std::cout << "Error receiving message: " << e.what() << std::endl;

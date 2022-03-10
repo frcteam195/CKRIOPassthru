@@ -26,37 +26,34 @@ ApplyMotorConfigTask::ApplyMotorConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
 void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
 {
     mTaskTimer.start();
-    //TODO: Improve memory efficiency
+    // TODO: Improve memory efficiency
     std::vector<uint8_t> buf;
-    bool updateSuccessful = true;
     if (NetworkManager::getInstance().getMessage(MOTOR_CONFIG_MESSAGE_GROUP, buf))
     {
         ck::MotorConfiguration motorsUpdate;
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
-        if (MotorConfigManager::getInstance().try_lock())
-        {
-            MotorConfigManager::getInstance().setMotorsConfigMsg(motorsUpdate);
-            std::map<uint16_t, ck::MotorConfiguration_Motor>& mPrevMotorsConfigMsgMap = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
-            for (ck::MotorConfiguration_Motor m : motorsUpdate.motors())
-            {
-                if (MotorManager::getInstance().motorExists(m.id()))
-                {
-                    if ((size_t)motorsUpdate.motors().size() == mPrevMotorsConfigMsgMap.size())
-                    {
-                        mDiff.Compare(mPrevMotorsConfigMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
-                    }
-                    else
-                    {
-                        updateSuccessful = fullUpdate(m);
-                    }
 
-                    if (updateSuccessful)
-                    {
-                        MotorConfigManager::getInstance().setPrevMotorConfigMsg(m.id(), m);
-                    }
+        MotorConfigManager::getInstance().setMotorsConfigMsg(motorsUpdate);
+        std::map<uint16_t, ck::MotorConfiguration_Motor>& mPrevMotorsConfigMsgMap = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
+        for (ck::MotorConfiguration_Motor m : motorsUpdate.motors())
+        {
+            bool updateSuccessful = true;
+            if (MotorManager::getInstance().motorExists(m.id()))
+            {
+                if ((size_t)motorsUpdate.motors().size() == mPrevMotorsConfigMsgMap.size())
+                {
+                    mDiff.Compare(mPrevMotorsConfigMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
+                }
+                else
+                {
+                    updateSuccessful = fullUpdate(m);
+                }
+
+                if (updateSuccessful)
+                {
+                    MotorConfigManager::getInstance().setPrevMotorConfigMsg(m.id(), m);
                 }
             }
-            MotorConfigManager::getInstance().unlock();
         }
     }
     mTaskTimer.reportElapsedTime();
@@ -64,6 +61,7 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
 
 bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
 {
+    std::cout << "Full Config Start" << std::endl;
     bool isMaster = m.controller_mode() != ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE;
 
     //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());

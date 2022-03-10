@@ -14,6 +14,12 @@ Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
+	ck::resetCANivore();
+	ThreadRateControl trc;
+	trc.start();
+	trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
+
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
 	ctre::phoenix::unmanaged::Unmanaged::LoadPhoenix();
@@ -29,7 +35,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
-	TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
+	// TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
@@ -42,12 +48,9 @@ void Robot::RobotInit()
 #endif 
 
 	//Initialize the CAN Server
-	std::cout << "Starting CK CAN Server..." << std::endl;
-	CKCANServer::getInstance();
-	std::cout << "CK CAN Server started!" << std::endl;
-
-	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
-	ck::resetCANivore();
+	// std::cout << "Starting CK CAN Server..." << std::endl;
+	// CKCANServer::getInstance();
+	// std::cout << "CK CAN Server started!" << std::endl;
 
 	//Start Scheduler
 	std::cout << "Starting Task Scheduler..." << std::endl;

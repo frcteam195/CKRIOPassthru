@@ -17,15 +17,14 @@ SendMotorDataTask::~SendMotorDataTask()
 
 void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
 {
-    mTaskTimer.start();
     mMotorStatusMsg.Clear();
 
     MotorManager::getInstance().forEach([&](uint16_t id, BaseTalon *mCtrl, MotorType mType)
                                         {
-        //ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
+        // ck::MotorConfiguration::Motor::ControllerMode mCtrlMode = MotorConfigManager::getInstance().getControllerMode(id);
         
         // if (mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER
-        //     || mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER)
+        //      || mCtrlMode == ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_MASTER)
         // {
             ck::MotorStatus_Motor* m = mMotorStatusMsg.add_motors();
             m->set_id(id);
@@ -93,16 +92,25 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             }
                 break;
             }
-        //}
-        });
+        // }
+    });
 
     if (mMotorStatusMsg.SerializeToArray(mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong()))
     {
-        NetworkManager::getInstance().sendMessage(MOTOR_STATUS_MESSAGE_GROUP, mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong());
+        // static double t1 = (double)frc::Timer::GetFPGATimestamp();
+        bool msgSendSuccess = NetworkManager::getInstance().sendMessage(MOTOR_STATUS_MESSAGE_GROUP, mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong());
+        if (!msgSendSuccess)
+        {
+            std::cout << "Failed to send msg" << std::endl;
+        }
+        // double t2 = (double)frc::Timer::GetFPGATimestamp();
+        // std::cout << "Msg Send Time: " << t2 - t1 << std::endl;
+        // t1 = t2;
     }
     else
     {
         std::cout << "Motor status message failed to serialize. Message probably too large or invalid." << std::endl;
     }
     mTaskTimer.reportElapsedTime();
+    mTaskTimer.start();
 }
