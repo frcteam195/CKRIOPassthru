@@ -71,7 +71,13 @@ void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
 
 uint16_t CKSolenoid::getModuleId()
 {
-    return (mSolenoidId >> 16) & 0xFFFF;
+    uint16_t retVal = (mSolenoidId >> 16) & 0xFFFF;
+    if (mModuleType == ck::SolenoidControl_Solenoid_ModuleType::SolenoidControl_Solenoid_ModuleType_REVPH && retVal == 0)
+    {
+        //REV PH defaults to ID 1
+        retVal = 1;
+    }
+    return retVal;
 }
 
 uint16_t CKSolenoid::getSolenoidId()
