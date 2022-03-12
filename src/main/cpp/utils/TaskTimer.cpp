@@ -17,6 +17,9 @@ void TaskTimer::start()
 {
     int32_t status;
     startTimeuS = HAL_GetFPGATime(&status);
+#ifdef DEBUG
+    std::cout << "Start running " << mTaskName << std::endl;
+#endif
 }
 
 float TaskTimer::hasElapsedMs()

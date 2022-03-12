@@ -15,9 +15,10 @@ public:
     uint16_t getSolenoidId();
     uint16_t getModuleId();
 private:
-    ck::SolenoidControl::Solenoid::ModuleType mModuleType;
-    uint32_t mSolenoidId;
-    ck::SolenoidControl::Solenoid::SolenoidType mSolenoidType;
+    std::atomic<ck::SolenoidControl::Solenoid::SolenoidValue> mValue {ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF};
+    ck::SolenoidControl::Solenoid::ModuleType mModuleType {ck::SolenoidControl::Solenoid::ModuleType::SolenoidControl_Solenoid_ModuleType_REVPH};
+    uint32_t mSolenoidId = 0;
+    ck::SolenoidControl::Solenoid::SolenoidType mSolenoidType {ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE};
     frc::Solenoid* mSingleSolenoid;
     frc::DoubleSolenoid* mDoubleSolenoid;
 };

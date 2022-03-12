@@ -1,6 +1,7 @@
 #include "RobotDataHelper.hpp"
 #include "utils/RobotControlModeHelper.hpp"
 #include <iostream>
+#include "utils/CKErrors.hpp"
 
 RobotDataHelper::RobotDataHelper() :
 mThreadActive(true),
@@ -42,15 +43,25 @@ void RobotDataHelper::runThread()
     mRateControl.start();
     while (mThreadActive)
     {
-        mAlliance = mCachedAlliance.getValue();
-        mMatchTime = mCachedMatchTime.getValue();
-        // TODO: Figure out why this is causing crash when DS not connected
-        // if (mCacheTimerMsg.isTimedOut())
-        // {
-        //     std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
-        //     mGameSpecificMsg = frc::DriverStation::GetGameSpecificMessage();
-        //     mCacheTimerMsg.reset();
-        // }
+        try {
+            mAlliance = mCachedAlliance.getValue();
+            mMatchTime = mCachedMatchTime.getValue();
+            mGameSpecificMsg = "";
+            // TODO: Figure out why this is causing crash when DS not connected
+            // if (mCacheTimerMsg.isTimedOut())
+            // {
+            //     std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
+            //     mGameSpecificMsg = frc::DriverStation::GetGameSpecificMessage();
+            //     mCacheTimerMsg.reset();
+            // }
+        }
+        catch (...)
+        {
+            mAlliance = frc::DriverStation::Alliance::kInvalid;
+            mMatchTime = -1;
+            mGameSpecificMsg = "";
+            ck::ReportError("Failed to get DS data");
+        }
         mRateControl.doRateControl(RBDATAHELPER_THREAD_RATE_MS);
     }
 }

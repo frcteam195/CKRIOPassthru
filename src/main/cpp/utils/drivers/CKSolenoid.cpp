@@ -1,5 +1,5 @@
 #include "utils/drivers/CKSolenoid.hpp"
-#include "frc/Errors.h"
+#include "utils/CKErrors.hpp"
 
 CKSolenoid::CKSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint32_t solenoidId, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 : mModuleType(moduleType), mSolenoidId(solenoidId), mSolenoidType(solenoidType)
@@ -35,6 +35,7 @@ CKSolenoid::~CKSolenoid()
 
 void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
 {
+    mValue = value;
     switch (mSolenoidType)
     {
     case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE:
@@ -46,7 +47,8 @@ void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
         }
         else
         {
-            FRC_ReportError(-100, "Invalid solenoid set for ID: %d", mSolenoidId);
+            std::string errMsg = "Invalid solenoid set for ID: " + mSolenoidId;
+            ck::ReportError(errMsg);
         }
     }
         break;
@@ -60,7 +62,8 @@ void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
         }
         else
         {
-            FRC_ReportError(-100, "Invalid solenoid set for ID: %d", mSolenoidId);
+            std::string errMsg = "Invalid solenoid set for ID: " + mSolenoidId;
+            ck::ReportError(errMsg);
         }
     }
         break;
@@ -87,15 +90,5 @@ uint16_t CKSolenoid::getSolenoidId()
 
 ck::SolenoidControl::Solenoid::SolenoidValue CKSolenoid::getValue()
 {
-    switch (mSolenoidType)
-    {
-    case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE:
-        return mSingleSolenoid->Get()
-            ? ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_ON
-            : ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF;
-    case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_DOUBLE:
-        return (ck::SolenoidControl::Solenoid::SolenoidValue)mDoubleSolenoid->Get();
-    default:
-        return ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF;
-    }
+    return mValue;
 }

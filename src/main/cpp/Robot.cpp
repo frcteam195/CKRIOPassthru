@@ -3,10 +3,10 @@
 #include "utils/CKLogger.hpp"
 #include <iostream>
 #include "ExternalControlManager.hpp"
-#include "frc/Errors.h"
 #include "frc/RobotController.h"
 #include "CKCANServer.hpp"
 #include "ctre/phoenix/unmanaged/Unmanaged.h"
+#include "utils/CKErrors.hpp"
 #include <thread>
 #include <chrono>
 
@@ -70,9 +70,8 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				FRC_ReportError(16, "{}", "ROS Connection Resumed");
+				ck::ReportWarning("ROS Connection Resumed");
 			}
-			//std::cout << "ROS Connection Resumed" << std::endl;
 			robotFailover.Reset();
 			failoverActive = false;
 		}
@@ -83,9 +82,8 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				FRC_ReportError(16, "{}", "Failover Control Activated");
+				ck::ReportWarning("Failover Control Activated");
 			}
-			//std::cout << "Failover Control Activated" << std::endl;
 			robotFailover.RobotFailoverInit();
 			failoverActive = true;
 		}

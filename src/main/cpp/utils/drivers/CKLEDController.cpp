@@ -2,10 +2,10 @@
 #include <cstring>
 #include <algorithm>
 #include <cctype>
-#include "frc/Errors.h"
 #include "CKCANServer.hpp"
 #include "utils/drivers/CKCANPacket.hpp"
 #include <vector>
+#include "utils/CKErrors.hpp"
 
 CKLEDController::CKLEDController(int deviceID)
 : CKCANDevice(deviceID, CK_LED_CAN_DEVICE_TYPE, CK_LED_CAN_MANUFACTURER_TYPE), mDeviceID(deviceID & 0x3F)
@@ -53,13 +53,13 @@ void CKLEDController::setMorse(std::string msg)
     //Check if string is empty or whitespace and return
     if (msg.empty() || std::all_of(msg.begin(), msg.end(), [](char c){return std::isspace(c);}))
     {
-        FRC_ReportError(-111, "{}", "Morse code message is empty or whitespace!");
+        ck::ReportError("Morse code message is empty or whitespace!");
         return;
     }
 
     if (msg.length() > MAX_MORSE_STRING_SIZE)
     {
-        FRC_ReportError(-111, "{}", "Morse code message size is too long!");
+        ck::ReportError("Morse code message size is too long!");
         return;
     }
 
