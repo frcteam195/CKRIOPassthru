@@ -46,7 +46,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                             }
                             else
                             {
-                                BaseTalon* motorMaster = MotorManager::getInstance().getMotor_unsafe(m.output_value());
+                                BaseTalon* motorMaster = MotorManager::getInstance().getMotor(m.output_value());
                                 if (motorMaster && mCtrl->GetControlMode() != ControlMode::Follower)
                                 {
                                     mCtrl->Follow(*motorMaster);

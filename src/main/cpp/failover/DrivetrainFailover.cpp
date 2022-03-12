@@ -7,20 +7,23 @@ void DrivetrainFailover::init()
     //Initialize joysticks here so they don't exist until in failover mode
     mJoystick = new frc::Joystick(DRIVE_JOYSTICK_ID);
 
+    SupplyCurrentLimitConfiguration supplyCurrLim {true, 60, 0, 0};
     //Motor Configuration code should be placed here
-    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [](uint16_t id, BaseTalon* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(LEFT_MOTOR_ID, [&](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         //Simple example config. See tasks/ApplyMotorConfigTask.cpp for more advanced examples
         mCtrl->ConfigVoltageCompSaturation(12);
         mCtrl->EnableVoltageCompensation(true);
+        mCtrl->ConfigSupplyCurrentLimit(supplyCurrLim);
     });
 
-    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [](uint16_t id, BaseTalon* mCtrl, MotorType mType)
+    MotorManager::getInstance().onMotor(RIGHT_MOTOR_ID, [&](uint16_t id, BaseTalon* mCtrl, MotorType mType)
     {
         //Simple example config. See tasks/ApplyMotorConfigTask.cpp for more advanced examples
         mCtrl->ConfigVoltageCompSaturation(12);
         mCtrl->EnableVoltageCompensation(true);
         mCtrl->SetInverted(ctre::phoenix::motorcontrol::InvertType::InvertMotorOutput);
+        mCtrl->ConfigSupplyCurrentLimit(supplyCurrLim);
     });
 }
 

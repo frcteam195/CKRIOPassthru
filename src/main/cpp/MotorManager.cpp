@@ -73,11 +73,6 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface 
 void MotorManager::deleteMotor(uint16_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    deleteMotor_internal_unsafe(id);
-}
-
-void MotorManager::deleteMotor_internal_unsafe(uint16_t id)
-{
     if (mRegisteredMotorTypeList.count(id))
     {
         delete mRegisteredMotorList[id];
@@ -98,7 +93,7 @@ void MotorManager::processHeartbeat()
         {
             uint16_t currMotor = it->first;
             std::cout << std::endl << "Deleting motor, id: " << currMotor << std::endl;
-            deleteMotor_internal_unsafe(it->first);
+            deleteMotor(it->first);
             std::cout << "Motor deleted, id: " << currMotor << std::endl << std::endl;
         }
     }
@@ -110,8 +105,9 @@ bool MotorManager::motorExists(uint16_t id)
     return mRegisteredMotorList.count(id);
 }
 
-BaseTalon* MotorManager::getMotor_unsafe(uint16_t id)
+BaseTalon* MotorManager::getMotor(uint16_t id)
 {
+    std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (mRegisteredMotorList.count(id))
     {
         return mRegisteredMotorList[id];
@@ -120,10 +116,4 @@ BaseTalon* MotorManager::getMotor_unsafe(uint16_t id)
     {
         return nullptr;
     }
-}
-
-BaseTalon* MotorManager::getMotor_threadsafe(uint16_t id)
-{
-    std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    return getMotor_unsafe(id);
 }

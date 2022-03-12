@@ -9,6 +9,21 @@
 #include "utils/CKErrors.hpp"
 #include <thread>
 #include <chrono>
+#include "MotorManager.hpp"
+#include "utils/PhoenixHelper.hpp"
+
+static bool hasRobotInitialized = false;
+void initIfNotInit()
+{
+	if (!hasRobotInitialized)
+	{
+		MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
+		{
+			ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id);
+		});
+		hasRobotInitialized = true;
+	}
+}
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -19,6 +34,7 @@ void Robot::RobotInit()
 	ThreadRateControl trc;
 	trc.start();
 	trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
+
 
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
@@ -94,6 +110,8 @@ void Robot::RobotPeriodic() {
 
 void Robot::AutonomousInit()
 {
+	initIfNotInit();
+
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
 	if (!isExternalControl())
 	{
@@ -110,6 +128,8 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+	initIfNotInit();
+
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::TELEOP);
 	if (!isExternalControl())
 	{

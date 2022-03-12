@@ -28,10 +28,8 @@ public:
     void forEach(std::function<void(uint16_t, BaseTalon*, MotorType)> func);
     void processHeartbeat();
     bool motorExists(uint16_t id);
-    //getMotor_threadsafe will lock the data structures before accessing, however, it can still return nullptr if motor does not exist
-    BaseTalon* getMotor_threadsafe(uint16_t id);
-    //UNSAFE Methods will not lock the data structures before accessing. Be careful with usage
-    BaseTalon* getMotor_unsafe(uint16_t id);
+    BaseTalon* getMotor(uint16_t id);
+
 private:
     MotorManager();
     ~MotorManager();
@@ -41,8 +39,6 @@ private:
     std::map<uint16_t, int> mRegisteredMotorHeartbeatList;
 
     std::recursive_mutex motorLock;
-
-    void deleteMotor_internal_unsafe(uint16_t id);
 
     static constexpr int kMaxHeartbeatTicks = 250;     //20ms per tick (ProcessHeartbeatTask) * 250 = 5s timeout
 };

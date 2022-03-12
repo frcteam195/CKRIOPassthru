@@ -32,28 +32,31 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
     {
         ck::MotorConfiguration motorsUpdate;
         motorsUpdate.ParseFromArray(&buf[0], buf.size());
-
-        MotorConfigManager::getInstance().setMotorsConfigMsg(motorsUpdate);
-        std::map<uint16_t, ck::MotorConfiguration_Motor>& mPrevMotorsConfigMsgMap = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
-        for (ck::MotorConfiguration_Motor m : motorsUpdate.motors())
+        if (MotorConfigManager::getInstance().try_lock())
         {
-            bool updateSuccessful = true;
-            if (MotorManager::getInstance().motorExists(m.id()))
+            MotorConfigManager::getInstance().setMotorsConfigMsg(motorsUpdate);
+            std::map<uint16_t, ck::MotorConfiguration_Motor>& mPrevMotorsConfigMsgMap = MotorConfigManager::getInstance().getPrevMotorsConfigMsg();
+            for (ck::MotorConfiguration_Motor m : motorsUpdate.motors())
             {
-                if ((size_t)motorsUpdate.motors().size() == mPrevMotorsConfigMsgMap.size())
+                bool updateSuccessful = true;
+                if (MotorManager::getInstance().motorExists(m.id()))
                 {
-                    mDiff.Compare(mPrevMotorsConfigMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
-                }
-                else
-                {
-                    updateSuccessful = fullUpdate(m);
-                }
+                    if ((size_t)motorsUpdate.motors().size() == mPrevMotorsConfigMsgMap.size())
+                    {
+                        mDiff.Compare(mPrevMotorsConfigMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
+                    }
+                    else
+                    {
+                        updateSuccessful = fullUpdate(m);
+                    }
 
-                if (updateSuccessful)
-                {
-                    MotorConfigManager::getInstance().setPrevMotorConfigMsg(m.id(), m);
+                    if (updateSuccessful)
+                    {
+                        MotorConfigManager::getInstance().setPrevMotorConfigMsg(m.id(), m);
+                    }
                 }
             }
+            MotorConfigManager::getInstance().unlock();
         }
     }
     mTaskTimer.reportElapsedTime();
