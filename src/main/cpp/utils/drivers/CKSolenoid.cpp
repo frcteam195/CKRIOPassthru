@@ -1,9 +1,39 @@
 #include "utils/drivers/CKSolenoid.hpp"
 #include "utils/CKErrors.hpp"
+#include "utils/GlobalConfig.hpp"
+#include <sstream>
+
+std::atomic_bool CKSolenoid::ctrePCMInitialized = false;
 
 CKSolenoid::CKSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint32_t solenoidId, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 : mModuleType(moduleType), mSolenoidId(solenoidId), mSolenoidType(solenoidType)
 {
+    if (mModuleType == ck::SolenoidControl::Solenoid::ModuleType::SolenoidControl_Solenoid_ModuleType_CTREPCM)
+    {
+        if (getModuleId() >= 64 || getSolenoidId() >= 8)
+        {
+            ck::ReportError("Solenoid or PCM ID is invalid. Not creating solenoid");
+            return;
+        }
+
+        if (!ctrePCMInitialized)
+        {
+            mCompressor = new frc::Compressor(getModuleId(), (frc::PneumaticsModuleType) mModuleType);
+            mCompressor->EnableDigital();
+            ctrePCMInitialized = true;
+        }
+    }
+    else if (mModuleType == ck::SolenoidControl::Solenoid::ModuleType::SolenoidControl_Solenoid_ModuleType_REVPH)
+    {
+        if (getModuleId() >= 63 || getSolenoidId() >= 16)
+        {
+            std::stringstream ss;
+            ss << "Solenoid or PH ID is invalid. Not creating module with ID" << getModuleId() << " and solenoid with ID " << mSolenoidId << std::endl;
+            ck::ReportError(ss.str());
+            return;
+        }
+    }
+
     switch (mSolenoidType)
     {
     case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE:
@@ -31,10 +61,21 @@ CKSolenoid::~CKSolenoid()
     {
         delete mDoubleSolenoid;
     }
+    if (mCompressor)
+    {
+        delete mCompressor;
+        ctrePCMInitialized = false;
+    }
 }
 
 void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
 {
+    if (!mSingleSolenoid && !mDoubleSolenoid)
+    {
+        ck::ReportError("Solenoid or PH ID is invalid. Cannot set invalid solenoid with ID" + mSolenoidId);
+        return;
+    }
+
     mValue = value;
     switch (mSolenoidType)
     {
