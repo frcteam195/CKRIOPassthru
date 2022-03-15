@@ -3,7 +3,6 @@
 #include "SolenoidControl.pb.h"
 #include "frc/Solenoid.h"
 #include "frc/DoubleSolenoid.h"
-#include <atomic>
 #include "frc/Compressor.h"
 
 class CKSolenoid
@@ -17,13 +16,10 @@ public:
     uint16_t getSolenoidId();
     uint16_t getModuleId();
 private:
-    static std::atomic_bool ctrePCMInitialized;
-
     std::atomic<ck::SolenoidControl::Solenoid::SolenoidValue> mValue {ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF};
     ck::SolenoidControl::Solenoid::ModuleType mModuleType {ck::SolenoidControl::Solenoid::ModuleType::SolenoidControl_Solenoid_ModuleType_REVPH};
     uint32_t mSolenoidId = 0;
     ck::SolenoidControl::Solenoid::SolenoidType mSolenoidType {ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE};
     frc::Solenoid* mSingleSolenoid;
     frc::DoubleSolenoid* mDoubleSolenoid;
-    frc::Compressor* mCompressor;
 };

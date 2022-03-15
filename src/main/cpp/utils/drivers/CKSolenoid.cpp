@@ -3,8 +3,6 @@
 #include "utils/GlobalConfig.hpp"
 #include <sstream>
 
-std::atomic_bool CKSolenoid::ctrePCMInitialized = false;
-
 CKSolenoid::CKSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint32_t solenoidId, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 : mModuleType(moduleType), mSolenoidId(solenoidId), mSolenoidType(solenoidType)
 {
@@ -14,13 +12,6 @@ CKSolenoid::CKSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uin
         {
             ck::ReportError("Solenoid or PCM ID is invalid. Not creating solenoid");
             return;
-        }
-
-        if (!ctrePCMInitialized)
-        {
-            mCompressor = new frc::Compressor(getModuleId(), (frc::PneumaticsModuleType) mModuleType);
-            mCompressor->EnableDigital();
-            ctrePCMInitialized = true;
         }
     }
     else if (mModuleType == ck::SolenoidControl::Solenoid::ModuleType::SolenoidControl_Solenoid_ModuleType_REVPH)
@@ -60,11 +51,6 @@ CKSolenoid::~CKSolenoid()
     if (mDoubleSolenoid)
     {
         delete mDoubleSolenoid;
-    }
-    if (mCompressor)
-    {
-        delete mCompressor;
-        ctrePCMInitialized = false;
     }
 }
 
