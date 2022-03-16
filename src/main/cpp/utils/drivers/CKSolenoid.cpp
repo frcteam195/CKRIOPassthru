@@ -48,10 +48,11 @@ CKSolenoid::~CKSolenoid()
     {
         delete mSingleSolenoid;
     }
-    if (mDoubleSolenoid)
+    else if (mDoubleSolenoid)
     {
         delete mDoubleSolenoid;
     }
+    std::cout << "CKSolenoid destructed" << std::endl;
 }
 
 void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
@@ -67,8 +68,9 @@ void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
     {
     case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE:
     {
-        if (value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_ON
+        if ((value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_ON
             || value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF)
+            && mSingleSolenoid)
         {
             mSingleSolenoid->Set(value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_ON ? true : false);
         }
@@ -81,9 +83,10 @@ void CKSolenoid::set(ck::SolenoidControl::Solenoid::SolenoidValue value)
         break;
     case ck::SolenoidControl::Solenoid::SolenoidType::SolenoidControl_Solenoid_SolenoidType_DOUBLE:
     {
-        if (value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF
+        if ((value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF
             || value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_FORWARD
             || value == ck::SolenoidControl::Solenoid::SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_REVERSE)
+            && mDoubleSolenoid)
         {
             mDoubleSolenoid->Set((frc::DoubleSolenoid::Value)value);
         }

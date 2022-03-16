@@ -26,7 +26,7 @@ namespace ck
         }
         else
         {
-            return HAL_SendError(0, -111, 0, msg.c_str(), "", "", 1) == HAL_SUCCESS;
+            return HAL_SendError(0, 16, 0, msg.c_str(), "", "", 1) == HAL_SUCCESS;
         }
         return true;
     }

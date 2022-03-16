@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <frc/TimedRobot.h>
+#include <utils/ckrobot/TimedRobot.hpp>
 #include <string>
 #include <iostream>
 #include "utils/RobotControlModeHelper.hpp"
@@ -26,7 +26,7 @@
 #include "frc/livewindow/LiveWindow.h"
 #include "failover/RobotFailover.hpp"
 
-class Robot : public frc::TimedRobot {
+class Robot : public ck::TimedRobot {
 public:
 	Robot();
 
@@ -62,6 +62,7 @@ private:
  
 	RobotFailover robotFailover;
 	bool failoverActive = false;
+	bool initialStartupROSCompleted = false;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;

@@ -46,7 +46,7 @@ public:
 
 protected:
     AHRS mAHRS;
-    NavXCallback *mNavXCallback;
+    NavXCallback *mNavXCallback = nullptr;
 
 private:
     void resetState();

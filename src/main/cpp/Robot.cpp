@@ -19,7 +19,10 @@ void initIfNotInit()
 	{
 		MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
 		{
-			ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id);
+			if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
+			{
+				ck::ReportError("Failed to zero motor: " + id);
+			}
 		});
 		hasRobotInitialized = true;
 	}
@@ -55,7 +58,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
-	TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
+	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
 
@@ -86,10 +89,18 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				ck::ReportWarning("ROS Connection Resumed");
+				ck::ReportWarning("[rosdiag] ROS Connection Resumed");
 			}
 			robotFailover.Reset();
 			failoverActive = false;
+		}
+		else
+		{
+			if (!initialStartupROSCompleted && RobotControlModeHelper::getInstance().isDSAttached() && !failoverActive)
+			{
+				ck::ReportWarning("[rosdiag] ROS Connection Resumed");
+				initialStartupROSCompleted = true;
+			}
 		}
 	}
 	else
@@ -98,7 +109,7 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				ck::ReportWarning("Failover Control Activated");
+				ck::ReportWarning("[rosdiag] Failover Control Activated");
 			}
 			robotFailover.RobotFailoverInit();
 			failoverActive = true;
