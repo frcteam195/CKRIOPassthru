@@ -34,7 +34,7 @@ void ApplyIMUConfigTask::run(uint32_t timeSinceLastUpdateMs)
             {
                 CKIMUManager::getInstance().onIMU(imu_config_msg.id(), [&](uint16_t id, CKIMU* imu, IMUType imu_type)
                 {
-                    // success &= imu->configMountPose((AxisDirection)imu_config_msg.mount_pose_axis_forward(), (AxisDirection)imu_config_msg.mount_pose_axis_up());
+                    success &= imu->configMountPose((AxisDirection)imu_config_msg.mount_pose_axis_forward(), (AxisDirection)imu_config_msg.mount_pose_axis_up());
                     // success &= imu->reset();
                     switch (imu_type)
                     {
