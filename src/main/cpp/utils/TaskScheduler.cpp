@@ -4,6 +4,7 @@
 #include "hal/Notifier.h"
 #include "hal/HAL.h"
 #include "utils/SystemHelper.hpp"
+#include "utils/CKErrors.hpp"
 
 #define DEBUG
 
@@ -54,29 +55,35 @@ void TaskScheduler::run()
     ck::configureThreadPriority(90);
     while (threadActive)
     {
-        timeNow = HAL_GetFPGATime(&c_status);
-        nextWakeTime = std::numeric_limits<uint64_t>::max();
-        for (Task *t : taskList)
-        {
-            if (t)
+        try {
+            timeNow = HAL_GetFPGATime(&c_status);
+            nextWakeTime = std::numeric_limits<uint64_t>::max();
+            for (Task *t : taskList)
             {
-                if (t->mTaskRateMs <= 0) //Check loop rate is valid
+                if (t)
                 {
-                    continue;
-                }
+                    if (t->mTaskRateMs <= 0) //Check loop rate is valid
+                    {
+                        continue;
+                    }
 
-                //check that value is negative or 0, meaning we will send an update
-                if (t->timeNextUpdateuS < timeNow || t->timeNextUpdateuS == 0)
-                {
-                    t->run(timeNow - t->timeLastUpdateuS);
-                    t->timeLastUpdateuS = t->timeNextUpdateuS;
-                    t->timeNextUpdateuS = t->timeLastUpdateuS + (t->mTaskRateMs * 1000);
+                    //check that value is negative or 0, meaning we will send an update
+                    if (t->timeNextUpdateuS < timeNow || t->timeNextUpdateuS == 0)
+                    {
+                        t->run(timeNow - t->timeLastUpdateuS);
+                        t->timeLastUpdateuS = t->timeNextUpdateuS;
+                        t->timeNextUpdateuS = t->timeLastUpdateuS + (t->mTaskRateMs * 1000);
+                    }
+                    nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
                 }
-                nextWakeTime = ck::math::min(t->timeNextUpdateuS, nextWakeTime);
             }
+            HAL_UpdateNotifierAlarm(m_notifier, nextWakeTime, &c_status);
+            uint64_t sleepTime = HAL_WaitForNotifierAlarm(m_notifier, &c_status) - timeNow;
+            (void)sleepTime; //Remove unused variable warning
         }
-        HAL_UpdateNotifierAlarm(m_notifier, nextWakeTime, &c_status);
-        uint64_t sleepTime = HAL_WaitForNotifierAlarm(m_notifier, &c_status) - timeNow;
-        (void)sleepTime; //Remove unused variable warning
+        catch (std::exception& e)
+        {
+            ck::ReportError(e.what());
+        }
     }
 }
