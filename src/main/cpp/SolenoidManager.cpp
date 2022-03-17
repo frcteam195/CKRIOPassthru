@@ -70,8 +70,8 @@ void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType
     {
         mRegisteredSolenoidList[id] = new CKSolenoid(moduleType, id, solenoidType);
         std::cout << "Solenoid " << id << " created with type " << (int)solenoidType << std::endl;
+        mRegisteredSolenoidTypeList[id] = solenoidType;
     }
-    mRegisteredSolenoidTypeList[id] = solenoidType;
     mRegisteredSolenoidHeartbeatList[id] = kMaxHeartbeatTicks;
 }
 
