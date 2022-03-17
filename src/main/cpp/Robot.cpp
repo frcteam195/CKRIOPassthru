@@ -188,12 +188,13 @@ void Robot::DisabledInit()
 void Robot::DisabledPeriodic()
 {
 	static int debounceCounter = 0;
+	static uint32_t cycleCounter = 0;
 	if (!isExternalControl())
 	{
 		robotFailover.DisabledFailoverPeriodic();
 	}
 
-	if (!hasRobotInitialized)
+	if (!hasRobotInitialized && cycleCounter++ % 50 == 0)
 	{
 		performInit();
 	}
@@ -212,6 +213,7 @@ void Robot::DisabledPeriodic()
 	if (debounceCounter > 1 && !hasRobotInitialized)
 	{
 		std::cout << "Robot Final Position recorded" << std::endl;
+		performInit();
 		hasRobotInitialized = true;
 	}
 }
