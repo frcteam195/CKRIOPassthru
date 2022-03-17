@@ -10,20 +10,42 @@
 #include <thread>
 #include <chrono>
 #include "MotorManager.hpp"
+#include "CKIMUManager.hpp"
 #include "utils/PhoenixHelper.hpp"
+#include <hal/DriverStation.h>
+#include <hal/DriverStationTypes.h>
 
 static bool hasRobotInitialized = false;
+
+static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
+static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
+static bool robotFinalButtonPressed = false;
+static bool prevRobotFinalButtonPressed = false;
+
+void performInit()
+{
+	CKIMUManager::getInstance().forEach([] (uint16_t id, CKIMU* imu, IMUType imuType)
+	{
+		if (!imu->reset())
+		{
+			ck::ReportError("Failed to zero IMU: " + id);
+		}
+	});
+
+	MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
+	{
+		if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
+		{
+			ck::ReportError("Failed to zero motor: " + id);
+		}
+	});
+}
+
 void initIfNotInit()
 {
 	if (!hasRobotInitialized)
 	{
-		MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
-		{
-			if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
-			{
-				ck::ReportError("Failed to zero motor: " + id);
-			}
-		});
+		performInit();
 		hasRobotInitialized = true;
 	}
 }
@@ -165,9 +187,32 @@ void Robot::DisabledInit()
 }
 void Robot::DisabledPeriodic()
 {
+	static int debounceCounter = 0;
 	if (!isExternalControl())
 	{
 		robotFailover.DisabledFailoverPeriodic();
+	}
+
+	if (!hasRobotInitialized)
+	{
+		performInit();
+	}
+
+	if(debounceCounter <= 1 && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
+		HAL_JoystickButtons rawButtons;
+		HAL_GetJoystickButtons(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID, &rawButtons);
+		robotFinalButtonPressed = rawButtons.buttons & (1 << ROBOT_PLACED_FINAL_BUTTON_HAL_ID);
+		if (robotFinalButtonPressed && prevRobotFinalButtonPressed != robotFinalButtonPressed)
+		{
+			debounceCounter++;
+		}
+		prevRobotFinalButtonPressed = robotFinalButtonPressed;
+	}
+
+	if (debounceCounter > 1)
+	{
+		std::cout << "Robot Final Position recorded" << std::endl;
+		hasRobotInitialized = true;
 	}
 }
 
