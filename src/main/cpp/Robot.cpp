@@ -198,7 +198,7 @@ void Robot::DisabledPeriodic()
 		performInit();
 	}
 
-	if(debounceCounter <= 1 && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
+	if(debounceCounter <= 1 && !hasRobotInitialized && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
 		HAL_JoystickButtons rawButtons;
 		HAL_GetJoystickButtons(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID, &rawButtons);
 		robotFinalButtonPressed = rawButtons.buttons & (1 << ROBOT_PLACED_FINAL_BUTTON_HAL_ID);
@@ -209,7 +209,7 @@ void Robot::DisabledPeriodic()
 		prevRobotFinalButtonPressed = robotFinalButtonPressed;
 	}
 
-	if (debounceCounter > 1)
+	if (debounceCounter > 1 && !hasRobotInitialized)
 	{
 		std::cout << "Robot Final Position recorded" << std::endl;
 		hasRobotInitialized = true;
