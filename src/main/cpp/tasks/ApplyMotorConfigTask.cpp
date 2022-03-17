@@ -115,6 +115,7 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
             TalonFX* tfx = dynamic_cast<TalonFX*>(mCtrl);
             ck::runPhoenixFunctionWithRetry([&]() { return tfx->ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(supplyCurrLimConfig.enable(), supplyCurrLimConfig.current_limit(), supplyCurrLimConfig.trigger_threshold_current(), supplyCurrLimConfig.trigger_threshold_time()), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return tfx->ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(statorCurrLimConfig.enable(), statorCurrLimConfig.current_limit(), statorCurrLimConfig.trigger_threshold_current(), statorCurrLimConfig.trigger_threshold_time()), ck::kCANTimeoutMs); }, id);
+            std::cout << "Applying current limit id: " << m.id() << ": " << supplyCurrLimConfig.enable() << ", " << supplyCurrLimConfig.current_limit() << "," << supplyCurrLimConfig.trigger_threshold_current() << "," <<  supplyCurrLimConfig.trigger_threshold_time() << std::endl;
         }
             break;
         case MotorType::TALON_SRX:

@@ -60,7 +60,8 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface 
             break;
         default:
         {
-
+            std::cout << "Motor " << id << " does not have a valid type " << (int)motorType << " on bus " << canNetwork << std::endl;
+            return;
         }
             break;
         }

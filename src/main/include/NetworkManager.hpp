@@ -41,5 +41,5 @@ private:
     // const std::string CK_SULI_TEST_IP = "10.0.2.108";   //Suli linux vm home
     const std::string CK_COMM_PORT = "5801";
 
-    static constexpr int BUF_SIZE = 1500;
+    static constexpr int BUF_SIZE = 16384;
 };
