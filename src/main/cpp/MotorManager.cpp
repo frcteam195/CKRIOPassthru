@@ -43,7 +43,7 @@ void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<v
 void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface canInterface)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    if (id >= 0 && id < 64)
+    if (id < 64)
     {
         if (!mRegisteredMotorList.count(id))
         {

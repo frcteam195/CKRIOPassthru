@@ -85,5 +85,9 @@ void TaskScheduler::run()
         {
             ck::ReportError(e.what());
         }
+        catch (...)
+        {
+            ck::ReportError("Unknown Exception in Task Scheduler");
+        }
     }
 }

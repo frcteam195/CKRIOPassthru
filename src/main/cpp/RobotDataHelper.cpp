@@ -55,12 +55,17 @@ void RobotDataHelper::runThread()
             //     mCacheTimerMsg.reset();
             // }
         }
-        catch (...)
+        catch (std::exception& e)
         {
             mAlliance = frc::DriverStation::Alliance::kInvalid;
             mMatchTime = -1;
             mGameSpecificMsg = "";
             ck::ReportError("Failed to get DS data");
+            ck::ReportError(e.what());
+        }
+        catch (...)
+        {
+            ck::ReportError("Unknown Exception from DS Data");
         }
         mRateControl.doRateControl(RBDATAHELPER_THREAD_RATE_MS);
     }

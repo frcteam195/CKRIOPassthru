@@ -66,7 +66,7 @@ void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::func
 void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint16_t id, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    if (id >= 0 && id < 64)
+    if (id < 64)
     {
         if (!mRegisteredSolenoidList.count(id))
         {
