@@ -43,32 +43,35 @@ void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<v
 void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface canInterface)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    if (!mRegisteredMotorList.count(id))
+    if (id >= 0 && id < 64)
     {
-        std::string canNetwork = ck::getCANInterfaceName(canInterface);
-        switch (motorType)
+        if (!mRegisteredMotorList.count(id))
         {
-        case MotorType::TALON_FX:
-        {
-            mRegisteredMotorList[id] = new TalonFX(id, canNetwork);
+            std::string canNetwork = ck::getCANInterfaceName(canInterface);
+            switch (motorType)
+            {
+            case MotorType::TALON_FX:
+            {
+                mRegisteredMotorList[id] = new TalonFX(id, canNetwork);
+            }
+                break;
+            case MotorType::TALON_SRX:
+            {
+                mRegisteredMotorList[id] = new TalonSRX(id);
+            }
+                break;
+            default:
+            {
+                std::cout << "Motor " << id << " does not have a valid type " << (int)motorType << " on bus " << canNetwork << std::endl;
+                return;
+            }
+                break;
+            }
+            std::cout << "Motor " << id << " created with type " << (int)motorType << " on bus " << canNetwork << std::endl;
+            mRegisteredMotorTypeList[id] = motorType;
         }
-            break;
-        case MotorType::TALON_SRX:
-        {
-            mRegisteredMotorList[id] = new TalonSRX(id);
-        }
-            break;
-        default:
-        {
-            std::cout << "Motor " << id << " does not have a valid type " << (int)motorType << " on bus " << canNetwork << std::endl;
-            return;
-        }
-            break;
-        }
-        std::cout << "Motor " << id << " created with type " << (int)motorType << " on bus " << canNetwork << std::endl;
+        mRegisteredMotorHeartbeatList[id] = kMaxHeartbeatTicks;
     }
-    mRegisteredMotorTypeList[id] = motorType;
-    mRegisteredMotorHeartbeatList[id] = kMaxHeartbeatTicks;
 }
 
 void MotorManager::deleteMotor(uint16_t id)

@@ -66,13 +66,16 @@ void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::func
 void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint16_t id, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    if (!mRegisteredSolenoidList.count(id))
+    if (id >= 0 && id < 64)
     {
-        mRegisteredSolenoidList[id] = new CKSolenoid(moduleType, id, solenoidType);
-        std::cout << "Solenoid " << id << " created with type " << (int)solenoidType << std::endl;
-        mRegisteredSolenoidTypeList[id] = solenoidType;
+        if (!mRegisteredSolenoidList.count(id))
+        {
+            mRegisteredSolenoidList[id] = new CKSolenoid(moduleType, id, solenoidType);
+            std::cout << "Solenoid " << id << " created with type " << (int)solenoidType << std::endl;
+            mRegisteredSolenoidTypeList[id] = solenoidType;
+        }
+        mRegisteredSolenoidHeartbeatList[id] = kMaxHeartbeatTicks;
     }
-    mRegisteredSolenoidHeartbeatList[id] = kMaxHeartbeatTicks;
 }
 
 void SolenoidManager::deleteSolenoid(uint16_t id)
