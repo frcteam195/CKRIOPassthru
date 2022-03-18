@@ -81,4 +81,14 @@ std::string RobotDataHelper::getGameSpecificMsg()
     std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
     return mGameSpecificMsg;
 }
-    
+
+
+void RobotDataHelper::setSelectedAuto(int selectedAuto)
+{
+    mSelectedAuto = selectedAuto;
+}
+
+int RobotDataHelper::getSelectedAuto()
+{
+    return mSelectedAuto;
+}

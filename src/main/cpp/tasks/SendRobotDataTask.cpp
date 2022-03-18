@@ -33,6 +33,7 @@ void SendRobotDataTask::sendRobotStatusMessage()
     mRobotStatus.set_alliance(RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed ? ck::RobotStatus_Alliance::RobotStatus_Alliance_RED : ck::RobotStatus_Alliance::RobotStatus_Alliance_BLUE);
     mRobotStatus.set_match_time(RobotDataHelper::getInstance().getMatchTime());
     mRobotStatus.set_game_data(RobotDataHelper::getInstance().getGameSpecificMsg());
+    mRobotStatus.set_selected_auto(RobotDataHelper::getInstance().getSelectedAuto());
     if (mRobotStatus.SerializeToArray(mRobotStatusBuf, mRobotStatus.ByteSizeLong()))
     {
         NetworkManager::getInstance().sendMessage(ROBOT_STATUS_MESSAGE_GROUP, mRobotStatusBuf, mRobotStatus.ByteSizeLong());

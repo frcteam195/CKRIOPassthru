@@ -17,6 +17,8 @@ public:
     frc::DriverStation::Alliance getAlliance();
     float getMatchTime();
     std::string getGameSpecificMsg();
+    void setSelectedAuto(int selectedAuto);
+    int getSelectedAuto();
     
 private:
     RobotDataHelper();
@@ -32,6 +34,7 @@ private:
     std::atomic<frc::DriverStation::Alliance> mAlliance {frc::DriverStation::Alliance::kInvalid};
     std::atomic<float> mMatchTime = 0;
     std::string mGameSpecificMsg  = "";
+    std::atomic<int> mSelectedAuto = 0;
 
     std::recursive_mutex mStrMutex;
 

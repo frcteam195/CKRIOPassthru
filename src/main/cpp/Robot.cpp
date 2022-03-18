@@ -14,7 +14,12 @@
 #include "utils/PhoenixHelper.hpp"
 #include <hal/DriverStation.h>
 #include <hal/DriverStationTypes.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include "RobotDataHelper.hpp"
 
+static frc::SendableChooser<int> autoChooser;
+static std::string autoMsg = "AutoSelection";
 static bool hasRobotInitialized = false;
 
 static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
@@ -54,6 +59,7 @@ Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+
 	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
 	ck::resetCANivore();
 	ThreadRateControl trc;
@@ -100,6 +106,10 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
+	autoChooser.SetDefaultOption("Auto1", 0);
+	autoChooser.AddOption("Auto2", 1);
+	autoChooser.AddOption("Auto3", 2);
+	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
 
@@ -187,6 +197,8 @@ void Robot::DisabledInit()
 }
 void Robot::DisabledPeriodic()
 {
+	RobotDataHelper::getInstance().setSelectedAuto(autoChooser.GetSelected());
+
 	static int debounceCounter = 0;
 	static uint32_t cycleCounter = 0;
 	if (!isExternalControl())
