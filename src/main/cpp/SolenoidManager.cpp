@@ -89,24 +89,26 @@ void SolenoidManager::deleteSolenoid(uint16_t id)
         }
         mRegisteredSolenoidList.erase(id);
         mRegisteredSolenoidTypeList.erase(id);
-        mRegisteredSolenoidHeartbeatList.erase(id);
     }
 }
 
 void SolenoidManager::processHeartbeat()
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    for (auto it = mRegisteredSolenoidHeartbeatList.cbegin(); it != mRegisteredSolenoidHeartbeatList.cend(); it++)
+    for (auto it = mRegisteredSolenoidHeartbeatList.cbegin(); it != mRegisteredSolenoidHeartbeatList.cend(); )
     {
         mRegisteredSolenoidHeartbeatList[it->first]--;
         if (mRegisteredSolenoidHeartbeatList[it->first] <= 0)
         {
             uint16_t currSolenoid = it->first;
-            std::cout << std::endl
-                      << "Deleting solenoid, id: " << currSolenoid << std::endl;
+            std::cout << std::endl << "Deleting solenoid, id: " << currSolenoid << std::endl;
             deleteSolenoid(it->first);
-            std::cout << "Solenoid deleted, id: " << currSolenoid << std::endl
-                      << std::endl;
+            it = mRegisteredSolenoidHeartbeatList.erase(it);
+            std::cout << "Solenoid deleted, id: " << currSolenoid << std::endl << std::endl;
+        }
+        else
+        {
+            ++it;
         }
     }
 }

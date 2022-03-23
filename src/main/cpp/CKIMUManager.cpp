@@ -66,17 +66,19 @@ void CKIMUManager::deleteIMU(uint16_t id)
     std::scoped_lock<std::recursive_mutex> lock(imuLock);
     if (mRegisteredIMUTypeList.count(id))
     {
-        delete mRegisteredIMUList[id];
+        if (mRegisteredIMUList[id])
+        {
+            delete mRegisteredIMUList[id];
+        }
         mRegisteredIMUList.erase(id);
         mRegisteredIMUTypeList.erase(id);
-        mRegisteredIMUHeartbeatList.erase(id);
     }
 }
 
 void CKIMUManager::processHeartbeat()
 {
     std::scoped_lock<std::recursive_mutex> lock(imuLock);
-    for (auto it = mRegisteredIMUHeartbeatList.cbegin(); it != mRegisteredIMUHeartbeatList.cend(); it++)
+    for (auto it = mRegisteredIMUHeartbeatList.cbegin(); it != mRegisteredIMUHeartbeatList.cend(); )
     {
         mRegisteredIMUHeartbeatList[it->first]--;
         if (mRegisteredIMUHeartbeatList[it->first] <= 0)
@@ -84,7 +86,12 @@ void CKIMUManager::processHeartbeat()
             uint16_t currIMU = it->first;
             std::cout << std::endl << "Deleting IMU, id: " << currIMU << std::endl;
             deleteIMU(it->first);
+            it = mRegisteredIMUHeartbeatList.erase(it);
             std::cout << "IMU deleted, id: " << currIMU << std::endl << std::endl;
+        }
+        else
+        {
+            ++it;
         }
     }
 }

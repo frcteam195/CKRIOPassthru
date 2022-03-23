@@ -79,10 +79,12 @@ void MotorManager::deleteMotor(uint16_t id)
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
     if (mRegisteredMotorTypeList.count(id))
     {
-        delete mRegisteredMotorList[id];
+        if (mRegisteredMotorList[id])
+        {
+            delete mRegisteredMotorList[id];
+        }
         mRegisteredMotorList.erase(id);
         mRegisteredMotorTypeList.erase(id);
-        mRegisteredMotorHeartbeatList.erase(id);
         MotorConfigManager::getInstance().deleteMotor(id);
     }
 }
@@ -90,7 +92,7 @@ void MotorManager::deleteMotor(uint16_t id)
 void MotorManager::processHeartbeat()
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    for (auto it = mRegisteredMotorHeartbeatList.cbegin(); it != mRegisteredMotorHeartbeatList.cend(); it++)
+    for (auto it = mRegisteredMotorHeartbeatList.cbegin(); it != mRegisteredMotorHeartbeatList.cend(); )
     {
         mRegisteredMotorHeartbeatList[it->first]--;
         if (mRegisteredMotorHeartbeatList[it->first] <= 0)
@@ -98,7 +100,12 @@ void MotorManager::processHeartbeat()
             uint16_t currMotor = it->first;
             std::cout << std::endl << "Deleting motor, id: " << currMotor << std::endl;
             deleteMotor(it->first);
+            it = mRegisteredMotorHeartbeatList.erase(it);
             std::cout << "Motor deleted, id: " << currMotor << std::endl << std::endl;
+        }
+        else
+        {
+            ++it;
         }
     }
 }
