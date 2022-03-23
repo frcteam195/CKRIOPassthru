@@ -42,6 +42,15 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                         {
                             if (m.control_mode() != ck::MotorControl_Motor_ControlMode::MotorControl_Motor_ControlMode_Follower)
                             {
+                                if (id == 18)
+                                {
+                                    // std::cout << "Output val ID18: " << m.output_value() << std::endl;
+                                    if (mFalconMitigationCounter++ % 200 == 0)
+                                    {
+                                        mCtrl->Set(ControlMode::PercentOutput, 0, DemandType::DemandType_ArbitraryFeedForward, 0);
+                                        return;
+                                    }
+                                }
                                 mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
                             }
                             else
