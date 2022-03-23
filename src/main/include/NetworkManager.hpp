@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <mutex>
 
 class NetworkManager : public Singleton<NetworkManager>
 {
@@ -16,6 +17,8 @@ public:
     bool getMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, std::vector<uint8_t> &bytes);
     bool sendMessage(std::string group, void* bytes, int arrSize);
+
+    bool placeFailoverMessage(std::string group, std::vector<uint8_t> &bytes);
 
     void connectListener(std::string ip);
 
@@ -30,6 +33,8 @@ private:
     zmq::socket_t zmqRecvSock;
     
     std::map<std::string, std::vector<uint8_t>> recvMsgMap;
+
+    std::recursive_mutex mNetworkLock;
 
     const std::string CK_CO_IP = "10.1.95.5";
     // const std::string CK_CO2_IP = "10.1.95.6";
