@@ -45,6 +45,7 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                                 if (id == 18)
                                 {
                                     // std::cout << "Output val ID18: " << m.output_value() << std::endl;
+                                    // TODO: Fix this for real once firmware does not exhibit crazy behavior
                                     if (mFalconMitigationCounter++ % 200 == 0)
                                     {
                                         mCtrl->Set(ControlMode::PercentOutput, 0, DemandType::DemandType_ArbitraryFeedForward, 0);
