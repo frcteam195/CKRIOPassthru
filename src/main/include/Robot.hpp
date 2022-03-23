@@ -26,6 +26,8 @@
 #include "frc/livewindow/LiveWindow.h"
 #include "failover/RobotFailover.hpp"
 
+#include "utils/death_handler.h"
+
 class Robot : public ck::TimedRobot {
 public:
 	Robot();
@@ -63,6 +65,8 @@ private:
 	RobotFailover robotFailover;
 	bool failoverActive = false;
 	bool initialStartupROSCompleted = false;
+
+	Debug::DeathHandler dh;
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskTimingReporterTask taskTimingReporterTask;

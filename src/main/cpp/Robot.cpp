@@ -18,13 +18,6 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "RobotDataHelper.hpp"
 
-#include <stdio.h>
-#include <execinfo.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-
 static frc::SendableChooser<int> autoChooser;
 static std::string autoMsg = "AutoSelection";
 static bool hasRobotInitialized = false;
@@ -33,19 +26,6 @@ static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
 static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
 static bool robotFinalButtonPressed = false;
 static bool prevRobotFinalButtonPressed = false;
-
-void handler(int sig) {
-	void *array[10];
-	size_t size;
-
-	// get void*'s for all entries on the stack
-	size = backtrace(array, 10);
-
-	// print out all the frames to stderr
-	fprintf(stderr, "Error: signal %d:\n", sig);
-	backtrace_symbols_fd(array, size, STDERR_FILENO);
-	exit(1);
-}
 
 void performInit()
 {
@@ -79,8 +59,6 @@ Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
-	signal(SIGSEGV, handler);
-
 	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
 	ck::resetCANivore();
 	ThreadRateControl trc;
