@@ -120,7 +120,7 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				ck::ReportWarning("[rosdiag] ROS Connection Resumed");
+				ck::ReportError("[rosdiag] ROS Connection Resumed");
 			}
 			robotFailover.Reset();
 			failoverActive = false;
@@ -129,7 +129,7 @@ void Robot::RobotPeriodic() {
 		{
 			if (!initialStartupROSCompleted && RobotControlModeHelper::getInstance().isDSAttached() && !failoverActive)
 			{
-				ck::ReportWarning("[rosdiag] ROS Connection Resumed");
+				ck::ReportError("[rosdiag] ROS Connection Resumed");
 				initialStartupROSCompleted = true;
 			}
 		}
@@ -140,7 +140,7 @@ void Robot::RobotPeriodic() {
 		{
 			if (RobotControlModeHelper::getInstance().isDSAttached())
 			{
-				ck::ReportWarning("[rosdiag] Failover Control Activated");
+				ck::ReportError("[rosdiag] Failover Control Activated");
 			}
 			robotFailover.RobotFailoverInit();
 			failoverActive = true;
@@ -223,9 +223,10 @@ void Robot::DisabledPeriodic()
 
 	if (debounceCounter > 1 && !hasRobotInitialized)
 	{
-		std::cout << "Robot Final Position recorded" << std::endl;
+		ck::ReportWarning("Robot Final Position Recorded");
 		performInit();
 		hasRobotInitialized = true;
+		frc::SmartDashboard::PutBoolean("FinalPositionRecorded", true);
 	}
 }
 
