@@ -26,6 +26,7 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::connectListener(std::string ip)
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     zmq::socket_t* zSock = new zmq::socket_t(zmqCtx, zmq::socket_type::radio);
     zSock->connect(std::string("udp://") + ip + std::string(":") + CK_COMM_PORT);
     zmqSendSockVec.push_back(zSock);
@@ -33,6 +34,7 @@ void NetworkManager::connectListener(std::string ip)
 
 void NetworkManager::joinGroup(const char *group)
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     zmqRecvSock.join(group);
 }
 
@@ -48,7 +50,10 @@ bool NetworkManager::receiveMessagePump()
             memcpy(&buf[0], msg.data(), msg.size());
             std::string msgGroup = msg.group();
             //TODO: verify that this vector is moved into map properly and not copied
-            recvMsgMap[msgGroup] = std::move(buf);
+            {
+                std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
+                recvMsgMap[msgGroup] = std::move(buf);
+            }
             ExternalControlManager::getInstance().externalControlMsgReceived();
 
             //Clear any buffered msgs
@@ -63,8 +68,16 @@ bool NetworkManager::receiveMessagePump()
     }
 }
 
+bool NetworkManager::placeFailoverMessage(std::string group, std::vector<uint8_t> &bytes)
+{
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
+    recvMsgMap[group] = bytes;
+    return true;
+}
+
 bool NetworkManager::getMessage(std::string group, std::vector<uint8_t> &bytes)
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     if (recvMsgMap.count(group))
     {
         bytes = recvMsgMap[group];
@@ -76,6 +89,7 @@ bool NetworkManager::getMessage(std::string group, std::vector<uint8_t> &bytes)
 
 void NetworkManager::listStoredMessages()
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     for (auto const& [key, val] : recvMsgMap)
     {
         (void)val;
@@ -90,6 +104,7 @@ bool NetworkManager::sendMessage(std::string group, std::vector<uint8_t> &bytes)
 
 bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize)
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     bool retVal = true;
     for (zmq::socket_t* zSock : zmqSendSockVec)
     {
@@ -100,6 +115,7 @@ bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize)
 
 bool NetworkManager::sendMessage(std::string group, void* bytes, int arrSize, zmq::socket_t* zSock)
 {
+    std::scoped_lock<std::recursive_mutex> lock(mNetworkLock);
     try {
         zmq::message_t msg(bytes, arrSize);
         msg.set_group(group.c_str());
