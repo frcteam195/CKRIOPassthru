@@ -52,7 +52,10 @@ void ApplyMotorValuesTask::run(uint32_t timeSinceLastUpdateMs)
                                         return;
                                     }
                                 }
-                                mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
+                                if (!std::isinf(m.output_value()) && !std::isnan(m.output_value()))
+                                {
+                                    mCtrl->Set((ControlMode)m.control_mode(), m.output_value(), DemandType::DemandType_ArbitraryFeedForward, m.arbitrary_feedforward());
+                                }
                             }
                             else
                             {
