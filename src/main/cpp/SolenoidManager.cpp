@@ -81,13 +81,16 @@ void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType
 void SolenoidManager::deleteSolenoid(uint16_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    if (mRegisteredSolenoidTypeList.count(id))
+    if (mRegisteredSolenoidList.count(id))
     {
         if (mRegisteredSolenoidList[id])
         {
             delete mRegisteredSolenoidList[id];
         }
         mRegisteredSolenoidList.erase(id);
+    }
+    if (mRegisteredSolenoidTypeList.count(id))
+    {
         mRegisteredSolenoidTypeList.erase(id);
     }
 }

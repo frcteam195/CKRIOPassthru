@@ -46,8 +46,14 @@ ck::MotorConfiguration::Motor::ControllerMode MotorConfigManager::getControllerM
 void MotorConfigManager::deleteMotor(uint16_t id)
 {
     std::lock_guard<std::recursive_mutex> lock(mConfigLock);
-    mMotorMsgs.erase(id);
-    mPrevMotorMsgs.erase(id);
+    if (mMotorMsgs.count(id))
+    {
+        mMotorMsgs.erase(id);
+    }
+    if (mPrevMotorMsgs.count(id))
+    {
+        mPrevMotorMsgs.erase(id);
+    }
 }
 
 MotorConfigManager::MotorConfigManager(){}

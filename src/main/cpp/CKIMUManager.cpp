@@ -64,13 +64,16 @@ void CKIMUManager::registerIMU(uint16_t id, IMUType imuType, CANInterface canInt
 void CKIMUManager::deleteIMU(uint16_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(imuLock);
-    if (mRegisteredIMUTypeList.count(id))
+    if (mRegisteredIMUList.count(id))
     {
         if (mRegisteredIMUList[id])
         {
             delete mRegisteredIMUList[id];
         }
         mRegisteredIMUList.erase(id);
+    }
+    if (mRegisteredIMUTypeList.count(id))
+    {
         mRegisteredIMUTypeList.erase(id);
     }
 }

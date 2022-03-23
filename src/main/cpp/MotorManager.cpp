@@ -77,16 +77,19 @@ void MotorManager::registerMotor(uint16_t id, MotorType motorType, CANInterface 
 void MotorManager::deleteMotor(uint16_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    if (mRegisteredMotorTypeList.count(id))
+    if (mRegisteredMotorList.count(id))
     {
         if (mRegisteredMotorList[id])
         {
             delete mRegisteredMotorList[id];
         }
         mRegisteredMotorList.erase(id);
-        mRegisteredMotorTypeList.erase(id);
-        MotorConfigManager::getInstance().deleteMotor(id);
     }
+    if (mRegisteredMotorTypeList.count(id))
+    {
+        mRegisteredMotorTypeList.erase(id);
+    }
+    MotorConfigManager::getInstance().deleteMotor(id);
 }
 
 void MotorManager::processHeartbeat()
