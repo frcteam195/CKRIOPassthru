@@ -1,84 +1,40 @@
 #pragma once
 
-#include "Singleton.hpp"
+#include "utils/Singleton.hpp"
 #include <mutex>
-#include <ostream>
-#include <sstream>
 #include <unordered_map>
 #include <iostream>
+#include <atomic>
 #include "GlobalConfig.hpp"
 
-namespace std {
-    template<typename _CharT, typename _Traits>
-    inline basic_ostream<_CharT, _Traits>&
-    endl2(basic_ostream<_CharT, _Traits>& __os)
-    {
-        flush(__os.put(__os.widen('\n')));
-        return flush(__os.put(__os.widen('\n')));
-    }
-}
-
-
-class CKLogger
+namespace ck
 {
-public:
-    template<class T>
-    CKLogger& operator<<(const T& v)
+    enum class LogLevel : int
     {
-#ifdef CONSOLE_REPORTING
-        std::scoped_lock<std::mutex> lock(listLock);
-        std::string s = toString(v);
-        if (!msgList.count(s))
-        {
-            msgList[s] = 0;
-            mStream << v;
-            mCurrMsg.clear();
-            mCurrMsg << v;
-        }
-#endif
-        return *this;
-    }
+        DEBUG = 0,
+        INFO = 1,
+        WARNING = 2,
+        ERROR = 3
+    };
 
-    CKLogger& operator<<(std::ostream& (*F)(std::ostream&))
+    void log(std::string msg, LogLevel logLevel = LogLevel::INFO);
+    void set_log_level(LogLevel logLevel);
+
+    void _log_pump();
+
+    class CKLogRunner : public Singleton<CKLogRunner>
     {
-#ifdef CONSOLE_REPORTING
-        std::scoped_lock<std::mutex> lock(listLock);
-        if (mPrevMsg.str() != mCurrMsg.str())
-        {
-            mStream << F;
-            mPrevMsg.clear();
-            mPrevMsg << mCurrMsg.rdbuf();
-        }
-#endif
-        return *this;
-    }
+        friend CKLogRunner;
+    public:
+        
+    private:
+        static constexpr int LOGGER_THREAD_RATE_MS = 1000;
 
-    void messagePump()
-    {
-#ifdef CONSOLE_REPORTING
-        std::scoped_lock<std::mutex> lock(listLock);
-        // mStream.flush();
-        std::cout << mStream.rdbuf() << std::endl;
-        msgList.clear();
-#endif
-    }
-
-    CKLogger() {}
-    ~CKLogger() {}
-private:
-    std::mutex listLock;
-    std::unordered_map<std::string, int> msgList;
-    std::stringstream mStream;
-    std::stringstream mCurrMsg;
-    std::stringstream mPrevMsg;
-
-    template<typename T>
-    std::string toString(const T& x)
-    {
-        std::ostringstream os;
-        os << x;
-        return os.str();
-    }
+        std::thread mThread;
+        std::atomic<bool> mThreadActive;
+        ThreadRateControl mRateControl;
+        void runThread();
+        CKLogRunner();
+        ~CKLogRunner();
+    };
 };
-
-extern CKLogger ckLogger;
