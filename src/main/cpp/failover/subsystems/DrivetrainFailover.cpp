@@ -30,16 +30,16 @@ void DrivetrainFailover::periodic()
 void DrivetrainFailover::run()
 {
     //Motor Control code should be placed here
-    double x = 0;
-    double y = 0;
+    double wheel = 0;
+    double throttle = 0;
     //Check mJoystick is valid and connected
     if (mJoystick && mJoystick->IsConnected())
     {
-        x = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
-        y = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        wheel = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        throttle = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
     }
 
-    DriveMotorValues dv = mDriveHelper.calculateOutput( y, x, mJoystick->GetRawButton(DRIVE_JOYSTICK_QUICK_TURN_BUTTON), true );
+    DriveMotorValues dv = mDriveHelper.calculateOutput( throttle, wheel, mJoystick->GetRawButton(DRIVE_JOYSTICK_QUICK_TURN_BUTTON), true );
     double left = mLeftValueRamper.calculateOutput(dv.left);
     double right = mRightValueRamper.calculateOutput(dv.right);
 
