@@ -17,6 +17,9 @@ void DrivetrainFailover::uninit()
         delete mJoystick;
         mJoystick = nullptr;
     }
+
+    mLeftMaster->set_output_value(0);
+    mRightMaster->set_output_value(0);
 }
 
 void DrivetrainFailover::periodic()
@@ -121,7 +124,7 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftFollowerConfig = mMotorConfiguration.add_motors();
     mLeftFollowerConfig->set_id(LEFT_FOLLOWER_MOTOR_ID);
     mLeftFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
-    mLeftFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
+    mLeftFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_FollowMaster);
     mLeftFollowerConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
     mLeftFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
     mLeftFollowerConfig->set_voltage_compensation_saturation(12);
@@ -150,7 +153,7 @@ DrivetrainFailover::DrivetrainFailover()
     mRightMasterConfig = mMotorConfiguration.add_motors();
     mRightMasterConfig->set_id(RIGHT_MASTER_MOTOR_ID);
     mRightMasterConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER);
-    mRightMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
+    mRightMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_InvertMotorOutput);
     mRightMasterConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
     mRightMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
     mRightMasterConfig->set_voltage_compensation_saturation(12);
@@ -178,7 +181,7 @@ DrivetrainFailover::DrivetrainFailover()
     mRightFollowerConfig = mMotorConfiguration.add_motors();
     mRightFollowerConfig->set_id(RIGHT_FOLLOWER_MOTOR_ID);
     mRightFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
-    mRightFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
+    mRightFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_FollowMaster);
     mRightFollowerConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
     mRightFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
     mRightFollowerConfig->set_voltage_compensation_saturation(12);
@@ -208,5 +211,4 @@ DrivetrainFailover::~DrivetrainFailover()
 {
     uninit();
     free(mBuff);
-    
 }
