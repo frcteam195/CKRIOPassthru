@@ -25,6 +25,18 @@ ck::MotorConfiguration::Motor* FailoverMessageManager::addMotorConfig()
     return mMotorConfiguration.add_motors();
 }
 
+ck::SolenoidControl::Solenoid* FailoverMessageManager::addSolenoidControl()
+{
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    return mSolenoidControl.add_solenoids();
+}
+
+ck::IMUConfig::IMUConfigData* FailoverMessageManager::addIMUConfig()
+{
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    return mIMUConfig.add_imu_config();
+}
+
 void FailoverMessageManager::publishMessages()
 {
     //Called at roughly 20ms
@@ -37,6 +49,13 @@ void FailoverMessageManager::publishMessages()
         NetworkManager::getInstance().placeFailoverMessage("motorcontrol", buf);
     }
 
+    if (mSolenoidControl.SerializeToArray(mBuff, BUF_SIZE))
+    {
+        std::vector<uint8_t> buf(BUF_SIZE, 0);
+        memcpy(&buf[0], mBuff, BUF_SIZE);
+        NetworkManager::getInstance().placeFailoverMessage("solenoidcontrol", buf);
+    }
+
     //Should be roughly 500ms
     if (mLoopCounter++ % 25 == 0)
     {
@@ -45,6 +64,13 @@ void FailoverMessageManager::publishMessages()
             std::vector<uint8_t> buf(BUF_SIZE, 0);
             memcpy(&buf[0], mBuff, BUF_SIZE);
             NetworkManager::getInstance().placeFailoverMessage("motorconfig", buf);
+        }
+
+        if (mIMUConfig.SerializeToArray(mBuff, BUF_SIZE))
+        {
+            std::vector<uint8_t> buf(BUF_SIZE, 0);
+            memcpy(&buf[0], mBuff, BUF_SIZE);
+            NetworkManager::getInstance().placeFailoverMessage("imuconfig", buf);
         }
     }
 }
