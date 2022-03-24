@@ -8,8 +8,8 @@ namespace ck
 
     void log(std::string msg, LogLevel logLevel)
     {
-        (void)CKLogRunner::getInstance();
 #ifdef CONSOLE_REPORTING
+        (void)CKLogRunner::getInstance();
         std::scoped_lock<std::recursive_mutex> lock(messageMapLock);
         messageMap[msg] = logLevel;
 #endif
@@ -17,8 +17,10 @@ namespace ck
 
     void set_log_level(LogLevel logLevel)
     {
+#ifdef CONSOLE_REPORTING
         std::scoped_lock<std::recursive_mutex> lock(messageMapLock);
         currLogLevel = logLevel;
+#endif
     }
 
     void _log_pump()
@@ -48,19 +50,28 @@ namespace ck
 #endif
     }
 
-    CKLogRunner::CKLogRunner() : mThreadActive(true), mThread(&CKLogRunner::runThread, this) {}
+    CKLogRunner::CKLogRunner()
+    {
+#ifdef CONSOLE_REPORTING
+        mThreadActive = true;
+        mThread = std::thread(&CKLogRunner::runThread, this);
+#endif
+    }
 
     CKLogRunner::~CKLogRunner()
     {
+#ifdef CONSOLE_REPORTING
         mThreadActive = false;
         if (mThread.joinable())
         {
             mThread.join();
         }
+#endif
     }
 
     void CKLogRunner::runThread()
     {
+#ifdef CONSOLE_REPORTING
         mRateControl.start();
         std::ios_base::sync_with_stdio(false);
         while (mThreadActive)
@@ -68,5 +79,6 @@ namespace ck
             _log_pump();
             mRateControl.doRateControl(LOGGER_THREAD_RATE_MS);
         }
+#endif
     }
 }
