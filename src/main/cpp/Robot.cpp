@@ -59,6 +59,8 @@ Robot::Robot() : TimedRobot(20_ms) {}
 
 void Robot::RobotInit()
 {
+	dh.set_generate_core_dump(true);
+	
 	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
 	ck::resetCANivore();
 	ThreadRateControl trc;

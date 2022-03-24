@@ -109,7 +109,7 @@ double CKNavX::getRoll() {
 }
 
 double CKNavX::getRollRad() {
-    return ck::math::degToRad(mAHRS.GetRoll());
+    return ck::math::deg2rad(mAHRS.GetRoll());
 }
 
 double CKNavX::getPitch() {
@@ -117,11 +117,11 @@ double CKNavX::getPitch() {
 }
 
 double CKNavX::getPitchRad() {
-    return ck::math::degToRad(mAHRS.GetPitch());
+    return ck::math::deg2rad(mAHRS.GetPitch());
 }
 
 double CKNavX::getYawRateRadPerSec() {
-    return ck::math::degToRad(getYawRateDegreesPerSec());
+    return ck::math::deg2rad(getYawRateDegreesPerSec());
 }
 
 double CKNavX::getYawRateDegreesPerSec() {
@@ -136,7 +136,7 @@ double CKNavX::getFusedHeading() {
 
 double CKNavX::getFusedHeadingRad() {
     std::scoped_lock<std::mutex>lock(mSyncLock);
-    return ck::math::degToRad(mFusedHeading);
+    return ck::math::deg2rad(mFusedHeading);
 }
 
 bool CKNavX::hasUpdated() {

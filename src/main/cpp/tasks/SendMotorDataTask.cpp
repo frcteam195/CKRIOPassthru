@@ -56,6 +56,8 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
                     m->set_raw_closed_loop_error(mCtrl->GetClosedLoopError());
                     m->set_raw_integral_accum(mCtrl->GetIntegralAccumulator());
                     m->set_raw_error_derivative(mCtrl->GetErrorDerivative());
+                    //DEBUG ONLY
+                    m->set_active_trajectory_arbff(mCtrl->GetClosedLoopTarget());
                     break;
                 }
                 case ControlMode::Follower:

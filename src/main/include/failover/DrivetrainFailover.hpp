@@ -7,6 +7,8 @@
 #include "MotorControl.pb.h"
 #include "MotorConfiguration.pb.h"
 #include <cstdint>
+#include "failover/utils/drive_helper.hpp"
+#include "failover/utils/ValueRamper.hpp"
 
 class DrivetrainFailover : public Singleton<DrivetrainFailover>, public FailoverSubsystem
 {
@@ -24,12 +26,23 @@ private:
 
     frc::Joystick* mJoystick;
 
-    static constexpr MotorType DRIVE_MOTOR_TYPE = MotorType::TALON_FX;
-    static constexpr int LEFT_MOTOR_ID = 1;
-    static constexpr int RIGHT_MOTOR_ID = 4;
+    static constexpr int LEFT_MASTER_MOTOR_ID = 1;
+    static constexpr int LEFT_FOLLOWER_MOTOR_ID = 2;
+    static constexpr int RIGHT_MASTER_MOTOR_ID = 4;
+    static constexpr int RIGHT_FOLLOWER_MOTOR_ID = 5;
 
     static constexpr int DRIVE_JOYSTICK_ID = 0;
-    static constexpr double DRIVE_JOYSTICK_DEADBAND = 0.05;
+    static constexpr double DRIVE_JOYSTICK_DEADBAND = 0.12;
+    static constexpr int DRIVE_JOYSTICK_X_AXIS = 0;
+    static constexpr int DRIVE_JOYSTICK_Y_AXIS = 1;
+    static constexpr int DRIVE_JOYSTICK_QUICK_TURN_BUTTON = 7;
+    static constexpr int DRIVE_JOYSTICK_BRAKE_MODE_BUTTON = 8;
+
+    static constexpr double DRIVE_ACCEL_RAMP = 0.5;
+    static constexpr double DRIVE_DECEL_RAMP = 0.2;
+    static constexpr double DRIVE_ZERO_VAL = 0;
+    static constexpr double DRIVE_MAX_VAL = 1;
+
 
     ck::MotorConfiguration mMotorConfiguration;
     ck::MotorConfiguration::Motor* mLeftMasterConfig = nullptr;
@@ -42,6 +55,10 @@ private:
     ck::MotorControl::Motor* mLeftFollower = nullptr;
     ck::MotorControl::Motor* mRightMaster = nullptr;
     ck::MotorControl::Motor* mRightFollower = nullptr;
+    
+    DriveHelper mDriveHelper;
+    ValueRamper mLeftValueRamper;
+    ValueRamper mRightValueRamper;
 
     static constexpr int BUF_SIZE = 1500;
     void* mBuff = nullptr;

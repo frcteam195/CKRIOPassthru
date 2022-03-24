@@ -32,12 +32,31 @@ void DrivetrainFailover::run()
     //Check mJoystick is valid and connected
     if (mJoystick && mJoystick->IsConnected())
     {
-        x = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(4), DRIVE_JOYSTICK_DEADBAND);
-        y = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(1), DRIVE_JOYSTICK_DEADBAND);
+        x = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        y = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
     }
 
-    mLeftMaster->set_output_value(std::max(std::min(y + x, 1.0), -1.0));
-    mRightMaster->set_output_value(std::max(std::min(y - x, 1.0), -1.0));
+    DriveMotorValues dv = mDriveHelper.calculateOutput( y, x, mJoystick->GetRawButton(DRIVE_JOYSTICK_QUICK_TURN_BUTTON), true );
+    double left = mLeftValueRamper.calculateOutput(dv.left);
+    double right = mRightValueRamper.calculateOutput(dv.right);
+
+    mLeftMaster->set_output_value(left);
+    mRightMaster->set_output_value(right);
+
+    if (mJoystick->GetRawButton(DRIVE_JOYSTICK_BRAKE_MODE_BUTTON))
+	{
+		mLeftMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);
+        mLeftFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);
+        mRightMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);
+        mRightFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);
+	}
+	else
+	{
+		mLeftMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
+        mLeftFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
+        mRightMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
+        mRightFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Coast);
+	}
 }
 
 void DrivetrainFailover::registerMotors()
@@ -51,7 +70,8 @@ void DrivetrainFailover::registerMotors()
         NetworkManager::getInstance().placeFailoverMessage("motorcontrol", buf);
     }
 
-    if (mLoopCounter++ % 50 == 0)
+    //Should be roughly 500ms
+    if (mLoopCounter++ % 25 == 0)
     {
         if (mMotorConfiguration.SerializeToArray(mBuff, BUF_SIZE))
         {
@@ -63,13 +83,15 @@ void DrivetrainFailover::registerMotors()
 }
 
 DrivetrainFailover::DrivetrainFailover()
+: mLeftValueRamper(DRIVE_ACCEL_RAMP, DRIVE_DECEL_RAMP, DRIVE_ZERO_VAL, DRIVE_MAX_VAL),
+  mRightValueRamper(DRIVE_ACCEL_RAMP, DRIVE_DECEL_RAMP, DRIVE_ZERO_VAL, DRIVE_MAX_VAL)
 {
     mBuff = malloc(BUF_SIZE * sizeof(uint8_t));
     memset(mBuff, 0, BUF_SIZE * sizeof(uint8_t));
 
     //Left Side
     mLeftMasterConfig = mMotorConfiguration.add_motors();
-    mLeftMasterConfig->set_id(1);
+    mLeftMasterConfig->set_id(LEFT_MASTER_MOTOR_ID);
     mLeftMasterConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER);
     mLeftMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
     mLeftMasterConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
@@ -90,14 +112,14 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftMasterConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
     mLeftMaster = mMotorControl.add_motors();
-    mLeftMaster->set_id(1);
+    mLeftMaster->set_id(LEFT_MASTER_MOTOR_ID);
     mLeftMaster->set_arbitrary_feedforward(0);
     mLeftMaster->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mLeftMaster->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_PercentOutput);
     mLeftMaster->set_output_value(0);
     
     mLeftFollowerConfig = mMotorConfiguration.add_motors();
-    mLeftFollowerConfig->set_id(2);
+    mLeftFollowerConfig->set_id(LEFT_FOLLOWER_MOTOR_ID);
     mLeftFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
     mLeftFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
     mLeftFollowerConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
@@ -118,15 +140,15 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftFollowerConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
     mLeftFollower = mMotorControl.add_motors();
-    mLeftFollower->set_id(2);
+    mLeftFollower->set_id(LEFT_FOLLOWER_MOTOR_ID);
     mLeftFollower->set_arbitrary_feedforward(0);
     mLeftFollower->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mLeftFollower->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_Follower);
-    mLeftFollower->set_output_value(1); //Master ID
+    mLeftFollower->set_output_value(LEFT_MASTER_MOTOR_ID); //Master ID
 
     //Right Side
     mRightMasterConfig = mMotorConfiguration.add_motors();
-    mRightMasterConfig->set_id(4);
+    mRightMasterConfig->set_id(RIGHT_MASTER_MOTOR_ID);
     mRightMasterConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER);
     mRightMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
     mRightMasterConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
@@ -147,14 +169,14 @@ DrivetrainFailover::DrivetrainFailover()
     mRightMasterConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
     mRightMaster = mMotorControl.add_motors();
-    mRightMaster->set_id(4);
+    mRightMaster->set_id(RIGHT_MASTER_MOTOR_ID);
     mRightMaster->set_arbitrary_feedforward(0);
     mRightMaster->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mRightMaster->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_PercentOutput);
     mRightMaster->set_output_value(0);
     
     mRightFollowerConfig = mMotorConfiguration.add_motors();
-    mRightFollowerConfig->set_id(5);
+    mRightFollowerConfig->set_id(RIGHT_FOLLOWER_MOTOR_ID);
     mRightFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
     mRightFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
     mRightFollowerConfig->set_controller_type(ck::MotorConfiguration::Motor::ControllerType::MotorConfiguration_Motor_ControllerType_TALON_FX);
@@ -175,15 +197,16 @@ DrivetrainFailover::DrivetrainFailover()
     mRightFollowerConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
     mRightFollower = mMotorControl.add_motors();
-    mRightFollower->set_id(5);
+    mRightFollower->set_id(RIGHT_FOLLOWER_MOTOR_ID);
     mRightFollower->set_arbitrary_feedforward(0);
     mRightFollower->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mRightFollower->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_Follower);
-    mRightFollower->set_output_value(4); //Master ID
+    mRightFollower->set_output_value(RIGHT_MASTER_MOTOR_ID); //Master ID
 }
 
 DrivetrainFailover::~DrivetrainFailover()
 {
     uninit();
     free(mBuff);
+    
 }

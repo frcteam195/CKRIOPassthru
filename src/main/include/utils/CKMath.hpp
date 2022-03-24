@@ -2,6 +2,7 @@
 
 #include "CKMathConstants.hpp"
 #include "Units.hpp"
+#include <cmath>
 #include <map>
 
 namespace ck
@@ -27,15 +28,15 @@ namespace ck
         }
 
         template <typename T>
-        inline double degToRad(T val)
+        inline bool inRange(T val, T delta)
         {
-            return (val * M_PI / 180.0);
+            return val >= -delta && val <= delta;
         }
 
         template <typename T>
-        inline double radToDeg(T val)
+        inline bool inRange(T val, T minVal, T maxVal)
         {
-            return (val * 180.0 / M_PI);
+            return val >= minVal && val <= maxVal;
         }
 
         template <typename T>
@@ -51,15 +52,15 @@ namespace ck
         }
 
         template <typename T>
-        inline T limit(T v, T maxMagnitude)
-        {
-            return limit(v, -maxMagnitude, maxMagnitude);
-        }
-
-        template <typename T>
         inline T limit(T v, T minVal, T maxVal)
         {
             return min(maxVal, max(minVal, v));
+        }
+
+        template <typename T>
+        inline T limit(T v, T maxMagnitude)
+        {
+            return limit(v, -maxMagnitude, maxMagnitude);
         }
 
         template <typename T>
@@ -69,8 +70,25 @@ namespace ck
             return a + (b - a) * x;
         }
 
+        template <typename T>
+        inline T handleDeadband(T val, T deadband) {
+            return (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+        }
+
+        template <typename T>
+        T normalizeWithDeadband(T val, T deadband) {
+            val = handleDeadband(val, deadband);
+
+            if (val != 0)
+            {
+                val = signum(val) * ((std::fabs(val) - deadband) / (1.0 - deadband));
+            }
+
+            return val;
+        }
+
         template <typename K, typename V>
-        inline double interpolate(const std::map<K, V> &data, K x)
+        inline V interpolate(const std::map<K, V> &data, K x)
         {
             typedef typename std::map<K, V>::const_iterator i_t;
 
@@ -90,16 +108,26 @@ namespace ck
             return delta * i->second + (1 - delta) * l->second;
         }
 
-        template <typename T>
-        T normalizeWithDeadband(T val, T deadband) {
-            val = (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+        template <typename K, typename V>
+        inline V interpolateGeometry2d(const std::map<K, V> &data, K x)
+        {
+            typedef typename std::map<K, V>::const_iterator i_t;
 
-            if (val != 0)
+            i_t i = data.upper_bound(x);
+            if (i == data.end())
             {
-                val = signum(val) * ((std::fabs(val) - deadband) / (1.0 - deadband));
+                return (--i)->second;
             }
+            if (i == data.begin())
+            {
+                return i->second;
+            }
+            i_t l = i;
+            --l;
 
-            return (std::fabs(val) > std::fabs(deadband)) ? val : 0.0;
+            const K delta = (x - l->first) / (i->first - l->first);
+            return i->second.interpolate(l->second, delta);
         }
+
     } // namespace math
 } // namespace ck

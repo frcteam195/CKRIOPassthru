@@ -1,5 +1,6 @@
 #include "utils/drivers/CKPigeon2.hpp"
 #include "utils/PhoenixHelper.hpp"
+#include "utils/CKMath.hpp"
 
 CKPigeon2::CKPigeon2(int deviceNumber, std::string const &canbus)
 : mPigeon(deviceNumber, canbus)
@@ -36,7 +37,7 @@ bool CKPigeon2::getYPR(double ypr[3])
     bool success = mPigeon.GetYawPitchRoll(yprDeg) == ErrorCode::OK;
     for (int i = 0; i < 3; i++)
     {
-        ypr[i] = yprDeg[i] * M_PI / 180.0;
+        ypr[i] = ck::math::deg2rad(yprDeg[i]);
     }
     return success;
 }
