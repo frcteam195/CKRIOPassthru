@@ -5,7 +5,9 @@
 #include <unordered_map>
 #include <iostream>
 #include <atomic>
+#include <thread>
 #include "GlobalConfig.hpp"
+#include "utils/ThreadRateControl.hpp"
 
 namespace ck
 {
@@ -24,17 +26,17 @@ namespace ck
 
     class CKLogRunner : public Singleton<CKLogRunner>
     {
-        friend CKLogRunner;
+        friend Singleton;
     public:
         
     private:
         static constexpr int LOGGER_THREAD_RATE_MS = 1000;
 
-        std::thread mThread;
         std::atomic<bool> mThreadActive;
+        std::thread mThread;
         ThreadRateControl mRateControl;
         void runThread();
         CKLogRunner();
         ~CKLogRunner();
     };
-};
+}

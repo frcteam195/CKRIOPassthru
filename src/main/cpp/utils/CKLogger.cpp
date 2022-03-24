@@ -1,6 +1,4 @@
 #include "utils/CKLogger.hpp"
-#include <thread>
-#include "utils/ThreadRateControl.hpp"
 
 namespace ck
 {
@@ -71,4 +69,4 @@ namespace ck
             mRateControl.doRateControl(LOGGER_THREAD_RATE_MS);
         }
     }
-};
+}
