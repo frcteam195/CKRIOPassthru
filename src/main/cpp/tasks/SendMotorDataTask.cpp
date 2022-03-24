@@ -4,6 +4,7 @@
 #include "MotorManager.hpp"
 #include "NetworkManager.hpp"
 #include "MotorConfigManager.hpp"
+#include "utils/CKLogger.hpp"
 
 SendMotorDataTask::SendMotorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMotorStatusMsg()
 {
@@ -103,11 +104,8 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
         bool msgSendSuccess = NetworkManager::getInstance().sendMessage(MOTOR_STATUS_MESSAGE_GROUP, mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong());
         if (!msgSendSuccess)
         {
-            std::cout << "Failed to send msg" << std::endl;
+            ck::log("Failed to send msg\n", ck::LogLevel::ERROR);
         }
-        // double t2 = (double)frc::Timer::GetFPGATimestamp();
-        // std::cout << "Msg Send Time: " << t2 - t1 << std::endl;
-        // t1 = t2;
     }
     else
     {

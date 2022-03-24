@@ -10,6 +10,7 @@
 #include "utils/PhoenixHelper.hpp"
 #include "MotorConfigManager.hpp"
 #include <iostream>
+#include "utils/CKLogger.hpp"
 
 // #define DEBUG
 
@@ -64,7 +65,7 @@ void ApplyMotorConfigTask::run(uint32_t timeSinceLastUpdateMs)
 
 bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
 {
-    std::cout << "Full Config Start" << std::endl;
+    ck::log("Full Config Start\n");
     bool isMaster = m.controller_mode() != ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE;
 
     //MotorManager::getInstance().registerMotor(m.id(), (MotorType)m.controller_type());
