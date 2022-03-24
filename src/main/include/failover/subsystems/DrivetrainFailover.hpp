@@ -18,7 +18,6 @@ protected:
     void periodic() override;
     void uninit() override;
     void run() override;
-    void registerMotors() override;
 
 private:
     DrivetrainFailover();
@@ -44,13 +43,11 @@ private:
     static constexpr double DRIVE_MAX_VAL = 1;
 
 
-    ck::MotorConfiguration mMotorConfiguration;
     ck::MotorConfiguration::Motor* mLeftMasterConfig = nullptr;
     ck::MotorConfiguration::Motor* mLeftFollowerConfig = nullptr;
     ck::MotorConfiguration::Motor* mRightMasterConfig = nullptr;
     ck::MotorConfiguration::Motor* mRightFollowerConfig = nullptr;
 
-    ck::MotorControl mMotorControl;
     ck::MotorControl::Motor* mLeftMaster = nullptr;
     ck::MotorControl::Motor* mLeftFollower = nullptr;
     ck::MotorControl::Motor* mRightMaster = nullptr;
@@ -59,7 +56,4 @@ private:
     DriveHelper mDriveHelper;
     ValueRamper mLeftValueRamper;
     ValueRamper mRightValueRamper;
-
-    static constexpr int BUF_SIZE = 1500;
-    void* mBuff = nullptr;
 };

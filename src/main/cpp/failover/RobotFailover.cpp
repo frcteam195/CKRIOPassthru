@@ -1,5 +1,6 @@
 #include "failover/RobotFailover.hpp"
-#include "failover/DrivetrainFailover.hpp"
+#include "failover/subsystems/DrivetrainFailover.hpp"
+#include "failover/FailoverMessageManager.hpp"
 
 void RobotFailover::RobotFailoverInit()
 {
@@ -7,7 +8,7 @@ void RobotFailover::RobotFailoverInit()
     // lCtrl = new CKLEDController(1);
     // lCtrl->setColor(RGBColor{0, 128, 0, 255});
     // lCtrl->setBrightness(255);
-    //lCtrl->configureBlink(10, 500);
+    // lCtrl->configureBlink(10, 500);
     // lCtrl->setCommLoss();
     // lCtrl->setDefaultState(CKLEDController::LEDState::BLINK);
     // lCtrl->setCommRestored();
@@ -19,6 +20,8 @@ void RobotFailover::RobotFailoverInit()
 void RobotFailover::RobotFailoverPeriodic()
 {
     //Make sure this is called to keep motors registered
+    FailoverMessageManager::getInstance().publishMessages();
+
     DrivetrainFailover::getInstance().SubsystemPeriodic();
 }
 
@@ -45,4 +48,7 @@ void RobotFailover::Reset()
 }
 
 
-RobotFailover::RobotFailover() {}
+RobotFailover::RobotFailover()
+{
+    DrivetrainFailover::getInstance();
+}

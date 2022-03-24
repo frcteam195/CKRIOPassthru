@@ -3,12 +3,10 @@
 class FailoverSubsystem {
 public:
     void SubsystemInit() {
-        registerMotors();
         init();
     }
 
     void SubsystemPeriodic() {
-        registerMotors();
         periodic();
     }
 
@@ -29,6 +27,4 @@ protected:
     virtual void periodic() = 0;
     virtual void run() = 0;
     virtual void uninit() = 0;
-
-    virtual void registerMotors() = 0;
 };

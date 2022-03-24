@@ -1,7 +1,7 @@
-#include "failover/DrivetrainFailover.hpp"
+#include "failover/subsystems/DrivetrainFailover.hpp"
 #include "utils/PhoenixHelper.hpp"
 #include "utils/CKMath.hpp"
-#include "NetworkManager.hpp"
+#include "failover/FailoverMessageManager.hpp"
 
 void DrivetrainFailover::init()
 {
@@ -62,38 +62,12 @@ void DrivetrainFailover::run()
 	}
 }
 
-void DrivetrainFailover::registerMotors()
-{
-    static uint32_t mLoopCounter = 0;
-    //Place all motors used here. This will be called automatically as needed in the SubsystemRun and SubsystemInit methods
-    if (mMotorControl.SerializeToArray(mBuff, BUF_SIZE))
-    {
-        std::vector<uint8_t> buf(BUF_SIZE, 0);
-        memcpy(&buf[0], mBuff, BUF_SIZE);
-        NetworkManager::getInstance().placeFailoverMessage("motorcontrol", buf);
-    }
-
-    //Should be roughly 500ms
-    if (mLoopCounter++ % 25 == 0)
-    {
-        if (mMotorConfiguration.SerializeToArray(mBuff, BUF_SIZE))
-        {
-            std::vector<uint8_t> buf(BUF_SIZE, 0);
-            memcpy(&buf[0], mBuff, BUF_SIZE);
-            NetworkManager::getInstance().placeFailoverMessage("motorconfig", buf);
-        }
-    }
-}
-
 DrivetrainFailover::DrivetrainFailover()
 : mLeftValueRamper(DRIVE_ACCEL_RAMP, DRIVE_DECEL_RAMP, DRIVE_ZERO_VAL, DRIVE_MAX_VAL),
   mRightValueRamper(DRIVE_ACCEL_RAMP, DRIVE_DECEL_RAMP, DRIVE_ZERO_VAL, DRIVE_MAX_VAL)
 {
-    mBuff = malloc(BUF_SIZE * sizeof(uint8_t));
-    memset(mBuff, 0, BUF_SIZE * sizeof(uint8_t));
-
     //Left Side
-    mLeftMasterConfig = mMotorConfiguration.add_motors();
+    mLeftMasterConfig = FailoverMessageManager::getInstance().addMotorConfig();
     mLeftMasterConfig->set_id(LEFT_MASTER_MOTOR_ID);
     mLeftMasterConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER);
     mLeftMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_None);
@@ -114,14 +88,14 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftMasterConfig->set_allocated_supply_current_limit_config(mLeftMasterCurrLim);
     mLeftMasterConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
-    mLeftMaster = mMotorControl.add_motors();
+    mLeftMaster = FailoverMessageManager::getInstance().addMotorControl();
     mLeftMaster->set_id(LEFT_MASTER_MOTOR_ID);
     mLeftMaster->set_arbitrary_feedforward(0);
     mLeftMaster->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mLeftMaster->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_PercentOutput);
     mLeftMaster->set_output_value(0);
     
-    mLeftFollowerConfig = mMotorConfiguration.add_motors();
+    mLeftFollowerConfig = FailoverMessageManager::getInstance().addMotorConfig();
     mLeftFollowerConfig->set_id(LEFT_FOLLOWER_MOTOR_ID);
     mLeftFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
     mLeftFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_FollowMaster);
@@ -142,7 +116,7 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftFollowerConfig->set_allocated_supply_current_limit_config(mLeftFollowerCurrLim);
     mLeftFollowerConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
-    mLeftFollower = mMotorControl.add_motors();
+    mLeftFollower = FailoverMessageManager::getInstance().addMotorControl();
     mLeftFollower->set_id(LEFT_FOLLOWER_MOTOR_ID);
     mLeftFollower->set_arbitrary_feedforward(0);
     mLeftFollower->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
@@ -150,7 +124,7 @@ DrivetrainFailover::DrivetrainFailover()
     mLeftFollower->set_output_value(LEFT_MASTER_MOTOR_ID); //Master ID
 
     //Right Side
-    mRightMasterConfig = mMotorConfiguration.add_motors();
+    mRightMasterConfig = FailoverMessageManager::getInstance().addMotorConfig();
     mRightMasterConfig->set_id(RIGHT_MASTER_MOTOR_ID);
     mRightMasterConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_FAST_MASTER);
     mRightMasterConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_InvertMotorOutput);
@@ -171,14 +145,14 @@ DrivetrainFailover::DrivetrainFailover()
     mRightMasterConfig->set_allocated_supply_current_limit_config(mRightMasterCurrLim);
     mRightMasterConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
-    mRightMaster = mMotorControl.add_motors();
+    mRightMaster = FailoverMessageManager::getInstance().addMotorControl();
     mRightMaster->set_id(RIGHT_MASTER_MOTOR_ID);
     mRightMaster->set_arbitrary_feedforward(0);
     mRightMaster->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
     mRightMaster->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_PercentOutput);
     mRightMaster->set_output_value(0);
     
-    mRightFollowerConfig = mMotorConfiguration.add_motors();
+    mRightFollowerConfig = FailoverMessageManager::getInstance().addMotorConfig();
     mRightFollowerConfig->set_id(RIGHT_FOLLOWER_MOTOR_ID);
     mRightFollowerConfig->set_controller_mode(ck::MotorConfiguration::Motor::ControllerMode::MotorConfiguration_Motor_ControllerMode_SLAVE);
     mRightFollowerConfig->set_invert_type(ck::MotorConfiguration::Motor::InvertType::MotorConfiguration_Motor_InvertType_FollowMaster);
@@ -199,7 +173,7 @@ DrivetrainFailover::DrivetrainFailover()
     mRightFollowerConfig->set_allocated_supply_current_limit_config(mRightFollowerCurrLim);
     mRightFollowerConfig->set_can_network(ck::CANNetwork::RIO_CANIVORE);
 
-    mRightFollower = mMotorControl.add_motors();
+    mRightFollower = FailoverMessageManager::getInstance().addMotorControl();
     mRightFollower->set_id(RIGHT_FOLLOWER_MOTOR_ID);
     mRightFollower->set_arbitrary_feedforward(0);
     mRightFollower->set_controller_type(ck::MotorControl::Motor::ControllerType::MotorControl_Motor_ControllerType_TALON_FX);
@@ -210,5 +184,4 @@ DrivetrainFailover::DrivetrainFailover()
 DrivetrainFailover::~DrivetrainFailover()
 {
     uninit();
-    free(mBuff);
 }

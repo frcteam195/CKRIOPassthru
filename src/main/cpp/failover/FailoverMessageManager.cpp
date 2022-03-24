@@ -1,0 +1,50 @@
+#include "failover/FailoverMessageManager.hpp"
+#include "NetworkManager.hpp"
+#include <cstdint>
+
+FailoverMessageManager::FailoverMessageManager()
+{
+    mBuff = malloc(BUF_SIZE * sizeof(uint8_t));
+    memset(mBuff, 0, BUF_SIZE * sizeof(uint8_t));
+}
+
+FailoverMessageManager::~FailoverMessageManager()
+{
+    free(mBuff);
+}
+
+ck::MotorControl::Motor* FailoverMessageManager::addMotorControl()
+{
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    return mMotorControl.add_motors();
+}
+
+ck::MotorConfiguration::Motor* FailoverMessageManager::addMotorConfig()
+{
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    return mMotorConfiguration.add_motors();
+}
+
+void FailoverMessageManager::publishMessages()
+{
+    //Called at roughly 20ms
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    static uint32_t mLoopCounter = 0;
+    if (mMotorControl.SerializeToArray(mBuff, BUF_SIZE))
+    {
+        std::vector<uint8_t> buf(BUF_SIZE, 0);
+        memcpy(&buf[0], mBuff, BUF_SIZE);
+        NetworkManager::getInstance().placeFailoverMessage("motorcontrol", buf);
+    }
+
+    //Should be roughly 500ms
+    if (mLoopCounter++ % 25 == 0)
+    {
+        if (mMotorConfiguration.SerializeToArray(mBuff, BUF_SIZE))
+        {
+            std::vector<uint8_t> buf(BUF_SIZE, 0);
+            memcpy(&buf[0], mBuff, BUF_SIZE);
+            NetworkManager::getInstance().placeFailoverMessage("motorconfig", buf);
+        }
+    }
+}
