@@ -101,10 +101,10 @@ void MotorManager::processHeartbeat()
         if (mRegisteredMotorHeartbeatList[it->first] <= 0)
         {
             uint16_t currMotor = it->first;
-            std::cout << std::endl << "Deleting motor, id: " << currMotor << std::endl;
+            // std::cout << std::endl << "Deleting motor, id: " << currMotor << std::endl;
             deleteMotor(it->first);
             it = mRegisteredMotorHeartbeatList.erase(it);
-            std::cout << "Motor deleted, id: " << currMotor << std::endl << std::endl;
+            std::cout << "Motor deleted, id: " << currMotor << std::endl;
         }
         else
         {

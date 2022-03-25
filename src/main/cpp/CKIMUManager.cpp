@@ -87,10 +87,10 @@ void CKIMUManager::processHeartbeat()
         if (mRegisteredIMUHeartbeatList[it->first] <= 0)
         {
             uint16_t currIMU = it->first;
-            std::cout << std::endl << "Deleting IMU, id: " << currIMU << std::endl;
+            // std::cout << std::endl << "Deleting IMU, id: " << currIMU << std::endl;
             deleteIMU(it->first);
             it = mRegisteredIMUHeartbeatList.erase(it);
-            std::cout << "IMU deleted, id: " << currIMU << std::endl << std::endl;
+            std::cout << "IMU deleted, id: " << currIMU << std::endl;
         }
         else
         {

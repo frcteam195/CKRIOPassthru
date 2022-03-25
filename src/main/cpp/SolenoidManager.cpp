@@ -104,10 +104,10 @@ void SolenoidManager::processHeartbeat()
         if (mRegisteredSolenoidHeartbeatList[it->first] <= 0)
         {
             uint16_t currSolenoid = it->first;
-            std::cout << std::endl << "Deleting solenoid, id: " << currSolenoid << std::endl;
+            // std::cout << std::endl << "Deleting solenoid, id: " << currSolenoid << std::endl;
             deleteSolenoid(it->first);
             it = mRegisteredSolenoidHeartbeatList.erase(it);
-            std::cout << "Solenoid deleted, id: " << currSolenoid << std::endl << std::endl;
+            std::cout << "Solenoid deleted, id: " << currSolenoid << std::endl;
         }
         else
         {
