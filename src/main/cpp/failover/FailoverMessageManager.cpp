@@ -49,12 +49,12 @@ void FailoverMessageManager::publishMessages()
         NetworkManager::getInstance().placeFailoverMessage("motorcontrol", buf);
     }
 
-    if (mSolenoidControl.SerializeToArray(mBuff, BUF_SIZE))
-    {
-        std::vector<uint8_t> buf(BUF_SIZE, 0);
-        memcpy(&buf[0], mBuff, BUF_SIZE);
-        NetworkManager::getInstance().placeFailoverMessage("solenoidcontrol", buf);
-    }
+    // if (mSolenoidControl.SerializeToArray(mBuff, BUF_SIZE))
+    // {
+    //     std::vector<uint8_t> buf(BUF_SIZE, 0);
+    //     memcpy(&buf[0], mBuff, BUF_SIZE);
+    //     NetworkManager::getInstance().placeFailoverMessage("solenoidcontrol", buf);
+    // }
 
     //Should be roughly 500ms
     if (mLoopCounter++ % 25 == 0)
@@ -66,11 +66,11 @@ void FailoverMessageManager::publishMessages()
             NetworkManager::getInstance().placeFailoverMessage("motorconfig", buf);
         }
 
-        if (mIMUConfig.SerializeToArray(mBuff, BUF_SIZE))
-        {
-            std::vector<uint8_t> buf(BUF_SIZE, 0);
-            memcpy(&buf[0], mBuff, BUF_SIZE);
-            NetworkManager::getInstance().placeFailoverMessage("imuconfig", buf);
-        }
+        // if (mIMUConfig.SerializeToArray(mBuff, BUF_SIZE))
+        // {
+        //     std::vector<uint8_t> buf(BUF_SIZE, 0);
+        //     memcpy(&buf[0], mBuff, BUF_SIZE);
+        //     NetworkManager::getInstance().placeFailoverMessage("imuconfig", buf);
+        // }
     }
 }

@@ -74,13 +74,13 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
         std::cout << "IMU data message failed to serialize. Message probably too large or invalid." << std::endl;
     }
 
-#ifdef CONSOLE_REPORTING
-    if (count++ % 500 == 0)
-    {
-        std::string s;
-        google::protobuf::util::MessageToJsonString(mIMUData, &s);
-        std::cout << s << std::endl;
-    }
-#endif
+// #ifdef CONSOLE_REPORTING
+//     if (count++ % 500 == 0)
+//     {
+//         std::string s;
+//         google::protobuf::util::MessageToJsonString(mIMUData, &s);
+//         std::cout << s << std::endl;
+//     }
+// #endif
     mTaskTimer.reportElapsedTime();
 }
