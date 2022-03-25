@@ -38,6 +38,12 @@ void DrivetrainFailover::run()
         wheel = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
         throttle = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
     }
+    else
+    {
+        mLeftMaster->set_output_value(0);
+        mRightMaster->set_output_value(0);
+        return;
+    }
 
     DriveMotorValues dv = mDriveHelper.calculateOutput( throttle, wheel, mJoystick->GetRawButton(DRIVE_JOYSTICK_QUICK_TURN_BUTTON), true );
     double left = mLeftValueRamper.calculateOutput(dv.left);
@@ -46,7 +52,7 @@ void DrivetrainFailover::run()
     mLeftMaster->set_output_value(left);
     mRightMaster->set_output_value(right);
 
-    if (mJoystick->GetRawButton(DRIVE_JOYSTICK_BRAKE_MODE_BUTTON))
+    if (mJoystick && mJoystick->GetRawButton(DRIVE_JOYSTICK_BRAKE_MODE_BUTTON))
 	{
 		mLeftMasterConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);
         mLeftFollowerConfig->set_neutral_mode(ck::MotorConfiguration::Motor::NeutralMode::MotorConfiguration_Motor_NeutralMode_Brake);

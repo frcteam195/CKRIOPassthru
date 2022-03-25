@@ -139,8 +139,8 @@ model {
                 lib library: 'librosproto', linkage: 'static'
                 binaries.all {
                     cppCompiler.args << "-Werror"
-                    cppCompiler.args << "-g"    //Generate debug info for stack trace
-                    cppCompiler.args << "-rdynamic" //Export symbols for stack trace
+                    // cppCompiler.args << "-g"    //Generate debug info for stack trace
+                    // cppCompiler.args << "-rdynamic" //Export symbols for stack trace
                     linker.args << "-lzmq"
                     linker.args << "-lprotobuf"
                     // cppCompiler.args.each{ value -> 
