@@ -57,8 +57,6 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
                     m->set_raw_closed_loop_error(mCtrl->GetClosedLoopError());
                     m->set_raw_integral_accum(mCtrl->GetIntegralAccumulator());
                     m->set_raw_error_derivative(mCtrl->GetErrorDerivative());
-                    //DEBUG ONLY
-                    m->set_active_trajectory_arbff(mCtrl->GetClosedLoopTarget());
                     break;
                 }
                 case ControlMode::Follower:
@@ -68,6 +66,11 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
                     break;
                 }
             }
+            /////////DEBUGONLY
+            m->set_commanded_output(mCtrl->GetMotorOutputPercent());
+            //////////////////
+
+
             m->set_raw_output_percent(mCtrl->GetMotorOutputPercent());
             m->set_bus_voltage(mCtrl->GetBusVoltage());
             m->set_bus_current(mCtrl->GetSupplyCurrent());
