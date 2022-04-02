@@ -44,8 +44,10 @@ void RobotDataHelper::runThread()
     while (mThreadActive)
     {
         try {
-            mAlliance = mCachedAlliance.getValue();
-            mMatchTime = mCachedMatchTime.getValue();
+            //mAlliance = mCachedAlliance.getValue();
+            mAlliance = frc::DriverStation::GetAlliance();
+            mMatchTime = (float)frc::DriverStation::GetMatchTime();
+            // mMatchTime = mCachedMatchTime.getValue();
             mGameSpecificMsg = "";
             // TODO: Figure out why this is causing crash when DS not connected
             // if (mCacheTimerMsg.isTimedOut())

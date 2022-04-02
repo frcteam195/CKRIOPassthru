@@ -152,9 +152,39 @@ void Robot::RobotPeriodic() {
 	
 }
 
+static constexpr double kStartPose1Yaw = -88.5;
+static constexpr double kStartPose2Yaw = 136.5;
 void Robot::AutonomousInit()
 {
 	initIfNotInit();
+	switch (RobotDataHelper::getInstance().getSelectedAuto())
+	{
+		case 0:
+		{
+			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+				ckIMU->setYaw(kStartPose1Yaw);
+			});
+			break;
+		}
+		case 1:
+		{
+			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+				ckIMU->setYaw(kStartPose2Yaw);
+			});
+			break;
+		}
+		case 2:
+		{
+			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+				ckIMU->setYaw(kStartPose1Yaw);
+			});
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
 	if (!isExternalControl())

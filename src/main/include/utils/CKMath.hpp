@@ -129,5 +129,20 @@ namespace ck
             return i->second.interpolate(l->second, delta);
         }
 
+        template <typename T>
+        inline T normalizeYaw(T input_angle_deg)
+        {
+            while (input_angle_deg > 180)
+            {
+                input_angle_deg -= 360.0;
+            }
+
+            while (input_angle_deg < -180)
+            {
+                input_angle_deg += 360.0;
+            }
+            return input_angle_deg;
+        }
+
     } // namespace math
 } // namespace ck

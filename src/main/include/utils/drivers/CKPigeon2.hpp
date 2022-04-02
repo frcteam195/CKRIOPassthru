@@ -3,6 +3,7 @@
 #include "ctre/Phoenix.h"
 #include "CKIMU.hpp"
 #include <string>
+#include <atomic>
 
 class CKPigeon2 : public CKIMU
 {
@@ -27,4 +28,6 @@ public:
 
 private:
     Pigeon2 mPigeon;
+    double getNormalizedYaw();
+    std::atomic<double> m_yaw_angle_offset {0};
 };

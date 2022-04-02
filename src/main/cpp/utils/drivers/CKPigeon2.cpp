@@ -1,6 +1,7 @@
 #include "utils/drivers/CKPigeon2.hpp"
 #include "utils/PhoenixHelper.hpp"
 #include "utils/CKMath.hpp"
+#include "utils/CKLogger.hpp"
 
 CKPigeon2::CKPigeon2(int deviceNumber, std::string const &canbus)
 : mPigeon(deviceNumber, canbus)
@@ -15,6 +16,11 @@ CKPigeon2::CKPigeon2(int deviceNumber, std::string const &canbus)
 
 bool CKPigeon2::setYaw(double yaw)
 {
+    double actual = ck::math::normalizeYaw(mPigeon.GetYaw());
+    // std::cout << "Current Actual: " << actual << std::endl;
+    // std::cout << "Current Yaw: " << yaw << std::endl;
+    m_yaw_angle_offset = ck::math::normalizeYaw(ck::math::normalizeYaw(yaw) - actual);
+    // std::cout << "Angle Offset Yaw: " << m_yaw_angle_offset << std::endl;
     return ck::runPhoenixFunctionWithRetry([&]() { return (ErrorCode)mPigeon.SetYaw(yaw, ck::kCANTimeoutMs); });
 }
 
@@ -37,6 +43,13 @@ bool CKPigeon2::getYPR(double ypr[3])
     bool success = mPigeon.GetYawPitchRoll(yprDeg) == ErrorCode::OK;
     for (int i = 0; i < 3; i++)
     {
+        if (i == 0)
+        {
+            // std::cout << "Curr Actual Deg: " << yprDeg[0] << std::endl;
+            // std::cout << "Curr Offset Deg: " << m_yaw_angle_offset << std::endl;
+            yprDeg[0] = ck::math::normalizeYaw(ck::math::normalizeYaw(yprDeg[0]) + m_yaw_angle_offset);
+            // std::cout << "Output Yaw Deg: " << yprDeg[0] << std::endl;
+        }
         ypr[i] = ck::math::deg2rad(yprDeg[i]);
     }
     return success;
