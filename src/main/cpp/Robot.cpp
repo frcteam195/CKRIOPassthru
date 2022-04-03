@@ -107,9 +107,10 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
-	autoChooser.SetDefaultOption("Auto1", 0);
-	autoChooser.AddOption("Auto2", 1);
-	autoChooser.AddOption("Auto3", 2);
+	autoChooser.SetDefaultOption("Auto1_5ball", 0);
+	autoChooser.AddOption("Auto2_2ball", 1);
+	autoChooser.AddOption("Auto3_1ballClose", 2);
+	autoChooser.AddOption("Auto4_1ballFar", 3);
 	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
@@ -152,31 +153,43 @@ void Robot::RobotPeriodic() {
 	
 }
 
-static constexpr double kStartPose1Yaw = -88.5;
-static constexpr double kStartPose2Yaw = 136.5;
+static constexpr double kStartPose1YawRed = -88.5;
+static constexpr double kStartPose2YawRed = 136.5;
+static constexpr double kStartPose3YawRed = -156;
+static constexpr double kStartPose1YawBlue = 91.5;
+static constexpr double kStartPose2YawBlue = -43.5;
+static constexpr double kStartPose3YawBlue = 24.0;
 void Robot::AutonomousInit()
 {
+	bool is_red = RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed;
 	initIfNotInit();
 	switch (RobotDataHelper::getInstance().getSelectedAuto())
 	{
 		case 0:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(kStartPose1Yaw);
+				ckIMU->setYaw(is_red ? kStartPose1YawRed : kStartPose1YawBlue);
 			});
 			break;
 		}
 		case 1:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(kStartPose2Yaw);
+				ckIMU->setYaw(is_red ? kStartPose2YawRed : kStartPose2YawBlue);
 			});
 			break;
 		}
 		case 2:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(kStartPose1Yaw);
+				ckIMU->setYaw(is_red ? kStartPose3YawRed : kStartPose3YawBlue);
+			});
+			break;
+		}
+		case 3:
+		{
+			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+				ckIMU->setYaw(is_red ? kStartPose3YawRed : kStartPose3YawBlue);
 			});
 			break;
 		}
