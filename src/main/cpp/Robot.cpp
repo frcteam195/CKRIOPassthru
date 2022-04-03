@@ -29,13 +29,13 @@ static bool prevRobotFinalButtonPressed = false;
 
 void performInit()
 {
-	CKIMUManager::getInstance().forEach([] (uint16_t id, CKIMU* imu, IMUType imuType)
-	{
-		if (!imu->reset())
-		{
-			ck::ReportError("Failed to zero IMU: " + id);
-		}
-	});
+	// CKIMUManager::getInstance().forEach([] (uint16_t id, CKIMU* imu, IMUType imuType)
+	// {
+	// 	if (!imu->reset())
+	// 	{
+	// 		ck::ReportError("Failed to zero IMU: " + id);
+	// 	}
+	// });
 
 	MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
 	{
