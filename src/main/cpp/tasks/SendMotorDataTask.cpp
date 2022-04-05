@@ -67,7 +67,7 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
                 }
             }
             /////////DEBUGONLY
-            m->set_commanded_output(mCtrl->GetMotorOutputPercent());
+            // m->set_commanded_output(mCtrl->GetMotorOutputPercent());
             //////////////////
 
 
