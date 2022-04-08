@@ -17,8 +17,9 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "RobotDataHelper.hpp"
+#include "utils/CKSendable.hpp"
 
-static frc::SendableChooser<int> autoChooser;
+static frc::SendableChooser<ck::Sendable<int>*> autoChooser;
 static std::string autoMsg = "AutoSelection";
 static bool hasRobotInitialized = false;
 
@@ -26,6 +27,11 @@ static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
 static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
 static bool robotFinalButtonPressed = false;
 static bool prevRobotFinalButtonPressed = false;
+
+static ck::Sendable<int> auto1(0);
+static ck::Sendable<int> auto2(1);
+static ck::Sendable<int> auto3(2);
+static ck::Sendable<int> auto4(3);
 
 void performInit()
 {
@@ -107,10 +113,10 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
-	autoChooser.SetDefaultOption("Auto1_5ball", 0);
-	autoChooser.AddOption("Auto2_2ball", 1);
-	autoChooser.AddOption("Auto3_1ballClose", 2);
-	autoChooser.AddOption("Auto4_1ballFar", 3);
+	autoChooser.SetDefaultOption("Auto1_5ball", &auto1);
+	autoChooser.AddOption("Auto2_2ball", &auto2);
+	autoChooser.AddOption("Auto3_1ballClose", &auto3);
+	autoChooser.AddOption("Auto4_1ballFar", &auto4);
 	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
@@ -241,7 +247,7 @@ void Robot::DisabledInit()
 }
 void Robot::DisabledPeriodic()
 {
-	RobotDataHelper::getInstance().setSelectedAuto(autoChooser.GetSelected());
+	RobotDataHelper::getInstance().setSelectedAuto(autoChooser.GetSelected()->m_value);
 
 	static int debounceCounter = 0;
 	static uint32_t cycleCounter = 0;

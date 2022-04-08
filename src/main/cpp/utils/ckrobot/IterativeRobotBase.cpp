@@ -207,11 +207,11 @@ namespace ck
 
 		RobotPeriodic();
 
-		//   SmartDashboard::UpdateValues();
+		SmartDashboard::UpdateValues();
 		//   m_watchdog.AddEpoch("SmartDashboard::UpdateValues()");
 		//   LiveWindow::UpdateValues();
 		//   m_watchdog.AddEpoch("LiveWindow::UpdateValues()");
-		//   Shuffleboard::Update();
+		Shuffleboard::Update();
 		//   m_watchdog.AddEpoch("Shuffleboard::Update()");
 
 		if constexpr (IsSimulation())
