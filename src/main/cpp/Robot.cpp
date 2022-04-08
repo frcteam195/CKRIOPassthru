@@ -19,6 +19,8 @@
 #include "RobotDataHelper.hpp"
 #include "utils/CKSendable.hpp"
 
+#include "networktables/NetworkTableInstance.h"
+
 static frc::SendableChooser<ck::Sendable<int>*> autoChooser;
 static std::string autoMsg = "AutoSelection";
 static bool hasRobotInitialized = false;
@@ -122,6 +124,7 @@ void Robot::RobotInit()
 void Robot::RobotPeriodic() {
 
 	RobotControlModeHelper::getInstance().setDSAttached(frc::DriverStation::IsDSAttached());
+	nt::NetworkTableInstance::GetDefault().GetTable("dashboard_data")->GetEntry("shuffleboard_offset").GetDouble(0);
 
 	if (isExternalControl())
 	{
