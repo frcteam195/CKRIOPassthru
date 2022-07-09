@@ -120,7 +120,7 @@ void Robot::RobotInit()
 	autoChooser.SetDefaultOption("Auto1_5ball", &auto1);
 	autoChooser.AddOption("Auto2_2ball", &auto2);
 	autoChooser.AddOption("Auto3_1ballClose", &auto3);
-	autoChooser.AddOption("Auto4_1ballFar", &auto4);
+	autoChooser.AddOption("Auto4_2ballSwag", &auto4);
 	autoChooser.AddOption("Auto5_1ballHng", &auto5);
 	autoChooser.AddOption("Auto6_1ballHub", &auto6);
 	frc::SmartDashboard::PutData(&autoChooser);
