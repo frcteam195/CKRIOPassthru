@@ -36,6 +36,7 @@ static ck::Sendable<int> auto3(2);
 static ck::Sendable<int> auto4(3);
 static ck::Sendable<int> auto5(4);
 static ck::Sendable<int> auto6(5);
+static ck::Sendable<int> auto7(6);
 
 void performInit()
 {
@@ -123,6 +124,7 @@ void Robot::RobotInit()
 	autoChooser.AddOption("Auto4_2ballSwag", &auto4);
 	autoChooser.AddOption("Auto5_1ballHng", &auto5);
 	autoChooser.AddOption("Auto6_1ballHub", &auto6);
+	autoChooser.AddOption("Auto7_5ballVets", &auto7);
 	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
@@ -179,14 +181,15 @@ void Robot::AutonomousInit()
 	switch (RobotDataHelper::getInstance().getSelectedAuto())
 	{
 		case 0:
+		case 6:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
 				ckIMU->setYaw(is_red ? kStartPose1YawRed : kStartPose1YawBlue);
 			});
 			break;
 		}
-		case 3:
 		case 1:
+		case 3:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
 				ckIMU->setYaw(is_red ? kStartPose2YawRed : kStartPose2YawBlue);
