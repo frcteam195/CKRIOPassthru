@@ -185,6 +185,7 @@ void Robot::AutonomousInit()
 			});
 			break;
 		}
+		case 3:
 		case 1:
 		{
 			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
@@ -193,13 +194,6 @@ void Robot::AutonomousInit()
 			break;
 		}
 		case 2:
-		{
-			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(is_red ? kStartPose3YawRed : kStartPose3YawBlue);
-			});
-			break;
-		}
-		case 3:
 		case 4:
 		case 5:
 		{
