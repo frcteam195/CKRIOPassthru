@@ -18,6 +18,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "RobotDataHelper.hpp"
 #include "utils/CKSendable.hpp"
+#include "utils/AutoStartPositionAnglePair.hpp"
 
 #include "networktables/NetworkTableInstance.h"
 
@@ -118,13 +119,12 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
-	autoChooser.SetDefaultOption("Auto1_5ball", &auto1);
-	autoChooser.AddOption("Auto2_2ball", &auto2);
-	autoChooser.AddOption("Auto3_1ballClose", &auto3);
-	autoChooser.AddOption("Auto4_2ballSwag", &auto4);
-	autoChooser.AddOption("Auto5_1ballHng", &auto5);
-	autoChooser.AddOption("Auto6_1ballHub", &auto6);
-	autoChooser.AddOption("Auto7_5ballVets", &auto7);
+	autoChooser.SetDefaultOption("CK_5ball", &auto1);
+	autoChooser.AddOption("CK_2ballConsistent", &auto2);
+	autoChooser.AddOption("CK_2ballSwaggy", &auto4);
+	autoChooser.AddOption("CK_1ballHangar", &auto5);
+	autoChooser.AddOption("CK_1ballHub", &auto6);
+	autoChooser.AddOption("CK_5ballVeterans", &auto7);
 	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
@@ -167,13 +167,11 @@ void Robot::RobotPeriodic() {
 	}
 	
 }
+static AutoStartPositionAnglePair start_angle_1(-88.5);
+static AutoStartPositionAnglePair start_angle_2(136.5);
+static AutoStartPositionAnglePair start_angle_3(-156.0);
 
-static constexpr double kStartPose1YawRed = -88.5;
-static constexpr double kStartPose2YawRed = 136.5;
-static constexpr double kStartPose3YawRed = -156;
-static constexpr double kStartPose1YawBlue = 91.5;
-static constexpr double kStartPose2YawBlue = -43.5;
-static constexpr double kStartPose3YawBlue = 24.0;
+AutoStartPositionAnglePair* m_angle_pair = nullptr;
 void Robot::AutonomousInit()
 {
 	bool is_red = RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed;
@@ -183,32 +181,38 @@ void Robot::AutonomousInit()
 		case 0:
 		case 6:
 		{
-			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(is_red ? kStartPose1YawRed : kStartPose1YawBlue);
-			});
+			m_angle_pair = &start_angle_1;
 			break;
 		}
 		case 1:
 		case 3:
 		{
-			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(is_red ? kStartPose2YawRed : kStartPose2YawBlue);
-			});
+			m_angle_pair = &start_angle_2;
 			break;
 		}
 		case 2:
 		case 4:
 		case 5:
 		{
-			CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-				ckIMU->setYaw(is_red ? kStartPose3YawRed : kStartPose3YawBlue);
-			});
+			m_angle_pair = &start_angle_3;
 			break;
 		}
 		default:
 		{
+			m_angle_pair = nullptr;
 			break;
 		}
+	}
+
+	if (m_angle_pair != nullptr)
+	{
+		CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+			ckIMU->setYaw(is_red ? m_angle_pair->get_red_start_angle() : m_angle_pair->get_blue_start_angle());
+		});
+	}
+	else
+	{
+		ck::ReportError("Start position is not yet set or is invalid!");
 	}
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
