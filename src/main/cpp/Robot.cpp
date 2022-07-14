@@ -119,12 +119,12 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 
-	autoChooser.SetDefaultOption("CK_5ball", &auto1);
+	// autoChooser.SetDefaultOption("CK_5ball", &auto1);
 	autoChooser.AddOption("CK_2ballConsistent", &auto2);
 	autoChooser.AddOption("CK_2ballSwaggy", &auto4);
 	autoChooser.AddOption("CK_1ballHangar", &auto5);
 	autoChooser.AddOption("CK_1ballHub", &auto6);
-	autoChooser.AddOption("CK_5ballVeterans", &auto7);
+	autoChooser.SetDefaultOption("CK_5ballVeterans", &auto7);
 	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
