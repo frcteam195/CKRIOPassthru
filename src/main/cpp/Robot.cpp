@@ -91,12 +91,14 @@ void Robot::RobotInit()
 
 	//Register Tasks
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
+	TaskScheduler::getInstance().scheduleTask(applyEncoderConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyIMUConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
 	// TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
+	TaskScheduler::getInstance().scheduleTask(sendEncoderDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
 	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);

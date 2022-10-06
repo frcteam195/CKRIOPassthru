@@ -12,12 +12,14 @@
 #include "utils/SystemHelper.hpp"
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/ApplySolenoidValuesTask.hpp"
+#include "tasks/ApplyEncoderConfigTask.hpp"
 #include "tasks/ApplyIMUConfigTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
 #include "tasks/SendLEDOutputTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
+#include "tasks/SendEncoderDataTask.hpp"
 #include "tasks/SendMotorDataTask.hpp"
 #include "tasks/SendSolenoidDataTask.hpp"
 #include "tasks/SendJoystickDataTask.hpp"
@@ -51,12 +53,14 @@ private:
 	//Declare tasks as member variables in Robot cpp so they never go out of scope
 	ReceiveMessagesTask receiveMessagesTask;
 	ApplyIMUConfigTask applyIMUConfigTask;
+	ApplyEncoderConfigTask applyEncoderConfigTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	ApplySolenoidValuesTask applySolenoidValuesTask;
 	SendLEDOutputTask sendLEDOutputTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
+	SendEncoderDataTask sendEncoderDataTask;
 	SendMotorDataTask sendMotorDataTask;
 	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
