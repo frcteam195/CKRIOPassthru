@@ -71,4 +71,6 @@ private:
     google::protobuf::FieldDescriptor* REVERSE_LIMIT_SWITCH_NORMAL_FD;
     google::protobuf::FieldDescriptor* PEAK_OUTPUT_FORWARD_FD;
     google::protobuf::FieldDescriptor* PEAK_OUTPUT_REVERSE_FD;
+    google::protobuf::FieldDescriptor* CAN_NETWORK_FD;
+    google::protobuf::FieldDescriptor* FEEDBACK_SENSOR_CAN_ID_FD;
 };

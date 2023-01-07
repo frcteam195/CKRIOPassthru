@@ -15,6 +15,7 @@ public:
     double getVelocity() override;
     bool isFaulted() override;
     bool configSensorSource(EncoderSensorSource sensor_source) override;
+    bool configInitializationStrategy(InitializationStrategy initialization_strategy) override;
     bool reset() override;
     CANCoder& getRawCANCoder();
 

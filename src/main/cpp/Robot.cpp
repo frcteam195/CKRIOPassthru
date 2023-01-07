@@ -74,10 +74,10 @@ void Robot::RobotInit()
 	// dh.set_generate_core_dump(true);
 	
 	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
-	ck::resetCANivore();
-	ThreadRateControl trc;
-	trc.start();
-	trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
+	// ck::resetCANivore();
+	// ThreadRateControl trc;
+	// trc.start();
+	// trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
 
 
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
@@ -91,14 +91,14 @@ void Robot::RobotInit()
 
 	//Register Tasks
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
-	TaskScheduler::getInstance().scheduleTask(applyEncoderConfigTask);
+	// TaskScheduler::getInstance().scheduleTask(applyEncoderConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyIMUConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
 	// TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
-	TaskScheduler::getInstance().scheduleTask(sendEncoderDataTask);
+	// TaskScheduler::getInstance().scheduleTask(sendEncoderDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
 	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);

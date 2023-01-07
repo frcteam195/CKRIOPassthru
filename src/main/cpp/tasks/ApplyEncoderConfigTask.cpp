@@ -7,6 +7,7 @@
 #include "CKEncoderManager.hpp"
 #include "utils/drivers/CKPigeon2.hpp"
 #include "NetworkManager.hpp"
+#include "utils/drivers/CKCANCoder.hpp"
 #include <iostream>
 
 ApplyEncoderConfigTask::ApplyEncoderConfigTask() : Task(THREAD_RATE_MS, TASK_NAME)
@@ -36,13 +37,15 @@ void ApplyEncoderConfigTask::run(uint32_t timeSinceLastUpdateMs)
                 CKEncoderManager::getInstance().onEncoder(encoder_config_msg.id(), [&](uint16_t id, CKEncoder* encoder, EncoderType encoder_type)
                 {
                     success &= encoder->configSensorSource((EncoderSensorSource)encoder_config_msg.sensor_source());
+                    success &= encoder->configInitializationStrategy((InitializationStrategy) encoder_config_msg.initialization_strategy());
                     // success &= encoder->reset();
                     switch (encoder_type)
                     {
                         case EncoderType::CANCoder:
                         {
-                            // CKCANCoder* ckcancoder = dynamic_cast<CKCANCoder*>(encoder);
-                            // CANCoder cancoder = ckcancoder->getRawCANCoder();
+                            CKCANCoder* ckcancoder = dynamic_cast<CKCANCoder*>(encoder);
+                            CANCoder cancoder = ckcancoder->getRawCANCoder();
+                            cancoder.ConfigMagnetOffset(encoder_config_msg.magnetic_offset());
                             break;
                         }
                     }

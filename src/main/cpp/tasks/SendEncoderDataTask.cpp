@@ -8,6 +8,8 @@
 #include "utils/GlobalConfig.hpp"
 #include <string>
 #include "CKEncoderManager.hpp"
+#include "utils/drivers/CKCANCoder.hpp"
+#include "ctre/Phoenix.h"
 
 SendEncoderDataTask::SendEncoderDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mEncoderData()
 {
@@ -32,10 +34,12 @@ void SendEncoderDataTask::run(uint32_t timeSinceLastUpdateMs)
     CKEncoderManager::getInstance().forEach([&](uint16_t id, CKEncoder* encoder, EncoderType encoderType)
     {
         ck::EncoderData_EncoderSensorData *encoderSensorData = mEncoderData.add_encoder_sensor();
+        // CKCANCoder* ckCANCoder = dynamic_cast<CKCANCoder*>(encoder);
         encoderSensorData->set_id(id);
-        encoderSensorData->set_sensor_position(encoder->getPosition());
-        encoderSensorData->set_sensor_velocity(encoder->getVelocity());
-        encoderSensorData->set_is_faulted(encoder->isFaulted());
+        encoderSensorData->set_sensor_absolute_position(encoder->getAbsolutePosition());
+        // encoderSensorData->set_sensor_relative_position(encoder->getRelativePosition());
+        // encoderSensorData->set_sensor_velocity(encoder->getVelocity());
+        // encoderSensorData->set_is_faulted(encoder->isFaulted());
     });
 
     if (mEncoderData.SerializeToArray(mEncoderDataBuf, mEncoderData.ByteSizeLong()))

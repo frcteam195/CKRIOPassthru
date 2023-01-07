@@ -52,6 +52,11 @@ bool CKCANCoder::configSensorSource(EncoderSensorSource sensor_source)
     return true;
 }
 
+bool CKCANCoder::configInitializationStrategy(InitializationStrategy initialization_strategy)
+{
+    return ck::runPhoenixFunctionWithRetry([&]() { return mCANCoder.ConfigSensorInitializationStrategy((SensorInitializationStrategy)initialization_strategy, ck::kCANTimeoutMs); });
+}
+
 bool CKCANCoder::reset()
 {
     return ck::runPhoenixFunctionWithRetry([&]() { return mCANCoder.SetPosition(0, ck::kCANTimeoutMs); });

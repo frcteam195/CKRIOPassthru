@@ -9,6 +9,9 @@
 #include "NetworkManager.hpp"
 #include "utils/PhoenixHelper.hpp"
 #include "MotorConfigManager.hpp"
+#include "CKEncoderManager.hpp"
+#include "utils/drivers/CKEncoder.hpp"
+#include "utils/drivers/CKCANCoder.hpp"
 #include <iostream>
 #include "utils/CKLogger.hpp"
 
@@ -88,6 +91,25 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
         
         if (isMaster)
         {
+            ck::runPhoenixFunctionWithRetry([&]() {
+                if (m.feedback_sensor_can_id() > 0)
+                {
+                    bool success = true;
+                    // CKEncoder* ckEncoder = CKEncoderManager::getInstance().getEncoder(m.feedback_sensor_can_id());
+                    // CKCANCoder* ckCANCoder = dynamic_cast<CKCANCoder*>(ckEncoder);
+                    // CANCoder canCoder = ckCANCoder->getRawCANCoder();
+                    // success &= mCtrl->ConfigRemoteFeedbackFilter(canCoder, 0, ck::kCANTimeoutMs) == ErrorCode::OK;
+                    std::cout << "Setting remote filter for motor ID: " << m.id() << std::endl;
+                    success &= mCtrl->ConfigRemoteFeedbackFilter(m.feedback_sensor_can_id(), RemoteSensorSource::RemoteSensorSource_CANCoder, 0, ck::kCANTimeoutMs) == ErrorCode::OK;
+                    success &= mCtrl->ConfigSelectedFeedbackSensor(RemoteFeedbackDevice::RemoteSensor0) == ErrorCode::OK;
+                    return success ? ErrorCode::OK : ErrorCode::GeneralError;
+                }
+                else
+                {
+                    return mCtrl->ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor);
+                }
+            }, id);
+
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kP(0, m.kp(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kI(0, m.ki(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kD(0, m.kd(), ck::kCANTimeoutMs); }, id);
@@ -203,6 +225,8 @@ void ApplyMotorConfigTask::initFieldDescriptors()
     REVERSE_LIMIT_SWITCH_NORMAL_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(32);
     PEAK_OUTPUT_FORWARD_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(33);
     PEAK_OUTPUT_REVERSE_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(34);
+    CAN_NETWORK_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(35);
+    FEEDBACK_SENSOR_CAN_ID_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(36);
 }
 
 void ApplyMotorConfigTask::initUpdateFunctions()
@@ -454,5 +478,29 @@ void ApplyMotorConfigTask::initUpdateFunctions()
         MotorManager::getInstance().onMotor(msg,
             [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigPeakOutputReverse(m.peak_output_reverse() > -0.04 ? -1.0 : m.peak_output_reverse(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(FEEDBACK_SENSOR_CAN_ID_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            {
+                ck::runPhoenixFunctionWithRetry([mCtrl, m]() {
+                    if (m.feedback_sensor_can_id() > 0)
+                    {
+                        CKEncoder* ckEncoder = CKEncoderManager::getInstance().getEncoder(m.feedback_sensor_can_id());
+                        CKCANCoder* ckCANCoder = dynamic_cast<CKCANCoder*>(ckEncoder);
+                        CANCoder canCoder = ckCANCoder->getRawCANCoder();
+                        bool success = true;
+                        success &= mCtrl->ConfigRemoteFeedbackFilter(canCoder, 0, ck::kCANTimeoutMs) == ErrorCode::OK;
+                        success &= mCtrl->ConfigSelectedFeedbackSensor(RemoteFeedbackDevice::RemoteSensor0) == ErrorCode::OK;
+                        return success ? ErrorCode::OK : ErrorCode::GeneralError;
+                    }
+                    else
+                    {
+                        return mCtrl->ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor);
+                    }
+                    return ErrorCode::OK;
+                }, id); });
     });
 }

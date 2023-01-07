@@ -6,6 +6,12 @@ enum class EncoderSensorSource
     ABSOLUTE = 1
 };
 
+enum class InitializationStrategy
+{
+    BOOT_TO_ZERO = 0,
+    BOOT_TO_ABSOLUTE = 1
+};
+
 class CKEncoder
 {
 public:
@@ -16,6 +22,7 @@ public:
     virtual double getVelocity() = 0;
     virtual bool isFaulted() = 0;
     virtual bool configSensorSource(EncoderSensorSource sensor_source) = 0;
+    virtual bool configInitializationStrategy(InitializationStrategy initialization_strategy) = 0;
     virtual bool reset() = 0;
 
 protected:
