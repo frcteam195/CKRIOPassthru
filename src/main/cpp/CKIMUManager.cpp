@@ -1,6 +1,5 @@
 #include "CKIMUManager.hpp"
 #include "utils/drivers/CKPigeon2.hpp"
-#include "utils/drivers/CKNavX.hpp"
 #include <iostream>
 #include "utils/PhoenixHelper.hpp"
 
@@ -43,11 +42,6 @@ void CKIMUManager::registerIMU(uint16_t id, IMUType imuType, CANInterface canInt
             case IMUType::PIGEON2:
             {
                 mRegisteredIMUList[id] = new CKPigeon2(id, canNetwork);
-                break;
-            }
-            case IMUType::NAVX:
-            {
-                mRegisteredIMUList[id] = new CKNavX();
                 break;
             }
             default:

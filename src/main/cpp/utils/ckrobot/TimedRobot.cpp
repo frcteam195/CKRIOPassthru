@@ -83,9 +83,7 @@ namespace ck
 	TimedRobot::TimedRobot(units::second_t period) : IterativeRobotBase(period)
 	{
 		m_startTime = Timer::GetFPGATimestamp();
-		AddPeriodic([=]
-					{ LoopFunc(); },
-					period);
+		AddPeriodic([=, this] { LoopFunc(); }, period);
 
 		int32_t status = 0;
 		m_notifier = HAL_InitializeNotifier(&status);

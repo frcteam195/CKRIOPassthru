@@ -1,7 +1,7 @@
 plugins {
     id "cpp"
     id "google-test-test-suite"
-    id "edu.wpi.first.GradleRIO" version "2022.4.1"
+    id "edu.wpi.first.GradleRIO" version "2023.1.1"
     id "org.hidetake.ssh" version "2.10.1"
 }
 
@@ -21,7 +21,7 @@ ssh.settings {
 
 //For this task to run successfully, you must have the following in your system path:
 //protoc
-//roborio toolchain (wpilib/2022/roborio/bin/)
+//roborio toolchain (wpilib/2023/roborio/bin/)
 task protoc {
     doFirst {
         exec {
@@ -32,12 +32,12 @@ task protoc {
         exec {
             workingDir "$projectDir/src/main/protogen"
             project.logger.lifecycle('Compiling generated source...')
-            commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
+            commandLine 'bash', '-c', 'arm-frc2023-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++11 -O3'
         }
         exec {
             workingDir "$projectDir/src/main/protogen"
             project.logger.lifecycle('Linking compiled source into static lib...')
-            commandLine 'bash', '-c', 'arm-frc2022-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+            commandLine 'bash', '-c', 'arm-frc2023-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
         }
     }
 }
@@ -159,9 +159,4 @@ model {
             wpi.cpp.deps.wpilib(it)
         }
     }
-}
-
-wrapper {
-    gradleVersion = '7.3.3'
-    distributionType = Wrapper.DistributionType.BIN
 }
