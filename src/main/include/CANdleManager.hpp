@@ -9,7 +9,6 @@
 #include <functional>
 #include "IntellisenseDefs.h"
 #include "LEDControl.pb.h"
-#include "utils/drivers/CKCANdle.hpp"
 #include "utils/drivers/CANInterface.hpp"
 
 class CANdleManager : public Singleton<CANdleManager>
@@ -19,6 +18,7 @@ public:
     void registerCANdle(uint16_t id, CANInterface canInterface);
     void deleteCANdle(uint16_t id);
     void onCANdle(uint16_t id, std::function<void(uint16_t, ctre::phoenix::led::CANdle*)> func);
+    void onCANdle(const google::protobuf::Message& msg, std::function<void(uint16_t, ctre::phoenix::led::CANdle*, const ck::LEDControl::LEDControlData&)> func);
     void forEach(std::function<void(uint16_t, ctre::phoenix::led::CANdle*)> func);
     void processHeartbeat();
     bool candleExists(uint16_t id);

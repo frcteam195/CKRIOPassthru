@@ -26,5 +26,5 @@ private:
     static constexpr unsigned int kMandatoryUpdatePerioduS = 200000;
     static constexpr bool MANDATORY_UPDATE_ENABLED = true;
 
-    uint32_t mFalconMitigationCounter = 0;
+    // uint32_t mFalconMitigationCounter = 0;
 };

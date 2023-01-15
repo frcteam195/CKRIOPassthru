@@ -26,10 +26,10 @@ static frc::SendableChooser<ck::Sendable<int>*> autoChooser;
 static std::string autoMsg = "AutoSelection";
 static bool hasRobotInitialized = false;
 
-static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
-static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
-static bool robotFinalButtonPressed = false;
-static bool prevRobotFinalButtonPressed = false;
+// static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
+// static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
+// static bool robotFinalButtonPressed = false;
+// static bool prevRobotFinalButtonPressed = false;
 
 static ck::Sendable<int> auto1(0);
 static ck::Sendable<int> auto2(1);
@@ -49,13 +49,13 @@ void performInit()
 	// 	}
 	// });
 
-	MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
-	{
-		if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
-		{
-			ck::ReportError("Failed to zero motor: " + id);
-		}
-	});
+	// MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
+	// {
+	// 	if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
+	// 	{
+	// 		ck::ReportError("Failed to zero motor: " + id);
+	// 	}
+	// });
 }
 
 void initIfNotInit()
@@ -260,36 +260,36 @@ void Robot::DisabledPeriodic()
 {
 	RobotDataHelper::getInstance().setSelectedAuto(autoChooser.GetSelected()->m_value);
 
-	static int debounceCounter = 0;
-	static uint32_t cycleCounter = 0;
+	// static int debounceCounter = 0;
+	// static uint32_t cycleCounter = 0;
 	if (!isExternalControl())
 	{
 		robotFailover.DisabledFailoverPeriodic();
 	}
 
-	if (!hasRobotInitialized && cycleCounter++ % 50 == 0)
-	{
-		performInit();
-	}
+	// if (!hasRobotInitialized && cycleCounter++ % 50 == 0)
+	// {
+	// 	performInit();
+	// }
 
-	if(debounceCounter <= 1 && !hasRobotInitialized && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
-		HAL_JoystickButtons rawButtons;
-		HAL_GetJoystickButtons(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID, &rawButtons);
-		robotFinalButtonPressed = rawButtons.buttons & (1 << ROBOT_PLACED_FINAL_BUTTON_HAL_ID);
-		if (robotFinalButtonPressed && prevRobotFinalButtonPressed != robotFinalButtonPressed)
-		{
-			debounceCounter++;
-		}
-		prevRobotFinalButtonPressed = robotFinalButtonPressed;
-	}
+	// if(debounceCounter <= 1 && !hasRobotInitialized && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
+	// 	HAL_JoystickButtons rawButtons;
+	// 	HAL_GetJoystickButtons(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID, &rawButtons);
+	// 	robotFinalButtonPressed = rawButtons.buttons & (1 << ROBOT_PLACED_FINAL_BUTTON_HAL_ID);
+	// 	if (robotFinalButtonPressed && prevRobotFinalButtonPressed != robotFinalButtonPressed)
+	// 	{
+	// 		debounceCounter++;
+	// 	}
+	// 	prevRobotFinalButtonPressed = robotFinalButtonPressed;
+	// }
 
-	if (debounceCounter > 1 && !hasRobotInitialized)
-	{
-		ck::ReportWarning("Robot Final Position Recorded");
-		performInit();
-		hasRobotInitialized = true;
-		frc::SmartDashboard::PutBoolean("FinalPositionRecorded", true);
-	}
+	// if (debounceCounter > 1 && !hasRobotInitialized)
+	// {
+	// 	ck::ReportWarning("Robot Final Position Recorded");
+	// 	performInit();
+	// 	hasRobotInitialized = true;
+	// 	frc::SmartDashboard::PutBoolean("FinalPositionRecorded", true);
+	// }
 }
 
 void Robot::TestInit()
