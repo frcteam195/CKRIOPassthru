@@ -16,7 +16,6 @@
 #include "tasks/ApplyIMUConfigTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
-#include "tasks/SendLEDOutputTask.hpp"
 #include "tasks/SendRobotDataTask.hpp"
 #include "tasks/SendIMUDataTask.hpp"
 #include "tasks/SendEncoderDataTask.hpp"
@@ -57,7 +56,6 @@ private:
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	ApplySolenoidValuesTask applySolenoidValuesTask;
-	SendLEDOutputTask sendLEDOutputTask;
 	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
 	SendEncoderDataTask sendEncoderDataTask;

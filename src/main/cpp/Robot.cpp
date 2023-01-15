@@ -96,7 +96,6 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
-	// TaskScheduler::getInstance().scheduleTask(sendLEDOutputTask);
 	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	// TaskScheduler::getInstance().scheduleTask(sendEncoderDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
