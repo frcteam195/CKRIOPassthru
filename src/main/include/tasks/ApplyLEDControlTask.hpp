@@ -25,9 +25,15 @@ private:
     DifferentialUpdateReporter mDiffReporter;
     google::protobuf::util::MessageDifferencer mDiff;
 
-    bool fullUpdate(ck::LEDControl::LEDControlData& d);
+    void updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
+    void updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
+
+    bool fullUpdate(ck::LEDControl::LEDControlData& m);
     void initFieldDescriptors();
     void initUpdateFunctions();
+
+
+    std::map<uint16_t, ck::LEDControl_LEDControlData_LEDControlMode> mCurrLEDCtrlMode;
 
     google::protobuf::FieldDescriptor* LED_TYPE_FD;
     google::protobuf::FieldDescriptor* VBAT_CONFIG_FD;

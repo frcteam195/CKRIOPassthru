@@ -11,6 +11,39 @@ CANdleManager::~CANdleManager()
     }
 }
 
+bool CANdleManager::try_lock()
+{
+    return candleLock.try_lock();
+}
+
+void CANdleManager::unlock()
+{
+    candleLock.unlock();
+}
+
+std::map<uint16_t, ck::LEDControl::LEDControlData>&CANdleManager::getPrevCANdlesConfigMsg()
+{
+    return mPrevCANdleMsgs;
+}
+
+void CANdleManager::setPrevCANdleConfigMsg(uint16_t id, ck::LEDControl::LEDControlData& ledControlMsg)
+{
+    mPrevCANdleMsgs[id] = ledControlMsg;
+}
+
+std::map<uint16_t, ck::LEDControl::LEDControlData>& CANdleManager::getCANdlesConfigMsg()
+{
+    return mCANdleMsgs;
+}
+
+void CANdleManager::setCANdlesConfigMsg(ck::LEDControl& candleConfigMsg)
+{
+    for (ck::LEDControl::LEDControlData m : candleConfigMsg.led_control())
+    {
+        mCANdleMsgs[m.id()] = m;
+    }
+}
+
 void CANdleManager::forEach(std::function<void(uint16_t, ctre::phoenix::led::CANdle*)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(candleLock);

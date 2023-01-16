@@ -102,6 +102,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
 	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
+	TaskScheduler::getInstance().scheduleTask(applyLEDControlTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
 
 #ifdef ENABLE_TASK_TIME_REPORTING

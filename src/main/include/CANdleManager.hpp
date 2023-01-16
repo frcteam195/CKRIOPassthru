@@ -15,6 +15,12 @@ class CANdleManager : public Singleton<CANdleManager>
 {
     friend Singleton;
 public:
+    bool try_lock();
+    void unlock();
+    std::map<uint16_t, ck::LEDControl::LEDControlData>& getPrevCANdlesConfigMsg();
+    void setPrevCANdleConfigMsg(uint16_t id, ck::LEDControl::LEDControlData& candleConfigMsg);
+    std::map<uint16_t, ck::LEDControl::LEDControlData>& getCANdlesConfigMsg();
+    void setCANdlesConfigMsg(ck::LEDControl& candleConfigMsg);
     void registerCANdle(uint16_t id, CANInterface canInterface);
     void deleteCANdle(uint16_t id);
     void onCANdle(uint16_t id, std::function<void(uint16_t, ctre::phoenix::led::CANdle*)> func);
@@ -30,6 +36,9 @@ private:
     std::map<uint16_t, ctre::phoenix::led::CANdle*> mRegisteredCANdleList;
     std::map<uint16_t, CANInterface> mRegisteredCANdleCANIntList;
     std::map<uint16_t, int> mRegisteredCANdleHeartbeatList;
+
+    std::map<uint16_t, ck::LEDControl::LEDControlData> mCANdleMsgs;
+    std::map<uint16_t, ck::LEDControl::LEDControlData> mPrevCANdleMsgs;
 
     std::recursive_mutex candleLock;
 

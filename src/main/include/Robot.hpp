@@ -13,6 +13,7 @@
 #include "tasks/ReceiveMessagesTask.hpp"
 #include "tasks/ApplySolenoidValuesTask.hpp"
 #include "tasks/ApplyEncoderConfigTask.hpp"
+#include "tasks/ApplyLEDControlTask.hpp"
 #include "tasks/ApplyIMUConfigTask.hpp"
 #include "tasks/ApplyMotorValuesTask.hpp"
 #include "tasks/ApplyMotorConfigTask.hpp"
@@ -53,6 +54,7 @@ private:
 	ReceiveMessagesTask receiveMessagesTask;
 	ApplyIMUConfigTask applyIMUConfigTask;
 	ApplyEncoderConfigTask applyEncoderConfigTask;
+	ApplyLEDControlTask applyLEDControlTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
 	ApplySolenoidValuesTask applySolenoidValuesTask;
