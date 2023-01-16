@@ -190,12 +190,12 @@ namespace ck
 	RobotPeriodic();
 	m_watchdog.AddEpoch("RobotPeriodic()");
 
-	// SmartDashboard::UpdateValues();
-	// m_watchdog.AddEpoch("SmartDashboard::UpdateValues()");
-	// LiveWindow::UpdateValues();
-	// m_watchdog.AddEpoch("LiveWindow::UpdateValues()");
-	// Shuffleboard::Update();
-	// m_watchdog.AddEpoch("Shuffleboard::Update()");
+	SmartDashboard::UpdateValues();
+	m_watchdog.AddEpoch("SmartDashboard::UpdateValues()");
+	LiveWindow::UpdateValues();
+	m_watchdog.AddEpoch("LiveWindow::UpdateValues()");
+	Shuffleboard::Update();
+	m_watchdog.AddEpoch("Shuffleboard::Update()");
 
 	if constexpr (IsSimulation()) {
 		HAL_SimPeriodicBefore();
