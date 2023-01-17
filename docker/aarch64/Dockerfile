@@ -1,4 +1,5 @@
 FROM ubuntu:22.04
+ARG YEAR=2023
 
 RUN apt-get update && apt-get install -y apt-transport-https \
     ca-certificates \
