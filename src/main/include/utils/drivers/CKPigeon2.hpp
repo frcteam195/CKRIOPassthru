@@ -12,6 +12,7 @@ public:
     bool setYaw(double yaw) override;
     bool getQuaternion(double quaternion[4]) override;
     bool getYPR(double ypr[3]) override;
+    bool getYPRRPS(double yprrps[3]) override;
     bool configMountPose(AxisDirection forward, AxisDirection up) override;
     bool reset() override;
     Pigeon2& getRawPigeon2();

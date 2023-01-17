@@ -34,6 +34,7 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
         ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
         imuSensorData->set_id(id);
         double ypr[3] = {};
+        double yprrps[3] = {};
 
         if (imu->getYPR(ypr))
         {
@@ -46,6 +47,19 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
             imuSensorData->set_x(0);
             imuSensorData->set_y(0);
             imuSensorData->set_z(0);
+        }
+
+        if (imu->getYPRRPS(yprrps))
+        {
+            imuSensorData->set_x_rps(yprrps[0]);
+            imuSensorData->set_y_rps(yprrps[1]);
+            imuSensorData->set_z_rps(yprrps[2]);
+        }
+        else
+        {
+            imuSensorData->set_x_rps(0);
+            imuSensorData->set_y_rps(0);
+            imuSensorData->set_z_rps(0);
         }
         
         // double quaternion[4];

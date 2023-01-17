@@ -80,6 +80,25 @@ bool CKPigeon2::getYPR(double ypr[3])
     return success;
 }
 
+bool CKPigeon2::getYPRRPS(double yprrps[3])
+{
+    double yprDPSDeg[3] = {};
+    bool success = mPigeon.GetRawGyro(yprDPSDeg) == ErrorCode::OK;
+    if (!success)
+    {
+        yprDPSDeg[0] = 0;
+        yprDPSDeg[1] = 0;
+        yprDPSDeg[2] = 0;
+        return false;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        yprrps[i] = ck::math::deg2rad(yprDPSDeg[i]);
+    }
+    return success;
+}
+
 bool CKPigeon2::configMountPose(AxisDirection forward, AxisDirection up)
 {
     return ck::runPhoenixFunctionWithRetry([&]() { return mPigeon.ConfigMountPose(forward, up, ck::kCANTimeoutMs); });
