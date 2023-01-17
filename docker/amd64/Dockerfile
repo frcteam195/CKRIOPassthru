@@ -1,62 +1,55 @@
-ARG UBUNTU=18.04
-ARG YEAR=2022
-FROM wpilib/roborio-cross-ubuntu:${YEAR}-${UBUNTU}
-ARG YEAR
+FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -y \
-    autoconf \
+RUN apt-get update && apt-get install -y apt-transport-https \
+    ca-certificates \
+    gnupg \
+    software-properties-common \
+    wget && \
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null && \
+    apt-add-repository 'deb https://apt.kitware.com/ubuntu/ jammy main' && \
+    add-apt-repository ppa:git-core/ppa && \
+    apt-get update && apt-get install -y tzdata && apt-get install -y \
     build-essential \
     ca-certificates \
+    clang-format-14 \
     cmake \
     curl \
-    file \
+    fakeroot \
     g++ --no-install-recommends \
     gcc \
     gdb \
+    git \
     java-common \
     libc6-dev \
-    libcups2-dev \
-    libfontconfig1-dev \
-    libfreetype6-dev \
-    libisl15 \
-    libpython2.7 \
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
+    libisl-dev \
+    libopencv-dev \
+    libvulkan-dev \
     libx11-dev \
-    libxext-dev \
+    libxcursor-dev \
+    libxi-dev \
+    libxinerama-dev \
     libxrandr-dev \
-    libxrender-dev \
-    libxtst-dev \
-    libxt-dev \
     make \
-    mercurial \
+    mesa-common-dev \
+    openjdk-17-jdk \
+    python-all-dev \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    sudo \
     unzip \
     wget \
-    zip
+    zip \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64
 
 WORKDIR /tmp
-RUN wget https://github.com/wpilibsuite/frc-openjdk-roborio/raw/2022/arm-x11-files.tar.xz \
-	&& cat arm-x11-files.tar.xz | sh -c "cd /usr/local/arm-frc${YEAR}-linux-gnueabi && tar xJf -" \
-	&& rm -Rf arm-x11-files.tar.xz
 
-RUN wget \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/alsa-lib-dev_1.1.5-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/alsa-server_1.1.5-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/cups-dev_2.2.6-r0.14_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libasound2_1.1.5-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libfontconfig-dev_2.12.6-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libfontconfig1_2.12.6-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libfreetype-dev_2.9-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libfreetype6_2.9-r0.6_cortexa9-vfpv3.ipk \
-    https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libz1_1.2.11-r0.71_cortexa9-vfpv3.ipk \
-	&& for f in *.ipk; do \
-		ar p $f data.tar.gz | sh -c 'cd /usr/local/arm-frc${YEAR}-linux-gnueabi && tar xzf -'; \
-	done \
-	&& rm *.ipk
+RUN curl -SL https://github.com/wpilibsuite/opensdk/releases/download/v2023-7/cortexa9_vfpv3-roborio-academic-2023-x86_64-linux-gnu-Toolchain-12.1.0.tgz | sh -c 'mkdir -p /usr/local && cd /usr/local && tar xzf - --strip-components=2'
 
-# Copy over a couple missing headers for building JRE
-RUN cp -n /usr/include/X11/extensions/Xrandr.h /usr/local/arm-frc${YEAR}-linux-gnueabi/usr/include/X11/extensions/ \
-	&& cp -n /usr/include/X11/extensions/randr.h /usr/local/arm-frc${YEAR}-linux-gnueabi/usr/include/X11/extensions/
-
-WORKDIR /tmp
 RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
 	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
 	&& cd /tmp/protobuf-3.18.0 \
