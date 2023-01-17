@@ -25,7 +25,7 @@ public:
         int CondStatus_10_SixDeg_Quat = 0;
         int CondStatus_11_GyroAccum = 0;
     };
-    static constexpr StatusFrameConfig FAST_GYRO_CONFIG = {100, 100, 5, 100, 5};
+    static constexpr StatusFrameConfig FAST_GYRO_CONFIG = {5, 5, 5, 5, 5};
 
 private:
     Pigeon2 mPigeon;
