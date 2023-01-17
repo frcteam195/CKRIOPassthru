@@ -71,7 +71,7 @@ RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4
 	&& make -j4 \
 	&& chown -R `id -u`:`id -g` src/.libs/libzmq.so \
 	&& arm-frc${YEAR}-linux-gnueabi-strip src/.libs/libzmq.so \
-	&& cp src/.libs/libzmq.so /usr/local/arm-frc${YEAR}-linux-gnueabi/lib/libzmq.so \
+	&& cp src/.libs/libzmq.so /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libzmq.so \
 	&& cd /tmp \
 	&& rm -Rf /tmp/* 
 
@@ -84,7 +84,7 @@ RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.1
 	&& make -j4 \
 	&& chown -R `id -u`:`id -g` .libs/libprotobuf.so \
 	&& arm-frc${YEAR}-linux-gnueabi-strip .libs/libprotobuf.so \
-	&& cp .libs/libprotobuf.so /usr/local/arm-frc${YEAR}-linux-gnueabi/lib/libprotobuf.so \
+	&& cp .libs/libprotobuf.so /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libprotobuf.so \
 	&& cd /tmp \
 	&& rm -Rf /tmp/*
 
