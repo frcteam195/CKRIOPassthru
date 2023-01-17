@@ -65,6 +65,8 @@ WORKDIR /tmp
 RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4.3.4.tar.gz \
 	&& tar -xzf zeromq-4.3.4.tar.gz \
 	&& cd /tmp/zeromq-4.3.4 \
+	&& export CFLAGS="-Wno-error" \
+	&& export CXXFLAGS="-Wno-error" \
 	&& ./configure --enable-drafts --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++ \
 	&& make -j4 \
 	&& chown -R `id -u`:`id -g` src/.libs/libzmq.so \
