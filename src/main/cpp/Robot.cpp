@@ -176,7 +176,7 @@ static AutoStartPositionAnglePair start_angle_3(-156.0);
 AutoStartPositionAnglePair* m_angle_pair = nullptr;
 void Robot::AutonomousInit()
 {
-	bool is_red = RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed;
+	// bool is_red = RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed;
 	initIfNotInit();
 	switch (RobotDataHelper::getInstance().getSelectedAuto())
 	{
@@ -206,16 +206,16 @@ void Robot::AutonomousInit()
 		}
 	}
 
-	if (m_angle_pair != nullptr)
-	{
-		CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-			ckIMU->setYaw(is_red ? m_angle_pair->get_red_start_angle() : m_angle_pair->get_blue_start_angle());
-		});
-	}
-	else
-	{
-		ck::ReportError("Start position is not yet set or is invalid!");
-	}
+	// if (m_angle_pair != nullptr)
+	// {
+	// 	CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
+	// 		ckIMU->setYaw(is_red ? m_angle_pair->get_red_start_angle() : m_angle_pair->get_blue_start_angle());
+	// 	});
+	// }
+	// else
+	// {
+	// 	ck::ReportError("Start position is not yet set or is invalid!");
+	// }
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
 	if (!isExternalControl())
