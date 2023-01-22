@@ -97,32 +97,51 @@ void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdl
             }
             case ck::LEDAnimation_AnimationType_Fire:
             {
-                // ctre::phoenix::led::FireAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::ColorFlowAnimation::Direction)a.direction(), a.offset());
-                // mCtrl->Animate(animation, a.slot());
+                ctre::phoenix::led::FireAnimation animation(a.brightness(), a.speed(), a.num_led(), 0.5, 0.5, a.direction(), a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_Larson:
             {
+                //TODO: Fix bounce mode in protobuf API
+                ctre::phoenix::led::LarsonAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_Rainbow:
             {
+                ctre::phoenix::led::RainbowAnimation animation(a.brightness(), a.speed(), a.num_led(), a.direction(), a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_RGBFade:
             {
+                ctre::phoenix::led::RgbFadeAnimation animation(a.brightness(), a.speed(), a.num_led(), a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_SingleFade:
             {
+                ctre::phoenix::led::SingleFadeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
+                mCtrl->Animate(animation, a.slot());
+                break;
+            }
+            case ck::LEDAnimation_AnimationType_Strobe:
+            {
+                ctre::phoenix::led::StrobeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_Twinkle:
             {
+                ctre::phoenix::led::TwinkleAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent76, a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             case ck::LEDAnimation_AnimationType_TwinkleOff:
             {
+                ctre::phoenix::led::TwinkleOffAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent76, a.offset());
+                mCtrl->Animate(animation, a.slot());
                 break;
             }
             default:
@@ -142,6 +161,8 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigVBatOutput((VBatOutputMode)m.vbat_config(), ck::kCANTimeoutMs); }, id);
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ModulateVBatOutput(m.vbat_duty_cycle()); }, id);
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
+
+        ck::log("LED Control Mode: " + m.led_control_mode());
         switch(m.led_control_mode())
         {
             case ck::LEDControl_LEDControlData_LEDControlMode_Static:
