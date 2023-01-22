@@ -170,10 +170,6 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
                 updateColor(id, mCtrl, m);
                 break;
             }
-            case ck::LEDControl_LEDControlData_LEDControlMode_Blinking:
-            {
-                break;
-            }
             case ck::LEDControl_LEDControlData_LEDControlMode_Animated:
             {
                 updateAnimation(id, mCtrl, m);
