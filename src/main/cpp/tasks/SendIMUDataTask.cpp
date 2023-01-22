@@ -33,21 +33,11 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
     {
         ck::IMUData_IMUSensorData *imuSensorData = mIMUData.add_imu_sensor();
         imuSensorData->set_id(id);
-        double ypr[3] = {};
         double yprrps[3] = {};
 
-        if (imu->getYPR(ypr))
-        {
-            imuSensorData->set_x(ypr[0]);
-            imuSensorData->set_y(ypr[1]);
-            imuSensorData->set_z(ypr[2]);
-        }
-        else
-        {
-            imuSensorData->set_x(0);
-            imuSensorData->set_y(0);
-            imuSensorData->set_z(0);
-        }
+        imuSensorData->set_x(imu->getYaw());
+        imuSensorData->set_y(imu->getPitch());
+        imuSensorData->set_z(imu->getRoll());
 
         if (imu->getYPRRPS(yprrps))
         {

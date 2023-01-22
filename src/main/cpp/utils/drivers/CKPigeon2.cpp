@@ -48,6 +48,21 @@ bool CKPigeon2::getQuaternion(double quaternion[4])
     return mPigeon.Get6dQuaternion(quaternion) == ErrorCode::OK;
 }
 
+double CKPigeon2::getYaw()
+{
+    return ck::math::deg2rad(mPigeon.GetYaw());
+}
+
+double CKPigeon2::getPitch()
+{
+    return ck::math::deg2rad(mPigeon.GetPitch());
+}
+
+double CKPigeon2::getRoll()
+{
+    return ck::math::deg2rad(mPigeon.GetRoll());
+}
+
 bool CKPigeon2::getYPR(double ypr[3])
 {
     double yprDeg[3] = {};
@@ -94,7 +109,7 @@ bool CKPigeon2::getYPRRPS(double yprrps[3])
 
     for (int i = 0; i < 3; i++)
     {
-        yprrps[i] = ck::math::deg2rad(yprDPSDeg[i]);
+        yprrps[i] = yprDPSDeg[i];
     }
     return success;
 }
