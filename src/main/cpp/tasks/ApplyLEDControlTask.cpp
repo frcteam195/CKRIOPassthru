@@ -126,12 +126,6 @@ void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdl
                 mCtrl->Animate(animation, a.slot());
                 break;
             }
-            case ck::LEDAnimation_AnimationType_Strobe:
-            {
-                ctre::phoenix::led::StrobeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
             case ck::LEDAnimation_AnimationType_Twinkle:
             {
                 ctre::phoenix::led::TwinkleAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent76, a.offset());
@@ -141,6 +135,13 @@ void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdl
             case ck::LEDAnimation_AnimationType_TwinkleOff:
             {
                 ctre::phoenix::led::TwinkleOffAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent76, a.offset());
+                mCtrl->Animate(animation, a.slot());
+                break;
+            }
+            case ck::LEDAnimation_AnimationType_Strobe:
+            {
+                std::cout << "Stobe Animation" << std::endl;
+                ctre::phoenix::led::StrobeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
                 mCtrl->Animate(animation, a.slot());
                 break;
             }
@@ -162,7 +163,6 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ModulateVBatOutput(m.vbat_duty_cycle()); }, id);
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
 
-        ck::log("LED Control Mode: " + m.led_control_mode());
         switch(m.led_control_mode())
         {
             case ck::LEDControl_LEDControlData_LEDControlMode_Static:
