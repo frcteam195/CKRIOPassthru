@@ -184,6 +184,18 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
     return true;
 }
 
+void ApplyLEDControlTask::processLEDUpdate(ck::LEDControl::LEDControlData msg)
+{
+    if (msg.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Static)
+    {
+        updateColor(msg.id(), CANdleManager::getInstance().getCANdle(msg.id()), msg);
+    }
+    else if (msg.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Animated)
+    {
+        updateAnimation(msg.id(), CANdleManager::getInstance().getCANdle(msg.id()), msg);
+    }
+}
+
 void ApplyLEDControlTask::initFieldDescriptors()
 {
     LED_TYPE_FD = (google::protobuf::FieldDescriptor*)ck::LEDControl::LEDControlData::GetDescriptor()->FindFieldByNumber(3);
@@ -221,25 +233,20 @@ void ApplyLEDControlTask::initUpdateFunctions()
     {
         const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
+        processLEDUpdate(m);
     });
 
     mDiffReporter.RegisterUpdateFunction(COLOR_FD, [&](const google::protobuf::Message &msg)
     {
         const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        if (mCurrLEDCtrlMode[m.id()] == ck::LEDControl_LEDControlData_LEDControlMode_Static)
-        {
-            updateColor(m.id(), CANdleManager::getInstance().getCANdle(m.id()), m);
-        }
+        processLEDUpdate(m);
     });
 
     mDiffReporter.RegisterUpdateFunction(ANIMATION_FD, [&](const google::protobuf::Message &msg)
     {
         const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        if (mCurrLEDCtrlMode[m.id()] == ck::LEDControl_LEDControlData_LEDControlMode_Animated)
-        {
-            updateAnimation(m.id(), CANdleManager::getInstance().getCANdle(m.id()), m);
-        }
+        processLEDUpdate(m);
     });
 }
