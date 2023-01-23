@@ -227,8 +227,7 @@ void ApplyLEDControlTask::initUpdateFunctions()
     {
         const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
         mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        if (mCurrLEDCtrlMode[m.id()] == ck::LEDControl_LEDControlData_LEDControlMode_Static
-            || mCurrLEDCtrlMode[m.id()] == ck::LEDControl_LEDControlData_LEDControlMode_Blinking)
+        if (mCurrLEDCtrlMode[m.id()] == ck::LEDControl_LEDControlData_LEDControlMode_Static)
         {
             updateColor(m.id(), CANdleManager::getInstance().getCANdle(m.id()), m);
         }
