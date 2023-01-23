@@ -184,7 +184,7 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
     return true;
 }
 
-void ApplyLEDControlTask::processLEDUpdate(ck::LEDControl::LEDControlData msg)
+void ApplyLEDControlTask::processLEDUpdate(ck::LEDControl::LEDControlData& msg)
 {
     if (msg.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Static)
     {

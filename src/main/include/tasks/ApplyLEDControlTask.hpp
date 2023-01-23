@@ -28,7 +28,7 @@ private:
     void updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
     void updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
 
-    void processLEDUpdate(ck::LEDControl::LEDControlData msg);
+    void processLEDUpdate(ck::LEDControl::LEDControlData& msg);
 
     bool fullUpdate(ck::LEDControl::LEDControlData& m);
     void initFieldDescriptors();
