@@ -1,5 +1,6 @@
 #include "SolenoidManager.hpp"
 #include "utils/CKErrors.hpp"
+#include "utils/ProtobufTypeHelper.hpp"
 
 SolenoidManager::SolenoidManager() {}
 SolenoidManager::~SolenoidManager()
@@ -49,16 +50,19 @@ void SolenoidManager::onSolenoid(uint16_t id, std::function<void(uint16_t, CKSol
 void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::function<void(uint16_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType, const ck::SolenoidControl::Solenoid &)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    const ck::SolenoidControl::Solenoid &s = (const ck::SolenoidControl::Solenoid &)msg;
-    if (mRegisteredSolenoidList.count(s.id()))
+    ck::SolenoidControl::Solenoid s;
+    if (getTypedMessage(msg, s))
     {
-        if (mRegisteredSolenoidList[s.id()])
+        if (mRegisteredSolenoidList.count(s.id()))
         {
-            func((uint16_t)s.id(), mRegisteredSolenoidList[s.id()], mRegisteredSolenoidTypeList[s.id()], s);
-        }
-        else
-        {
-            ck::ReportError("Solenoid id pointer not value: " + s.id());
+            if (mRegisteredSolenoidList[s.id()])
+            {
+                func((uint16_t)s.id(), mRegisteredSolenoidList[s.id()], mRegisteredSolenoidTypeList[s.id()], s);
+            }
+            else
+            {
+                ck::ReportError("Solenoid id pointer not value: " + s.id());
+            }
         }
     }
 }

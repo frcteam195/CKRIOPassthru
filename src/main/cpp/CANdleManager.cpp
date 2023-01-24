@@ -1,5 +1,6 @@
 #include "CANdleManager.hpp"
 #include "utils/PhoenixHelper.hpp"
+#include "utils/ProtobufTypeHelper.hpp"
 
 CANdleManager::CANdleManager() {}
 CANdleManager::~CANdleManager()
@@ -65,10 +66,13 @@ void CANdleManager::onCANdle(uint16_t id, std::function<void(uint16_t, ctre::pho
 void CANdleManager::onCANdle(const google::protobuf::Message& msg, std::function<void(uint16_t, ctre::phoenix::led::CANdle*, const ck::LEDControl::LEDControlData&)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(candleLock);
-    const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
-    if (mRegisteredCANdleList.count(m.id()))
+    ck::LEDControl::LEDControlData m;
+    if (getTypedMessage(msg, m))
     {
-        func((uint16_t)m.id(), mRegisteredCANdleList[m.id()], m);
+        if (mRegisteredCANdleList.count(m.id()))
+        {
+            func((uint16_t)m.id(), mRegisteredCANdleList[m.id()], m);
+        }
     }
 }
 

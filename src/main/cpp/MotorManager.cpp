@@ -1,6 +1,7 @@
 #include "MotorManager.hpp"
 #include "MotorConfigManager.hpp"
 #include "utils/PhoenixHelper.hpp"
+#include "utils/ProtobufTypeHelper.hpp"
 
 MotorManager::MotorManager() {}
 MotorManager::~MotorManager()
@@ -33,10 +34,13 @@ void MotorManager::onMotor(uint16_t id, std::function<void(uint16_t, BaseTalon*,
 void MotorManager::onMotor(const google::protobuf::Message& msg, std::function<void(uint16_t, BaseTalon*, MotorType, const ck::MotorConfiguration::Motor&)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(motorLock);
-    const ck::MotorConfiguration::Motor& m = (const ck::MotorConfiguration::Motor&)msg;
-    if (mRegisteredMotorList.count(m.id()))
+    ck::MotorConfiguration::Motor m;
+    if (getTypedMessage(msg, m))
     {
-        func((uint16_t)m.id(), mRegisteredMotorList[m.id()], mRegisteredMotorTypeList[m.id()], m);
+        if (mRegisteredMotorList.count(m.id()))
+        {
+            func((uint16_t)m.id(), mRegisteredMotorList[m.id()], mRegisteredMotorTypeList[m.id()], m);
+        }
     }
 }
 
