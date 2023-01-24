@@ -19,21 +19,23 @@ void ApplySolenoidValuesTask::run(uint32_t timeSinceLastUpdateMs)
     if (NetworkManager::getInstance().getMessage(SOLENOID_CONTROL_MESSAGE_GROUP, buf))
     {
         ck::SolenoidControl solenoidUpdate;
-        solenoidUpdate.ParseFromArray(&buf[0], buf.size());
-
-        //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
-        //Maybe look into reportdifferencesto function
-        if (!google::protobuf::util::MessageDifferencer::Equivalent(solenoidUpdate, mPrevSolenoidMsg) || (rtTimer.hasElapseduS() > kMandatoryUpdatePerioduS && MANDATORY_UPDATE_ENABLED))
+        if (solenoidUpdate.ParseFromArray(&buf[0], buf.size()))
         {
-            for (ck::SolenoidControl::Solenoid const& s : solenoidUpdate.solenoids())
+
+            //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
+            //Maybe look into reportdifferencesto function
+            if (!google::protobuf::util::MessageDifferencer::Equivalent(solenoidUpdate, mPrevSolenoidMsg) || (rtTimer.hasElapseduS() > kMandatoryUpdatePerioduS && MANDATORY_UPDATE_ENABLED))
             {
-                SolenoidManager::getInstance().registerSolenoid(s.module_type(), s.id(), s.solenoid_type());
-                SolenoidManager::getInstance().onSolenoid(s.id(), [&] (uint16_t id, CKSolenoid* sCtrl, ck::SolenoidControl::Solenoid::SolenoidType sType)
+                for (ck::SolenoidControl::Solenoid const& s : solenoidUpdate.solenoids())
                 {
-                    sCtrl->set(s.output_value());
-                });
+                    SolenoidManager::getInstance().registerSolenoid(s.module_type(), s.id(), s.solenoid_type());
+                    SolenoidManager::getInstance().onSolenoid(s.id(), [&] (uint16_t id, CKSolenoid* sCtrl, ck::SolenoidControl::Solenoid::SolenoidType sType)
+                    {
+                        sCtrl->set(s.output_value());
+                    });
+                }
+                rtTimer.start();
             }
-            rtTimer.start();
         }
         mPrevSolenoidMsg = solenoidUpdate;
     }

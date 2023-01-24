@@ -44,34 +44,36 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
     if (NetworkManager::getInstance().getMessage(LED_CONTROL_MESSAGE_GROUP, buf))
     {
         ck::LEDControl candlesUpdate;
-        candlesUpdate.ParseFromArray(&buf[0], buf.size());
-        if (CANdleManager::getInstance().try_lock())
+        if (candlesUpdate.ParseFromArray(&buf[0], buf.size()))
         {
-            CANdleManager::getInstance().setCANdlesConfigMsg(candlesUpdate);
-            std::map<uint16_t, ck::LEDControl::LEDControlData>& mPrevCANdlesControlMsgMap = CANdleManager::getInstance().getPrevCANdlesConfigMsg();
-            for (ck::LEDControl::LEDControlData m : candlesUpdate.led_control())
+            if (CANdleManager::getInstance().try_lock())
             {
-                CANdleManager::getInstance().registerCANdle(m.id(), (CANInterface)m.can_network());
-
-                bool updateSuccessful = true;
-                if (CANdleManager::getInstance().candleExists(m.id()))
+                CANdleManager::getInstance().setCANdlesConfigMsg(candlesUpdate);
+                std::map<uint16_t, ck::LEDControl::LEDControlData>& mPrevCANdlesControlMsgMap = CANdleManager::getInstance().getPrevCANdlesConfigMsg();
+                for (ck::LEDControl::LEDControlData m : candlesUpdate.led_control())
                 {
-                    if ((size_t)candlesUpdate.led_control().size() == mPrevCANdlesControlMsgMap.size())
-                    {
-                        mDiff.Compare(mPrevCANdlesControlMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
-                    }
-                    else
-                    {
-                        updateSuccessful = fullUpdate(m);
-                    }
+                    CANdleManager::getInstance().registerCANdle(m.id(), (CANInterface)m.can_network());
 
-                    if (updateSuccessful)
+                    bool updateSuccessful = true;
+                    if (CANdleManager::getInstance().candleExists(m.id()))
                     {
-                        CANdleManager::getInstance().setPrevCANdleConfigMsg(m.id(), m);
+                        if ((size_t)candlesUpdate.led_control().size() == mPrevCANdlesControlMsgMap.size())
+                        {
+                            mDiff.Compare(mPrevCANdlesControlMsgMap[m.id()], m);  //Make sure the current update is message2 for our implementation
+                        }
+                        else
+                        {
+                            updateSuccessful = fullUpdate(m);
+                        }
+
+                        if (updateSuccessful)
+                        {
+                            CANdleManager::getInstance().setPrevCANdleConfigMsg(m.id(), m);
+                        }
                     }
                 }
+                CANdleManager::getInstance().unlock();
             }
-            CANdleManager::getInstance().unlock();
         }
     }
     mTaskTimer.reportElapsedTime();
@@ -79,8 +81,11 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
 
 void ApplyLEDControlTask::updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
 {
-    ck::LEDControl_LEDColor c = m.color();
-    mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
+    const ck::LEDControl_LEDColor& c = m.color();
+    // if (c.IsInitialized() && c.rgbw_color().IsInitialized())
+    // {
+        mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
+    // }
 }
 
 void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
