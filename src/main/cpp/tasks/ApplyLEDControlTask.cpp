@@ -104,7 +104,7 @@ void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdl
             case ck::LEDAnimation_AnimationType_Larson:
             {
                 //TODO: Fix bounce mode in protobuf API
-                ctre::phoenix::led::LarsonAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), a.offset());
+                ctre::phoenix::led::LarsonAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 4, a.offset());
                 mCtrl->Animate(animation, a.slot());
                 break;
             }
