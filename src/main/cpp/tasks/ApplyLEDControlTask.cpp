@@ -82,10 +82,7 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
 void ApplyLEDControlTask::updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
 {
     const ck::LEDControl_LEDColor& c = m.color();
-    // if (c.IsInitialized() && c.rgbw_color().IsInitialized())
-    // {
-        mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
-    // }
+    mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
 }
 
 void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
@@ -236,22 +233,40 @@ void ApplyLEDControlTask::initUpdateFunctions()
 
     mDiffReporter.RegisterUpdateFunction(LED_CONTROL_MODE_FD, [&](const google::protobuf::Message &msg)
     {
-        const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
-        mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        processLEDUpdate(m);
+        try {
+            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
+            processLEDUpdate(m);
+        }
+        catch (std::exception& ex)
+        {
+            // std::cout << ex.what() << std::endl;
+        }
     });
 
     mDiffReporter.RegisterUpdateFunction(COLOR_FD, [&](const google::protobuf::Message &msg)
     {
-        const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
-        mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        processLEDUpdate(m);
+        try {
+            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
+            processLEDUpdate(m);
+        }
+        catch (std::exception& ex)
+        {
+            // std::cout << ex.what() << std::endl;
+        }
     });
 
     mDiffReporter.RegisterUpdateFunction(ANIMATION_FD, [&](const google::protobuf::Message &msg)
     {
-        const ck::LEDControl::LEDControlData& m = (const ck::LEDControl::LEDControlData&)msg;
-        mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-        processLEDUpdate(m);
+        try {
+            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
+            processLEDUpdate(m);
+        }
+        catch (std::exception& ex)
+        {
+            // std::cout << ex.what() << std::endl;
+        }
     });
 }
