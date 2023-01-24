@@ -10,6 +10,7 @@
 #include "utils/PhoenixHelper.hpp"
 #include <iostream>
 #include "utils/CKLogger.hpp"
+#include "utils/ProtobufTypeHelper.hpp"
 
 #include "ctre/phoenix/led/ColorFlowAnimation.h"
 #include "ctre/phoenix/led/FireAnimation.h"
@@ -233,40 +234,31 @@ void ApplyLEDControlTask::initUpdateFunctions()
 
     mDiffReporter.RegisterUpdateFunction(LED_CONTROL_MODE_FD, [&](const google::protobuf::Message &msg)
     {
-        try {
-            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+        ck::LEDControl::LEDControlData m;
+        if (getTypedMessage(msg, m))
+        {
             mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
             processLEDUpdate(m);
-        }
-        catch (std::exception& ex)
-        {
-            // std::cout << ex.what() << std::endl;
         }
     });
 
     mDiffReporter.RegisterUpdateFunction(COLOR_FD, [&](const google::protobuf::Message &msg)
     {
-        try {
-            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+        ck::LEDControl::LEDControlData m;
+        if (getTypedMessage(msg, m))
+        {
             mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
             processLEDUpdate(m);
-        }
-        catch (std::exception& ex)
-        {
-            // std::cout << ex.what() << std::endl;
         }
     });
 
     mDiffReporter.RegisterUpdateFunction(ANIMATION_FD, [&](const google::protobuf::Message &msg)
     {
-        try {
-            const ck::LEDControl::LEDControlData& m = dynamic_cast<const ck::LEDControl::LEDControlData&>(msg);
+        ck::LEDControl::LEDControlData m;
+        if (getTypedMessage(msg, m))
+        {
             mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
             processLEDUpdate(m);
-        }
-        catch (std::exception& ex)
-        {
-            // std::cout << ex.what() << std::endl;
         }
     });
 }
