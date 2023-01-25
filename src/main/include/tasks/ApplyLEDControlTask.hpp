@@ -26,18 +26,16 @@ private:
     google::protobuf::util::MessageDifferencer mDiff;
 
     void clearAllAnimations(uint16_t id);
-    void updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
-    void updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
+    void updateColor(const ck::LEDControl::LEDControlData& m);
+    void updateAnimation(const ck::LEDControl::LEDControlData& m);
 
-    void processLEDUpdate(const ck::LEDControl::LEDControlData& msg);
+    void processLEDUpdate(const google::protobuf::Message &msg);
 
     bool fullUpdate(ck::LEDControl::LEDControlData& m);
     void initFieldDescriptors();
     void initUpdateFunctions();
 
-
-    std::map<uint16_t, ck::LEDControl_LEDControlData_LEDControlMode> mCurrLEDCtrlMode;
-    std::map<uint16_t, ck::LEDControl_LEDControlData> mPrevLEDCtrlMsg;
+    ctre::phoenix::led::Animation* animationLookup(const ck::LEDAnimation& a);
 
     google::protobuf::FieldDescriptor* LED_TYPE_FD;
     google::protobuf::FieldDescriptor* VBAT_CONFIG_FD;

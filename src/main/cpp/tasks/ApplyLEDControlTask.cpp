@@ -67,8 +67,6 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
                             updateSuccessful = fullUpdate(m);
                         }
 
-                        mPrevLEDCtrlMsg[m.id()] = m;
-
                         if (updateSuccessful)
                         {
                             CANdleManager::getInstance().setPrevCANdleConfigMsg(m.id(), m);
@@ -86,7 +84,7 @@ void ApplyLEDControlTask::clearAllAnimations(uint16_t id)
 {
     CANdleManager::getInstance().onCANdle(id, [&] (uint16_t id, ctre::phoenix::led::CANdle* mCtrl)
     {
-        for (auto an : mPrevLEDCtrlMsg[id].animation())
+        for (auto an : CANdleManager::getInstance().getPrevCANdlesConfigMsg()[id].animation())
         {
             ck::runPhoenixFunctionWithRetry([mCtrl, an]() { return mCtrl->ClearAnimation(an.slot()); }, id);
         }
@@ -95,83 +93,80 @@ void ApplyLEDControlTask::clearAllAnimations(uint16_t id)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-void ApplyLEDControlTask::updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
+void ApplyLEDControlTask::updateColor(const ck::LEDControl::LEDControlData& m)
 {
-    clearAllAnimations(id);
-
-    const ck::LEDControl_LEDColor& c = m.color();
-    mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
+    clearAllAnimations(m.id());
+    CANdleManager::getInstance().onCANdle(m.id(), [&] (uint16_t id, ctre::phoenix::led::CANdle* mCtrl)
+    {
+        const ck::LEDControl_LEDColor& c = m.color();
+        ck::runPhoenixFunctionWithRetry([mCtrl, c]() { return mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds()); }, id);
+    });
 }
 
-void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
+ctre::phoenix::led::Animation* ApplyLEDControlTask::animationLookup(const ck::LEDAnimation& a)
 {
-    clearAllAnimations(id);
-
-    for (ck::LEDAnimation a : m.animation())
+    switch(a.animation_type())
     {
-        switch(a.animation_type())
+        case ck::LEDAnimation_AnimationType_ColorFlow:
         {
-            case ck::LEDAnimation_AnimationType_ColorFlow:
-            {
-                ctre::phoenix::led::ColorFlowAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::ColorFlowAnimation::Direction)a.direction(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_Fire:
-            {
-                ctre::phoenix::led::FireAnimation animation(a.brightness(), a.speed(), a.num_led(), 0.5, 0.5, a.direction(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_Larson:
-            {
-                //TODO: Fix bounce mode in protobuf API
-                ctre::phoenix::led::LarsonAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 4, a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_Rainbow:
-            {
-                ctre::phoenix::led::RainbowAnimation animation(a.brightness(), a.speed(), a.num_led(), a.direction(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_RGBFade:
-            {
-                ctre::phoenix::led::RgbFadeAnimation animation(a.brightness(), a.speed(), a.num_led(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_SingleFade:
-            {
-                ctre::phoenix::led::SingleFadeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_Twinkle:
-            {
-                ctre::phoenix::led::TwinkleAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent76, a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_TwinkleOff:
-            {
-                ctre::phoenix::led::TwinkleOffAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent76, a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            case ck::LEDAnimation_AnimationType_Strobe:
-            {
-                ctre::phoenix::led::StrobeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
-                mCtrl->Animate(animation, a.slot());
-                break;
-            }
-            default:
-            {
-                break;
-            }
+            return new ctre::phoenix::led::ColorFlowAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::ColorFlowAnimation::Direction)a.direction(), a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_Fire:
+        {
+            return new ctre::phoenix::led::FireAnimation(a.brightness(), a.speed(), a.num_led(), 0.5, 0.5, a.direction(), a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_Larson:
+        {
+            //TODO: Fix bounce mode in protobuf API
+            return new ctre::phoenix::led::LarsonAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 4, a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_Rainbow:
+        {
+            return new ctre::phoenix::led::RainbowAnimation(a.brightness(), a.speed(), a.num_led(), a.direction(), a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_RGBFade:
+        {
+            return new ctre::phoenix::led::RgbFadeAnimation(a.brightness(), a.speed(), a.num_led(), a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_SingleFade:
+        {
+            return new ctre::phoenix::led::SingleFadeAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_Twinkle:
+        {
+            return new ctre::phoenix::led::TwinkleAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent76, a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_TwinkleOff:
+        {
+            return new ctre::phoenix::led::TwinkleOffAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent76, a.offset());
+        }
+        case ck::LEDAnimation_AnimationType_Strobe:
+        {
+            return new ctre::phoenix::led::StrobeAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
+        }
+        default:
+        {
+            break;
         }
     }
+    return NULL;
+}
+
+void ApplyLEDControlTask::updateAnimation(const ck::LEDControl::LEDControlData& m)
+{
+    clearAllAnimations(m.id());
+    CANdleManager::getInstance().onCANdle(m.id(), [&] (uint16_t id, ctre::phoenix::led::CANdle* mCtrl)
+    {
+        for (ck::LEDAnimation a : m.animation())
+        {
+            ctre::phoenix::led::Animation* ctre_animation = animationLookup(a);
+            if (ctre_animation != NULL)
+            {
+                ck::runPhoenixFunctionWithRetry([mCtrl, ctre_animation, a]() { return mCtrl->Animate(*ctre_animation, a.slot()); }, id);
+                delete ctre_animation;
+            }
+        }
+    });
 }
 
 bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
@@ -182,18 +177,17 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigLEDType((ctre::phoenix::led::LEDStripType)m.led_type(), ck::kCANTimeoutMs); }, id);
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ConfigVBatOutput((VBatOutputMode)m.vbat_config(), ck::kCANTimeoutMs); }, id);
         ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->ModulateVBatOutput(m.vbat_duty_cycle()); }, id);
-        mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
 
         switch(m.led_control_mode())
         {
             case ck::LEDControl_LEDControlData_LEDControlMode_Static:
             {
-                updateColor(id, mCtrl, m);
+                updateColor(m);
                 break;
             }
             case ck::LEDControl_LEDControlData_LEDControlMode_Animated:
             {
-                updateAnimation(id, mCtrl, m);
+                updateAnimation(m);
                 break;
             }
             default:
@@ -205,15 +199,19 @@ bool ApplyLEDControlTask::fullUpdate(ck::LEDControl::LEDControlData& m)
     return true;
 }
 
-void ApplyLEDControlTask::processLEDUpdate(const ck::LEDControl::LEDControlData& msg)
+void ApplyLEDControlTask::processLEDUpdate(const google::protobuf::Message &msg)
 {
-    if (msg.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Static)
+    ck::LEDControl::LEDControlData m;
+    if (getTypedMessage(msg, m))
     {
-        updateColor(msg.id(), CANdleManager::getInstance().getCANdle(msg.id()), msg);
-    }
-    else if (msg.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Animated)
-    {
-        updateAnimation(msg.id(), CANdleManager::getInstance().getCANdle(msg.id()), msg);
+        if (m.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Static)
+        {
+            updateColor(m);
+        }
+        else if (m.led_control_mode() == ck::LEDControl_LEDControlData_LEDControlMode_Animated)
+        {
+            updateAnimation(m);
+        }
     }
 }
 
@@ -252,31 +250,16 @@ void ApplyLEDControlTask::initUpdateFunctions()
 
     mDiffReporter.RegisterUpdateFunction(LED_CONTROL_MODE_FD, [&](const google::protobuf::Message &msg)
     {
-        ck::LEDControl::LEDControlData m;
-        if (getTypedMessage(msg, m))
-        {
-            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-            processLEDUpdate(m);
-        }
+        processLEDUpdate(msg);
     });
 
     mDiffReporter.RegisterUpdateFunction(COLOR_FD, [&](const google::protobuf::Message &msg)
     {
-        ck::LEDControl::LEDControlData m;
-        if (getTypedMessage(msg, m))
-        {
-            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-            processLEDUpdate(m);
-        }
+        processLEDUpdate(msg);
     });
 
     mDiffReporter.RegisterUpdateFunction(ANIMATION_FD, [&](const google::protobuf::Message &msg)
     {
-        ck::LEDControl::LEDControlData m;
-        if (getTypedMessage(msg, m))
-        {
-            mCurrLEDCtrlMode[m.id()] = m.led_control_mode();
-            processLEDUpdate(m);
-        }
+        processLEDUpdate(msg);
     });
 }
