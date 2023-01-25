@@ -25,6 +25,7 @@ private:
     DifferentialUpdateReporter mDiffReporter;
     google::protobuf::util::MessageDifferencer mDiff;
 
+    void clearAllAnimations(uint16_t id);
     void updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
     void updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m);
 
@@ -36,6 +37,7 @@ private:
 
 
     std::map<uint16_t, ck::LEDControl_LEDControlData_LEDControlMode> mCurrLEDCtrlMode;
+    std::map<uint16_t, ck::LEDControl_LEDControlData> mPrevLEDCtrlMsg;
 
     google::protobuf::FieldDescriptor* LED_TYPE_FD;
     google::protobuf::FieldDescriptor* VBAT_CONFIG_FD;

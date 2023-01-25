@@ -67,6 +67,8 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
                             updateSuccessful = fullUpdate(m);
                         }
 
+                        mPrevLEDCtrlMsg[m.id()] = m;
+
                         if (updateSuccessful)
                         {
                             CANdleManager::getInstance().setPrevCANdleConfigMsg(m.id(), m);
@@ -80,14 +82,31 @@ void ApplyLEDControlTask::run(uint32_t timeSinceLastUpdateMs)
     mTaskTimer.reportElapsedTime();
 }
 
+void ApplyLEDControlTask::clearAllAnimations(uint16_t id)
+{
+    CANdleManager::getInstance().onCANdle(id, [&] (uint16_t id, ctre::phoenix::led::CANdle* mCtrl)
+    {
+        for (auto an : mPrevLEDCtrlMsg[id].animation())
+        {
+            ck::runPhoenixFunctionWithRetry([mCtrl, an]() { return mCtrl->ClearAnimation(an.slot()); }, id);
+        }
+    });
+    //TODO: This has to be removed. Very very very bad for us
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+}
+
 void ApplyLEDControlTask::updateColor(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
 {
+    clearAllAnimations(id);
+
     const ck::LEDControl_LEDColor& c = m.color();
     mCtrl->SetLEDs(c.rgbw_color().r(), c.rgbw_color().g(), c.rgbw_color().b(), c.rgbw_color().w(), c.start_index(), c.num_leds());
 }
 
 void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdle* mCtrl, const ck::LEDControl::LEDControlData& m)
 {
+    clearAllAnimations(id);
+
     for (ck::LEDAnimation a : m.animation())
     {
         switch(a.animation_type())
@@ -143,7 +162,6 @@ void ApplyLEDControlTask::updateAnimation(uint16_t id, ctre::phoenix::led::CANdl
             }
             case ck::LEDAnimation_AnimationType_Strobe:
             {
-                std::cout << "Stobe Animation" << std::endl;
                 ctre::phoenix::led::StrobeAnimation animation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), a.offset());
                 mCtrl->Animate(animation, a.slot());
                 break;
