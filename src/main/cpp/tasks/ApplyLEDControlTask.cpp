@@ -89,8 +89,6 @@ void ApplyLEDControlTask::clearAllAnimations(uint16_t id)
             ck::runPhoenixFunctionWithRetry([mCtrl, an]() { return mCtrl->ClearAnimation(an.slot()); }, id);
         }
     });
-    //TODO: This has to be removed. Very very very bad for us
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 void ApplyLEDControlTask::updateColor(const ck::LEDControl::LEDControlData& m)
