@@ -25,6 +25,7 @@
 #include "tasks/SendJoystickDataTask.hpp"
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "tasks/TaskTimingReporterTask.hpp"
+#include "tasks/UpdateDSConnectionStatusTask.hpp"
 #include "frc/livewindow/LiveWindow.h"
 #include "failover/RobotFailover.hpp"
 
@@ -65,6 +66,7 @@ private:
 	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;
+	UpdateDSConnectionStatusTask updateDSConnectionStatusTask;
  
 	RobotFailover robotFailover;
 	bool failoverActive = false;

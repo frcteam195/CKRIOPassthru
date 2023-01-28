@@ -41,21 +41,7 @@ static ck::Sendable<int> auto7(6);
 
 void performInit()
 {
-	// CKIMUManager::getInstance().forEach([] (uint16_t id, CKIMU* imu, IMUType imuType)
-	// {
-	// 	if (!imu->reset())
-	// 	{
-	// 		ck::ReportError("Failed to zero IMU: " + id);
-	// 	}
-	// });
 
-	// MotorManager::getInstance().forEach([] (uint16_t id, BaseTalon* mCtrl, MotorType motorType)
-	// {
-	// 	if (!ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SetSelectedSensorPosition(0, 0, ck::kCANTimeoutMs); }, id))
-	// 	{
-	// 		ck::ReportError("Failed to zero motor: " + id);
-	// 	}
-	// });
 }
 
 void initIfNotInit()
@@ -104,6 +90,7 @@ void Robot::RobotInit()
 	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(applyLEDControlTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
+	TaskScheduler::getInstance().scheduleTask(updateDSConnectionStatusTask);
 
 #ifdef ENABLE_TASK_TIME_REPORTING
 	TaskScheduler::getInstance().scheduleTask(taskTimingReporterTask);
@@ -176,46 +163,7 @@ static AutoStartPositionAnglePair start_angle_3(-156.0);
 AutoStartPositionAnglePair* m_angle_pair = nullptr;
 void Robot::AutonomousInit()
 {
-	// bool is_red = RobotDataHelper::getInstance().getAlliance() == frc::DriverStation::Alliance::kRed;
 	initIfNotInit();
-	switch (RobotDataHelper::getInstance().getSelectedAuto())
-	{
-		case 0:
-		case 6:
-		{
-			m_angle_pair = &start_angle_1;
-			break;
-		}
-		case 1:
-		case 3:
-		{
-			m_angle_pair = &start_angle_2;
-			break;
-		}
-		case 2:
-		case 4:
-		case 5:
-		{
-			m_angle_pair = &start_angle_3;
-			break;
-		}
-		default:
-		{
-			m_angle_pair = nullptr;
-			break;
-		}
-	}
-
-	// if (m_angle_pair != nullptr)
-	// {
-	// 	CKIMUManager::getInstance().onIMU(0, [&](uint16_t id, CKIMU* ckIMU, IMUType imuType) {
-	// 		ckIMU->setYaw(is_red ? m_angle_pair->get_red_start_angle() : m_angle_pair->get_blue_start_angle());
-	// 	});
-	// }
-	// else
-	// {
-	// 	ck::ReportError("Start position is not yet set or is invalid!");
-	// }
 
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
 	if (!isExternalControl())

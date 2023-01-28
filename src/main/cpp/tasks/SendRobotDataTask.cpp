@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "RobotDataHelper.hpp"
+#include "utils/DSConnectionMonitor.hpp"
 
 SendRobotDataTask::SendRobotDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mRobotStatus()
 {
@@ -34,6 +35,7 @@ void SendRobotDataTask::sendRobotStatusMessage()
     mRobotStatus.set_match_time(RobotDataHelper::getInstance().getMatchTime());
     mRobotStatus.set_game_data(RobotDataHelper::getInstance().getGameSpecificMsg());
     mRobotStatus.set_selected_auto(RobotDataHelper::getInstance().getSelectedAuto());
+    mRobotStatus.set_is_connected(DSConnectionMonitor::getInstance().isConnected());
     if (mRobotStatus.SerializeToArray(mRobotStatusBuf, mRobotStatus.ByteSizeLong()))
     {
         NetworkManager::getInstance().sendMessage(ROBOT_STATUS_MESSAGE_GROUP, mRobotStatusBuf, mRobotStatus.ByteSizeLong());
