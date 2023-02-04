@@ -5,6 +5,7 @@
 #include "NetworkManager.hpp"
 #include "MotorConfigManager.hpp"
 #include "utils/CKLogger.hpp"
+#include "utils/PhoenixHelper.hpp"
 
 SendMotorDataTask::SendMotorDataTask() : Task(THREAD_RATE_MS, TASK_NAME), mMotorStatusMsg()
 {
@@ -76,6 +77,16 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             m->set_bus_current(mCtrl->GetSupplyCurrent());
             m->set_stator_current(mCtrl->GetStatorCurrent());
             
+
+            //TODO: Test timing on this, make sure it doesn't actually poll while running, if it does, we'll need to drop it to once per sec or so
+            Faults f{};
+            StickyFaults s{};
+            mCtrl->GetFaults(f);
+            mCtrl->GetStickyFaults(s);
+            m->set_faults(f.ToBitfield());
+            m->set_sticky_faults(s.ToBitfield());
+
+
             switch (mType)
             {
             case MotorType::TALON_FX:
@@ -88,6 +99,7 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
             case MotorType::TALON_SRX:
             {
                 TalonSRX* tsrx = dynamic_cast<TalonSRX*>(mCtrl);
+                // m->set_encoder_present(tsrx->GetSensorCollection().GetPulseWidthRiseToRiseUs() != 0);
                 m->set_forward_limit_closed(tsrx->GetSensorCollection().IsFwdLimitSwitchClosed());
                 m->set_reverse_limit_closed(tsrx->GetSensorCollection().IsRevLimitSwitchClosed());
             }
