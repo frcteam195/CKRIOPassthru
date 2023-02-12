@@ -119,7 +119,7 @@ void SendMotorDataTask::run(uint32_t timeSinceLastUpdateMs)
         bool msgSendSuccess = NetworkManager::getInstance().sendMessage(MOTOR_STATUS_MESSAGE_GROUP, mMotorStatusBuf, mMotorStatusMsg.ByteSizeLong());
         if (!msgSendSuccess)
         {
-            ck::log("Failed to send msg\n", ck::LogLevel::ERROR);
+            ck::log("Failed to send motor status message msg\n", ck::LogLevel::ERROR);
         }
     }
     else
