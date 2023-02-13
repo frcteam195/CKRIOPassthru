@@ -211,10 +211,11 @@ namespace ck
 		nt::NetworkTableInstance::GetDefault().FlushLocal();
 	}
 
-	// Warn on loop time overruns
-	if (m_watchdog.IsExpired()) {
-		m_watchdog.PrintEpochs();
-	}
+	// // Warn on loop time overruns
+	// if (m_watchdog.IsExpired()) {
+	// 	m_watchdog.PrintEpochs();
+	// }
+	
 	}
 
 	void IterativeRobotBase::PrintLoopOverrunMessage() {

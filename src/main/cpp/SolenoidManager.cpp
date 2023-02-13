@@ -15,7 +15,7 @@ SolenoidManager::~SolenoidManager()
     }
 }
 
-void SolenoidManager::forEach(std::function<void(uint16_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType)> func)
+void SolenoidManager::forEach(std::function<void(uint32_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
     for (auto const &[key, val] : mRegisteredSolenoidList)
@@ -31,7 +31,7 @@ void SolenoidManager::forEach(std::function<void(uint16_t, CKSolenoid *, ck::Sol
     }
 }
 
-void SolenoidManager::onSolenoid(uint16_t id, std::function<void(uint16_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType)> func)
+void SolenoidManager::onSolenoid(uint32_t id, std::function<void(uint32_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
     if (mRegisteredSolenoidList.count(id))
@@ -47,7 +47,7 @@ void SolenoidManager::onSolenoid(uint16_t id, std::function<void(uint16_t, CKSol
     }
 }
 
-void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::function<void(uint16_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType, const ck::SolenoidControl::Solenoid &)> func)
+void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::function<void(uint32_t, CKSolenoid *, ck::SolenoidControl::Solenoid::SolenoidType, const ck::SolenoidControl::Solenoid &)> func)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
     ck::SolenoidControl::Solenoid s;
@@ -67,22 +67,19 @@ void SolenoidManager::onSolenoid(const google::protobuf::Message &msg, std::func
     }
 }
 
-void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint16_t id, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
+void SolenoidManager::registerSolenoid(ck::SolenoidControl::Solenoid::ModuleType moduleType, uint32_t id, ck::SolenoidControl::Solenoid::SolenoidType solenoidType)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
-    if (id < 64)
+    if (!mRegisteredSolenoidList.count(id))
     {
-        if (!mRegisteredSolenoidList.count(id))
-        {
-            mRegisteredSolenoidList[id] = new CKSolenoid(moduleType, id, solenoidType);
-            std::cout << "Solenoid " << id << " created with type " << (int)solenoidType << std::endl;
-            mRegisteredSolenoidTypeList[id] = solenoidType;
-        }
-        mRegisteredSolenoidHeartbeatList[id] = kMaxHeartbeatTicks;
+        mRegisteredSolenoidList[id] = new CKSolenoid(moduleType, id, solenoidType);
+        std::cout << "Solenoid " << (id & 0xFFFF) << " created with type " << (int)solenoidType << " on module " << ((id >> 16) & 0xFFFF) << std::endl;
+        mRegisteredSolenoidTypeList[id] = solenoidType;
     }
+    mRegisteredSolenoidHeartbeatList[id] = kMaxHeartbeatTicks;
 }
 
-void SolenoidManager::deleteSolenoid(uint16_t id)
+void SolenoidManager::deleteSolenoid(uint32_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
     if (mRegisteredSolenoidList.count(id))
@@ -120,7 +117,7 @@ void SolenoidManager::processHeartbeat()
     }
 }
 
-CKSolenoid *SolenoidManager::getSolenoid(uint16_t id)
+CKSolenoid *SolenoidManager::getSolenoid(uint32_t id)
 {
     std::scoped_lock<std::recursive_mutex> lock(solenoidLock);
     if (mRegisteredSolenoidList.count(id))
