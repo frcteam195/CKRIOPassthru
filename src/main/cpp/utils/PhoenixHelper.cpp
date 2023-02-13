@@ -14,7 +14,7 @@ namespace ck
         {
             if (id >= 0)
             {
-			    std::cout << "Failed to set parameter on Talon ID " << id << " !!!!!!" << std::endl;
+			    std::cout << "Failed to set parameter on device ID " << id << " !!!!!!" << std::endl;
             }
             return false;
         }
