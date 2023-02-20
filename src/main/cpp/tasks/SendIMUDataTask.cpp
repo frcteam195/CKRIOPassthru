@@ -35,9 +35,19 @@ void SendIMUDataTask::run(uint32_t timeSinceLastUpdateMs)
         imuSensorData->set_id(id);
         double yprrps[3] = {};
 
-        imuSensorData->set_x(imu->getYaw());
-        imuSensorData->set_y(imu->getPitch());
-        imuSensorData->set_z(imu->getRoll());
+        double quat[4] = {};
+
+        if (imu->getQuaternion(quat))
+        {
+            imuSensorData->set_w(quat[0]);
+            imuSensorData->set_x(quat[1]);
+            imuSensorData->set_y(quat[2]);
+            imuSensorData->set_z(quat[3]);
+        }
+
+        // imuSensorData->set_x(imu->getYaw());
+        // imuSensorData->set_y(imu->getPitch());
+        // imuSensorData->set_z(imu->getRoll());
 
         if (imu->getYPRRPS(yprrps))
         {
