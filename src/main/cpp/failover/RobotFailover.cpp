@@ -1,10 +1,10 @@
 #include "failover/RobotFailover.hpp"
-#include "failover/subsystems/DrivetrainFailover.hpp"
+#include "failover/subsystems/SwerveDrivetrainFailover.hpp"
 #include "failover/FailoverMessageManager.hpp"
 
 void RobotFailover::RobotFailoverInit()
 {
-    DrivetrainFailover::getInstance().SubsystemInit();
+    SwerveDrivetrainFailover::getInstance().SubsystemInit();
     // lCtrl = new CKLEDController(1);
     // lCtrl->setColor(RGBColor{0, 128, 0, 255});
     // lCtrl->setBrightness(255);
@@ -22,7 +22,7 @@ void RobotFailover::RobotFailoverPeriodic()
     //Make sure this is called to keep motors registered
     FailoverMessageManager::getInstance().publishMessages();
 
-    DrivetrainFailover::getInstance().SubsystemPeriodic();
+    SwerveDrivetrainFailover::getInstance().SubsystemPeriodic();
 }
 
 void RobotFailover::AutonomousFailoverInit() {}
@@ -35,7 +35,7 @@ void RobotFailover::TeleopFailoverInit()
 
 void RobotFailover::TeleopFailoverPeriodic()
 {
-    DrivetrainFailover::getInstance().SubsystemRun();
+    SwerveDrivetrainFailover::getInstance().SubsystemRun();
 }
 
 void RobotFailover::DisabledFailoverInit() {}
@@ -44,11 +44,11 @@ void RobotFailover::DisabledFailoverPeriodic() {}
 
 void RobotFailover::Reset()
 {
-    DrivetrainFailover::getInstance().SubsystemReset();
+    SwerveDrivetrainFailover::getInstance().SubsystemReset();
 }
 
 
 RobotFailover::RobotFailover()
 {
-    DrivetrainFailover::getInstance();
+    SwerveDrivetrainFailover::getInstance();
 }
