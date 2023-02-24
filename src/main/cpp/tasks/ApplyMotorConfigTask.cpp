@@ -116,6 +116,11 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kI(0, m.ki(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kD(0, m.kd(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kF(0, m.kf(), ck::kCANTimeoutMs); }, id);
+            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kP(1, m.kp_1(), ck::kCANTimeoutMs); }, id);
+            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kI(1, m.ki_1(), ck::kCANTimeoutMs); }, id);
+            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kD(1, m.kd_1(), ck::kCANTimeoutMs); }, id);
+            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_kF(1, m.kf_1(), ck::kCANTimeoutMs); }, id);
+            ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->SelectProfileSlot(m.active_gain_slot(), 0); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->Config_IntegralZone(0, m.izone(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigMaxIntegralAccumulator(0, m.max_i_accum(), ck::kCANTimeoutMs); }, id);
             ck::runPhoenixFunctionWithRetry([&]() { return mCtrl->ConfigAllowableClosedloopError(0, m.allowed_closed_loop_error(), ck::kCANTimeoutMs); }, id);
@@ -229,6 +234,11 @@ void ApplyMotorConfigTask::initFieldDescriptors()
     PEAK_OUTPUT_REVERSE_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(34);
     CAN_NETWORK_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(35);
     FEEDBACK_SENSOR_CAN_ID_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(36);
+    ACTIVE_GAIN_SLOT_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(37);
+    KP1_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(38);
+    KI1_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(39);
+    KD1_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(40);
+    KF1_FD = (google::protobuf::FieldDescriptor*)ck::MotorConfiguration::Motor::GetDescriptor()->FindFieldByNumber(41);
 }
 
 void ApplyMotorConfigTask::initUpdateFunctions()
@@ -259,6 +269,34 @@ void ApplyMotorConfigTask::initUpdateFunctions()
         MotorManager::getInstance().onMotor(msg,
             [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
             { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kF(0, m.kf(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(KP1_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kP(1, m.kp_1(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(KI1_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kI(1, m.ki_1(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(KD1_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kD(1, m.kd_1(), ck::kCANTimeoutMs); }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(KF1_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->Config_kF(1, m.kf_1(), ck::kCANTimeoutMs); }, id); });
     });
 
     mDiffReporter.RegisterUpdateFunction(IZONE_FD, [](const google::protobuf::Message &msg)
@@ -504,5 +542,12 @@ void ApplyMotorConfigTask::initUpdateFunctions()
                     }
                     return ErrorCode::OK;
                 }, id); });
+    });
+
+    mDiffReporter.RegisterUpdateFunction(ACTIVE_GAIN_SLOT_FD, [](const google::protobuf::Message &msg)
+    {
+        MotorManager::getInstance().onMotor(msg,
+            [](uint16_t id, BaseTalon* mCtrl, MotorType mType, const ck::MotorConfiguration::Motor& m)
+            { ck::runPhoenixFunctionWithRetry([mCtrl, m]() { return mCtrl->SelectProfileSlot(m.active_gain_slot(), 0); }, id); });
     });
 }

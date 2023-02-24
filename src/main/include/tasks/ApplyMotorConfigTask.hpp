@@ -73,4 +73,9 @@ private:
     google::protobuf::FieldDescriptor* PEAK_OUTPUT_REVERSE_FD;
     google::protobuf::FieldDescriptor* CAN_NETWORK_FD;
     google::protobuf::FieldDescriptor* FEEDBACK_SENSOR_CAN_ID_FD;
+    google::protobuf::FieldDescriptor* ACTIVE_GAIN_SLOT_FD;
+    google::protobuf::FieldDescriptor* KP1_FD;
+    google::protobuf::FieldDescriptor* KI1_FD;
+    google::protobuf::FieldDescriptor* KD1_FD;
+    google::protobuf::FieldDescriptor* KF1_FD;
 };
