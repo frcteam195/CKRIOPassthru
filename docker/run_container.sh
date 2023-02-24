@@ -11,7 +11,7 @@ docker run -it --rm --net=host \
     	--volume="/etc/passwd:/etc/passwd:ro" \
     	--volume="/etc/shadow:/etc/shadow:ro" \
 	--volume="${HOME}/.gradle:${HOME}/.gradle:rw" \
-	--volume="${HOME}:${HOME}:ro" \
+	--volume="${HOME}:${HOME}:rw" \
 	--volume="$(realpath $(dirname ${0})/..):/build/CKRIOPassthru" \
 	 guitar24t/ck-roborio-buildenv:latest \
 	/bin/bash -c '\
