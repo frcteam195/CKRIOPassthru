@@ -60,10 +60,10 @@ void Robot::RobotInit()
 	// dh.set_generate_core_dump(true);
 	
 	//Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
-	// ck::resetCANivore();
-	// ThreadRateControl trc;
-	// trc.start();
-	// trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
+	ck::resetCANivore();
+	ThreadRateControl trc;
+	trc.start();
+	trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
 
 
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
