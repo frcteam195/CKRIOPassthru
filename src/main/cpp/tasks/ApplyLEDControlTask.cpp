@@ -12,6 +12,8 @@
 #include "utils/CKLogger.hpp"
 #include "utils/ProtobufTypeHelper.hpp"
 
+#include "utils/drivers/LEDMorseController.hpp"
+
 #include "ctre/phoenix/led/ColorFlowAnimation.h"
 #include "ctre/phoenix/led/FireAnimation.h"
 #include "ctre/phoenix/led/LarsonAnimation.h"
@@ -157,11 +159,25 @@ void ApplyLEDControlTask::updateAnimation(const ck::LEDControl::LEDControlData& 
     {
         for (ck::LEDAnimation a : m.animation())
         {
-            ctre::phoenix::led::Animation* ctre_animation = animationLookup(a);
-            if (ctre_animation != NULL)
+            if (a.animation_type() == ck::LEDAnimation::AnimationType::LEDAnimation_AnimationType_Morse)
             {
-                ck::runPhoenixFunctionWithRetry([mCtrl, ctre_animation, a]() { return mCtrl->Animate(*ctre_animation, a.slot()); }, id);
-                delete ctre_animation;
+                try
+                {
+                    update_morse_controller(mCtrl, a.num_led(), a.morse_message(), a.color());
+                }
+                catch (std::exception& e)
+                {
+                    //Just here to prevent code issues until we can test more
+                }
+            }
+            else
+            {
+                ctre::phoenix::led::Animation* ctre_animation = animationLookup(a);
+                if (ctre_animation != NULL)
+                {
+                    ck::runPhoenixFunctionWithRetry([mCtrl, ctre_animation, a]() { return mCtrl->Animate(*ctre_animation, a.slot()); }, id);
+                    delete ctre_animation;
+                }
             }
         }
     });
