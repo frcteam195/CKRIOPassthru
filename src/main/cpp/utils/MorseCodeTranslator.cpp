@@ -4,6 +4,9 @@ void MorseCodeTranslator::getTranslatedMsg(std::string& msg, std::deque<std::str
 {
     for (auto it = msg.begin(); it != msg.end(); it++)
     {
-        queue.push_back(morse_character_chart[*it]);
+        if(morse_character_chart.count(*it) > 0)
+        {
+            queue.push_back(morse_character_chart[*it]);
+        }
     }
 }

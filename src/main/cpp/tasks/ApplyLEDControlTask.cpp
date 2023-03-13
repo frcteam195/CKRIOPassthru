@@ -161,7 +161,14 @@ void ApplyLEDControlTask::updateAnimation(const ck::LEDControl::LEDControlData& 
         {
             if (a.animation_type() == ck::LEDAnimation::AnimationType::LEDAnimation_AnimationType_Morse)
             {
-                update_morse_controller(mCtrl, a.num_led(), a.morse_message(), a.color());
+                try
+                {
+                    update_morse_controller(mCtrl, a.num_led(), a.morse_message(), a.color());
+                }
+                catch (std::exception& e)
+                {
+                    //Just here to prevent code issues until we can test more
+                }
             }
             else
             {
