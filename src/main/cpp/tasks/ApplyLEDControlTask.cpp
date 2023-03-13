@@ -111,12 +111,12 @@ ctre::phoenix::led::Animation* ApplyLEDControlTask::animationLookup(const ck::LE
         }
         case ck::LEDAnimation_AnimationType_Fire:
         {
-            return new ctre::phoenix::led::FireAnimation(a.brightness(), a.speed(), a.num_led(), 0.5, 0.5, a.direction(), a.offset());
+            return new ctre::phoenix::led::FireAnimation(a.brightness(), a.speed(), a.num_led(), 1.0, 1.0, a.direction(), a.offset());
         }
         case ck::LEDAnimation_AnimationType_Larson:
         {
             //TODO: Fix bounce mode in protobuf API
-            return new ctre::phoenix::led::LarsonAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 4, a.offset());
+            return new ctre::phoenix::led::LarsonAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 8, a.offset());
         }
         case ck::LEDAnimation_AnimationType_Rainbow:
         {
@@ -132,11 +132,11 @@ ctre::phoenix::led::Animation* ApplyLEDControlTask::animationLookup(const ck::LE
         }
         case ck::LEDAnimation_AnimationType_Twinkle:
         {
-            return new ctre::phoenix::led::TwinkleAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent76, a.offset());
+            return new ctre::phoenix::led::TwinkleAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleAnimation::TwinklePercent::Percent30, a.offset());
         }
         case ck::LEDAnimation_AnimationType_TwinkleOff:
         {
-            return new ctre::phoenix::led::TwinkleOffAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent76, a.offset());
+            return new ctre::phoenix::led::TwinkleOffAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), ctre::phoenix::led::TwinkleOffAnimation::TwinkleOffPercent::Percent30, a.offset());
         }
         case ck::LEDAnimation_AnimationType_Strobe:
         {
