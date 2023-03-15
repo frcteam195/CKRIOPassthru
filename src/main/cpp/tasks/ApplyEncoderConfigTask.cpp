@@ -26,8 +26,6 @@ void ApplyEncoderConfigTask::run(uint32_t timeSinceLastUpdateMs)
         if (encoderUpdate.ParseFromArray(&buf[0], buf.size()))
         {
 
-            // std::cout << "Parsed IMU Config" << std::endl;
-
             for (auto encoder_config_msg : encoderUpdate.encoder_config())
             {
                 bool success = true;
