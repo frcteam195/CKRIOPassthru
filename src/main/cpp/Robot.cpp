@@ -14,44 +14,11 @@
 #include "utils/PhoenixHelper.hpp"
 #include <hal/DriverStation.h>
 #include <hal/DriverStationTypes.h>
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 #include "RobotDataHelper.hpp"
 #include "utils/CKSendable.hpp"
 #include "utils/AutoStartPositionAnglePair.hpp"
 
 #include "networktables/NetworkTableInstance.h"
-
-static frc::SendableChooser<ck::Sendable<int>*> autoChooser;
-static std::string autoMsg = "AutoSelection";
-static bool hasRobotInitialized = false;
-
-// static constexpr int ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID = 3;
-// static constexpr int ROBOT_PLACED_FINAL_BUTTON_HAL_ID = 13;
-// static bool robotFinalButtonPressed = false;
-// static bool prevRobotFinalButtonPressed = false;
-
-static ck::Sendable<int> auto1(0);
-static ck::Sendable<int> auto2(1);
-static ck::Sendable<int> auto3(2);
-static ck::Sendable<int> auto4(3);
-static ck::Sendable<int> auto5(4);
-static ck::Sendable<int> auto6(5);
-static ck::Sendable<int> auto7(6);
-
-void performInit()
-{
-
-}
-
-void initIfNotInit()
-{
-	if (!hasRobotInitialized)
-	{
-		performInit();
-		hasRobotInitialized = true;
-	}
-}
 
 Robot::Robot() : TimedRobot(20_ms) {}
 
@@ -107,19 +74,10 @@ void Robot::RobotInit()
 	std::cout << "Task Scheduler started!" << std::endl;
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
-
-	// autoChooser.SetDefaultOption("CK_5ball", &auto1);
-	autoChooser.AddOption("CK_2ballConsistent", &auto2);
-	autoChooser.AddOption("CK_2ballSwaggy", &auto4);
-	autoChooser.AddOption("CK_1ballHangar", &auto5);
-	autoChooser.AddOption("CK_1ballHub", &auto6);
-	autoChooser.SetDefaultOption("CK_5ballVeterans", &auto7);
-	frc::SmartDashboard::PutData(&autoChooser);
 }
 void Robot::RobotPeriodic() {
 
 	RobotControlModeHelper::getInstance().setDSAttached(frc::DriverStation::IsDSAttached());
-	nt::NetworkTableInstance::GetDefault().GetTable("dashboard_data")->GetEntry("shuffleboard_offset").GetDouble(0);
 
 	if (isExternalControl())
 	{
@@ -156,15 +114,9 @@ void Robot::RobotPeriodic() {
 	}
 	
 }
-static AutoStartPositionAnglePair start_angle_1(-88.5);
-static AutoStartPositionAnglePair start_angle_2(136.5);
-static AutoStartPositionAnglePair start_angle_3(-156.0);
 
-AutoStartPositionAnglePair* m_angle_pair = nullptr;
 void Robot::AutonomousInit()
 {
-	initIfNotInit();
-
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::AUTONOMOUS);
 	if (!isExternalControl())
 	{
@@ -181,8 +133,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-	initIfNotInit();
-
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::TELEOP);
 	if (!isExternalControl())
 	{
@@ -207,38 +157,10 @@ void Robot::DisabledInit()
 }
 void Robot::DisabledPeriodic()
 {
-	RobotDataHelper::getInstance().setSelectedAuto(autoChooser.GetSelected()->m_value);
-
-	// static int debounceCounter = 0;
-	// static uint32_t cycleCounter = 0;
 	if (!isExternalControl())
 	{
 		robotFailover.DisabledFailoverPeriodic();
 	}
-
-	// if (!hasRobotInitialized && cycleCounter++ % 50 == 0)
-	// {
-	// 	performInit();
-	// }
-
-	// if(debounceCounter <= 1 && !hasRobotInitialized && frc::DriverStation::IsJoystickConnected(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID)) {
-	// 	HAL_JoystickButtons rawButtons;
-	// 	HAL_GetJoystickButtons(ROBOT_PLACED_FINAL_JOYSTICK_HAL_ID, &rawButtons);
-	// 	robotFinalButtonPressed = rawButtons.buttons & (1 << ROBOT_PLACED_FINAL_BUTTON_HAL_ID);
-	// 	if (robotFinalButtonPressed && prevRobotFinalButtonPressed != robotFinalButtonPressed)
-	// 	{
-	// 		debounceCounter++;
-	// 	}
-	// 	prevRobotFinalButtonPressed = robotFinalButtonPressed;
-	// }
-
-	// if (debounceCounter > 1 && !hasRobotInitialized)
-	// {
-	// 	ck::ReportWarning("Robot Final Position Recorded");
-	// 	performInit();
-	// 	hasRobotInitialized = true;
-	// 	frc::SmartDashboard::PutBoolean("FinalPositionRecorded", true);
-	// }
 }
 
 void Robot::TestInit()

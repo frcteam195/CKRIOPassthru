@@ -26,6 +26,6 @@ private:
     RobotControlModeHelper();
     ~RobotControlModeHelper();
 
-    std::atomic<bool> mDSAttached;
+    std::atomic_bool mDSAttached { false };
     std::atomic<CONTROL_MODE> mControlMode { CONTROL_MODE::DISABLED };
 };
