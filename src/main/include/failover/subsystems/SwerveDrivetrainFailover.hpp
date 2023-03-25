@@ -44,15 +44,15 @@ private:
     static constexpr int BACK_RIGHT_STEERING_CANCODER_ID = 28;
 
     static constexpr int DRIVE_JOYSTICK_ID = 0;
-    static constexpr double DRIVE_JOYSTICK_DEADBAND = 0.05;
+    static constexpr double DRIVE_JOYSTICK_DEADBAND = 0.1;
     static constexpr int DRIVE_JOYSTICK_X_AXIS = 0;
     static constexpr int DRIVE_JOYSTICK_Y_AXIS = 1;
     static constexpr int DRIVE_JOYSTICK_Z_AXIS = 3;
 
-    frc::Translation2d m_frontLeftLocation{11.5_in, 11.5_in};
-    frc::Translation2d m_frontRightLocation{11.5_in, -11.5_in};
-    frc::Translation2d m_backLeftLocation{-11.5_in, 11.5_in};
-    frc::Translation2d m_backRightLocation{-11.5_in, -11.5_in};
+    frc::Translation2d m_frontLeftLocation{11.5_in, -11.5_in};
+    frc::Translation2d m_frontRightLocation{11.5_in, 11.5_in};
+    frc::Translation2d m_backLeftLocation{-11.5_in, -11.5_in};
+    frc::Translation2d m_backRightLocation{-11.5_in, 11.5_in};
 
     units::inch_t DRIVE_WHEEL_DIAMETER = 3.9_in;
     double DRIVE_GEAR_RATIO = 6.75;

@@ -63,17 +63,17 @@ void SwerveDrivetrainFailover::run()
     //Check mJoystick is valid and connected
     if (mJoystick && mJoystick->IsConnected())
     {
-        x = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
-        y = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
-        z = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Z_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        x = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_X_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        y = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
+        z = -ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Z_AXIS), DRIVE_JOYSTICK_DEADBAND);
 
         // frc::ChassisSpeeds speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(4_mps * x, 4_mps * y, 8_rad_per_s * z, frc::Rotation2d(/*robot current angle*/));
-        frc::ChassisSpeeds robot_speeds{4_mps * x, 4_mps * y, 8_rad_per_s * z};
+        frc::ChassisSpeeds robot_speeds{4_mps * y, 4_mps * x, 8_rad_per_s * z};
         auto [fl, fr, bl, br] = m_kinematics.ToSwerveModuleStates(robot_speeds);
-        auto flOptimized = frc::SwerveModuleState::Optimize(fl, units::radian_t(mSteeringAngles[0]));
-        auto frOptimized = frc::SwerveModuleState::Optimize(fr, units::radian_t(mSteeringAngles[1]));
-        auto blOptimized = frc::SwerveModuleState::Optimize(bl, units::radian_t(mSteeringAngles[2]));
-        auto brOptimized = frc::SwerveModuleState::Optimize(br, units::radian_t(mSteeringAngles[3]));
+        auto flOptimized = frc::SwerveModuleState::Optimize(fl, units::degree_t(mSteeringAngles[0]));
+        auto frOptimized = frc::SwerveModuleState::Optimize(fr, units::degree_t(mSteeringAngles[1]));
+        auto blOptimized = frc::SwerveModuleState::Optimize(bl, units::degree_t(mSteeringAngles[2]));
+        auto brOptimized = frc::SwerveModuleState::Optimize(br, units::degree_t(mSteeringAngles[3]));
 
         mFrontLeftDrive->set_output_value(meters_per_second_to_native_units_drive_velocity(flOptimized.speed));
         mFrontRightDrive->set_output_value(meters_per_second_to_native_units_drive_velocity(frOptimized.speed));
@@ -158,7 +158,7 @@ void SwerveDrivetrainFailover::SetSteeringConfig(int id, int cancoder_id, ck::Mo
     config_obj->set_ki(steering_velocity_kI);
     config_obj->set_kd(steering_velocity_kD);
     config_obj->set_kf(steering_velocity_kF);
-    config_obj->set_open_loop_ramp(0.15);
+    config_obj->set_open_loop_ramp(0);
     config_obj->set_forward_limit_switch_source(ck::MotorConfiguration::Motor::LimitSwitchSource::MotorConfiguration_Motor_LimitSwitchSource_Deactivated);
     config_obj->set_forward_limit_switch_normal(ck::MotorConfiguration::Motor::LimitSwitchNormal::MotorConfiguration_Motor_LimitSwitchNormal_Disabled);
     config_obj->set_reverse_limit_switch_source(ck::MotorConfiguration::Motor::LimitSwitchSource::MotorConfiguration_Motor_LimitSwitchSource_Deactivated);
