@@ -90,5 +90,6 @@ private:
     ck::MotorControl::Motor* mFrontRightSteering = nullptr;
     ck::MotorControl::Motor* mBackLeftSteering = nullptr;
     ck::MotorControl::Motor* mBackRightSteering = nullptr;
-    
+
+    double mSteeringAngles[4] = {0.0, 0.0, 0.0, 0.0};
 };

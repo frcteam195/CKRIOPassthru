@@ -27,7 +27,19 @@ void SwerveDrivetrainFailover::uninit()
 
 void SwerveDrivetrainFailover::periodic()
 {
+    // MotorManager::getInstance().onMotor(FRONT_LEFT_STEERING_ID, [&](uint16_t id, BaseTalon *motor, MotorType mType)
+    // {
+    //     mSteeringAngles[0] = motor->GetSelectedSensorPosition();
+    // });
 
+    uint16_t steering_ids[] = {FRONT_LEFT_STEERING_ID, FRONT_RIGHT_STEERING_ID, BACK_LEFT_STEERING_ID, BACK_RIGHT_STEERING_ID};
+
+    for (size_t i = 0; i < 4; i++) {
+        MotorManager::getInstance().onMotor(steering_ids[i], [&](uint16_t id, BaseTalon *motor, MotorType mType)
+        {
+            mSteeringAngles[i] = motor->GetSelectedSensorPosition() / 4096.0 * 360.0;
+        });
+    }
 }
 
 double SwerveDrivetrainFailover::meters_per_second_to_native_units_drive_velocity(units::meters_per_second_t mps)
@@ -55,12 +67,13 @@ void SwerveDrivetrainFailover::run()
         y = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Y_AXIS), DRIVE_JOYSTICK_DEADBAND);
         z = ck::math::normalizeWithDeadband(mJoystick->GetRawAxis(DRIVE_JOYSTICK_Z_AXIS), DRIVE_JOYSTICK_DEADBAND);
 
-        frc::ChassisSpeeds speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(4_mps * x, 4_mps * y, 8_rad_per_s * z, frc::Rotation2d(/*robot current angle*/));
-        auto [fl, fr, bl, br] = m_kinematics.ToSwerveModuleStates(speeds);
-        auto flOptimized = frc::SwerveModuleState::Optimize(fl, units::radian_t(/*encoder distance*/));
-        auto frOptimized = frc::SwerveModuleState::Optimize(fr, units::radian_t(/*encoder distance*/));
-        auto blOptimized = frc::SwerveModuleState::Optimize(bl, units::radian_t(/*encoder distance*/));
-        auto brOptimized = frc::SwerveModuleState::Optimize(br, units::radian_t(/*encoder distance*/));
+        // frc::ChassisSpeeds speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(4_mps * x, 4_mps * y, 8_rad_per_s * z, frc::Rotation2d(/*robot current angle*/));
+        frc::ChassisSpeeds robot_speeds{4_mps * x, 4_mps * y, 8_rad_per_s * z};
+        auto [fl, fr, bl, br] = m_kinematics.ToSwerveModuleStates(robot_speeds);
+        auto flOptimized = frc::SwerveModuleState::Optimize(fl, units::radian_t(mSteeringAngles[0]));
+        auto frOptimized = frc::SwerveModuleState::Optimize(fr, units::radian_t(mSteeringAngles[1]));
+        auto blOptimized = frc::SwerveModuleState::Optimize(bl, units::radian_t(mSteeringAngles[2]));
+        auto brOptimized = frc::SwerveModuleState::Optimize(br, units::radian_t(mSteeringAngles[3]));
 
         mFrontLeftDrive->set_output_value(meters_per_second_to_native_units_drive_velocity(flOptimized.speed));
         mFrontRightDrive->set_output_value(meters_per_second_to_native_units_drive_velocity(frOptimized.speed));
