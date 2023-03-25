@@ -26,7 +26,7 @@ private:
     void SetBaseConfig(int id, ck::MotorConfiguration::Motor*& config_obj, int current_limit = 40);
     void SetBaseControl(int id, ck::MotorControl::Motor*& control_obj);
 
-    static constexpr int INTAKE_ID = 13;
+    static constexpr int INTAKE_ID = 14;
 
     ck::MotorConfiguration::Motor* mIntakeConfig = nullptr;
 
