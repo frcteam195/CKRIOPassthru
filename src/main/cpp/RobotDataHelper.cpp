@@ -5,7 +5,6 @@
 
 RobotDataHelper::RobotDataHelper() :
 mThreadActive(true),
-mThread(&RobotDataHelper::runThread, this),
 mCachedAlliance(250, []() {
     if (RobotControlModeHelper::getInstance().isDSAttached())
     {
@@ -27,7 +26,9 @@ mCachedMatchTime(500, []() {
     }
 } ),
 mCacheTimerMsg(250)
-{}
+{
+    mThread = std::thread(&RobotDataHelper::runThread, this);
+}
 
 RobotDataHelper::~RobotDataHelper()
 {
@@ -41,6 +42,7 @@ RobotDataHelper::~RobotDataHelper()
 void RobotDataHelper::runThread()
 {
     mRateControl.start();
+    // std::cout << "Singleton" << std::endl;
     while (mThreadActive)
     {
         try {
@@ -48,7 +50,8 @@ void RobotDataHelper::runThread()
             mAlliance = frc::DriverStation::GetAlliance();
             mMatchTime = (float)frc::DriverStation::GetMatchTime();
             // mMatchTime = mCachedMatchTime.getValue();
-            mGameSpecificMsg = "";
+            std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
+            mGameSpecificMsg.assign("");
             // TODO: Figure out why this is causing crash when DS not connected
             // if (mCacheTimerMsg.isTimedOut())
             // {
@@ -59,6 +62,7 @@ void RobotDataHelper::runThread()
         }
         catch (std::exception& e)
         {
+            std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
             mAlliance = frc::DriverStation::Alliance::kInvalid;
             mMatchTime = -1;
             mGameSpecificMsg = "";
@@ -87,15 +91,4 @@ std::string RobotDataHelper::getGameSpecificMsg()
 {
     std::scoped_lock<std::recursive_mutex> lock(mStrMutex);
     return mGameSpecificMsg;
-}
-
-
-void RobotDataHelper::setSelectedAuto(int selectedAuto)
-{
-    mSelectedAuto = selectedAuto;
-}
-
-int RobotDataHelper::getSelectedAuto()
-{
-    return mSelectedAuto;
 }

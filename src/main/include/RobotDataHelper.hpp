@@ -17,8 +17,6 @@ public:
     frc::DriverStation::Alliance getAlliance();
     float getMatchTime();
     std::string getGameSpecificMsg();
-    void setSelectedAuto(int selectedAuto);
-    int getSelectedAuto();
     
 private:
     RobotDataHelper();
@@ -26,7 +24,6 @@ private:
     void runThread();
 
     std::atomic_bool mThreadActive;
-    std::thread mThread;
 
     CachedValue<frc::DriverStation::Alliance> mCachedAlliance;
     CachedValue<float> mCachedMatchTime;
@@ -42,4 +39,6 @@ private:
     TimeoutTimer mCacheTimerMsg;
 
     static constexpr int RBDATAHELPER_THREAD_RATE_MS = 100;
+
+    std::thread mThread;
 };
