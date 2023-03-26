@@ -24,9 +24,10 @@ private:
     std::vector<CKCANPacket> mPacketList;
     std::mutex mPacketMutex;
     std::atomic_bool mThreadActive;
-    std::thread mThread;
 
     ThreadRateControl mRateControl;
 
     static constexpr int CAN_SERVER_THREAD_RATE_MS = 10;
+    
+    std::thread mThread;
 };

@@ -1,7 +1,10 @@
 #include "CKCANServer.hpp"
 #include <iostream>
 
-CKCANServer::CKCANServer() : mThreadActive(true), mThread(&CKCANServer::runCANSendThread, this) {}
+CKCANServer::CKCANServer() : mThreadActive(true)
+{
+    mThread = std::thread(&CKCANServer::runCANSendThread, this);
+}
 
 CKCANServer::~CKCANServer()
 {
