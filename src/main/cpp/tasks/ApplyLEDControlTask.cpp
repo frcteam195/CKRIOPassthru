@@ -118,7 +118,7 @@ ctre::phoenix::led::Animation* ApplyLEDControlTask::animationLookup(const ck::LE
         case ck::LEDAnimation_AnimationType_Larson:
         {
             //TODO: Fix bounce mode in protobuf API
-            return new ctre::phoenix::led::LarsonAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 8, a.offset());
+            return new ctre::phoenix::led::LarsonAnimation(a.color().r(), a.color().g(), a.color().b(), a.color().w(), a.speed(), a.num_led(), (ctre::phoenix::led::LarsonAnimation::BounceMode)a.direction(), 7, a.offset());
         }
         case ck::LEDAnimation_AnimationType_Rainbow:
         {
