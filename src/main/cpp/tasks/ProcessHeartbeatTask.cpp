@@ -1,6 +1,7 @@
 #include "tasks/ProcessHeartbeatTask.hpp"
 #include "utils/TaskScheduler.hpp"
 #include "MotorManager.hpp"
+#include "CANdleManager.hpp"
 #include "ExternalControlManager.hpp"
 #include "SolenoidManager.hpp"
 
@@ -11,5 +12,6 @@ void ProcessHeartbeatTask::run(uint32_t timeSinceLastUpdateMs)
     MotorManager::getInstance().processHeartbeat();
     SolenoidManager::getInstance().processHeartbeat();
     ExternalControlManager::getInstance().processHeartbeat();
+    CANdleManager::getInstance().processHeartbeat();
     mTaskTimer.reportElapsedTime();
 }
