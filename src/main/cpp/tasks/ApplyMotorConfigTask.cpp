@@ -97,11 +97,6 @@ bool ApplyMotorConfigTask::fullUpdate(ck::MotorConfiguration_Motor& m)
                 if (m.feedback_sensor_can_id() > 0)
                 {
                     bool success = true;
-                    // CKEncoder* ckEncoder = CKEncoderManager::getInstance().getEncoder(m.feedback_sensor_can_id());
-                    // CKCANCoder* ckCANCoder = dynamic_cast<CKCANCoder*>(ckEncoder);
-                    // CANCoder canCoder = ckCANCoder->getRawCANCoder();
-                    // success &= mCtrl->ConfigRemoteFeedbackFilter(canCoder, 0, ck::kCANTimeoutMs) == ErrorCode::OK;
-                    std::cout << "Setting remote filter for motor ID: " << m.id() << std::endl;
                     success &= mCtrl->ConfigRemoteFeedbackFilter(m.feedback_sensor_can_id(), RemoteSensorSource::RemoteSensorSource_CANCoder, 0, ck::kCANTimeoutMs) == ErrorCode::OK;
                     success &= mCtrl->ConfigSelectedFeedbackSensor(RemoteFeedbackDevice::RemoteSensor0) == ErrorCode::OK;
                     return success ? ErrorCode::OK : ErrorCode::GeneralError;
