@@ -37,6 +37,12 @@ ck::IMUConfig::IMUConfigData* FailoverMessageManager::addIMUConfig()
     return mIMUConfig.add_imu_config();
 }
 
+ck::LEDControl::LEDControlData* FailoverMessageManager::addLEDControl()
+{
+    std::scoped_lock<std::recursive_mutex> lock(mLock);
+    return mLEDControl.add_led_control();
+}
+
 void FailoverMessageManager::publishMessages()
 {
     //Called at roughly 20ms
@@ -66,6 +72,13 @@ void FailoverMessageManager::publishMessages()
             std::vector<uint8_t> buf(mMotorConfiguration.ByteSizeLong(), 0);
             memcpy(&buf[0], mBuff, mMotorConfiguration.ByteSizeLong());
             NetworkManager::getInstance().placeFailoverMessage("motorconfig", buf);
+        }
+
+        if (mLEDControl.SerializeToArray(mBuff, BUF_SIZE))
+        {
+            std::vector<uint8_t> buf(mLEDControl.ByteSizeLong(), 0);
+            memcpy(&buf[0], mBuff, mLEDControl.ByteSizeLong());
+            NetworkManager::getInstance().placeFailoverMessage("ledcontrol", buf);
         }
 
         // if (mIMUConfig.SerializeToArray(mBuff, BUF_SIZE))
