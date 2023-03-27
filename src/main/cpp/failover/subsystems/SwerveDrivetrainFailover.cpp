@@ -9,6 +9,35 @@ void SwerveDrivetrainFailover::init()
     //Initialize joysticks here so they don't exist until in failover mode
     mJoystick = new frc::Joystick(DRIVE_JOYSTICK_ID);
 
+
+    //Initialize current angles to actual motor angles to prevent the wheels from turning back to 0
+    double current_angles[4] = {0};
+    MotorManager::getInstance().onMotor(FRONT_LEFT_STEERING_ID, [&](uint16_t id, BaseTalon *motor, MotorType mType)
+    {
+        current_angles[0] = motor->GetSelectedSensorPosition();
+    });
+    MotorManager::getInstance().onMotor(FRONT_RIGHT_STEERING_ID, [&](uint16_t id, BaseTalon *motor, MotorType mType)
+    {
+        current_angles[1] = motor->GetSelectedSensorPosition();
+    });
+    MotorManager::getInstance().onMotor(BACK_LEFT_STEERING_ID, [&](uint16_t id, BaseTalon *motor, MotorType mType)
+    {
+        current_angles[2] = motor->GetSelectedSensorPosition();
+    });
+    MotorManager::getInstance().onMotor(BACK_RIGHT_STEERING_ID, [&](uint16_t id, BaseTalon *motor, MotorType mType)
+    {
+        current_angles[3] = motor->GetSelectedSensorPosition();
+    });
+
+    mFrontLeftSteering->set_output_value(current_angles[0]);
+    mFrontRightSteering->set_output_value(current_angles[1]);
+    mBackLeftSteering->set_output_value(current_angles[2]);
+    mBackRightSteering->set_output_value(current_angles[3]);
+
+    mSteeringAngles[0] = current_angles[0] / 4096.0 * 360.0;
+    mSteeringAngles[1] = current_angles[1] / 4096.0 * 360.0;
+    mSteeringAngles[2] = current_angles[2] / 4096.0 * 360.0;
+    mSteeringAngles[3] = current_angles[3] / 4096.0 * 360.0;
 }
 
 void SwerveDrivetrainFailover::uninit()
