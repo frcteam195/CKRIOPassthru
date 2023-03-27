@@ -22,6 +22,12 @@
 
 Robot::Robot() : TimedRobot(20_ms), dh()
 {
+	// //Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
+	ck::resetCANivore();
+	ThreadRateControl trc;
+	trc.start();
+	trc.doRateControl(2000);	//Wait for CANivore reset and Phoenix init
+
 	dh.set_cleanup(false);
 	dh.set_generate_core_dump(false);
 	dh.set_color_output(false);
@@ -32,12 +38,6 @@ Robot::Robot() : TimedRobot(20_ms), dh()
 
 void Robot::RobotInit()
 {	
-	// //Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
-	// ck::resetCANivore();
-	// ThreadRateControl trc;
-	// trc.start();
-	// trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
-
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
 	ctre::phoenix::unmanaged::Unmanaged::LoadPhoenix();
