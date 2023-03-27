@@ -51,14 +51,6 @@
 
 #define INLINE __attribute__((always_inline)) inline
 
-template< typename T, size_t n >
-static constexpr size_t countof( T (&)[n] ) {  return n;  }
-void backtrace()
-{
-	void *ptrs[100];
-	backtrace_symbols_fd( ptrs, backtrace( ptrs, countof(ptrs) ), 2 );
-}
-
 namespace Debug {
 namespace Safe {
   INLINE void print(const char *msg, size_t len = 0);
@@ -557,7 +549,7 @@ void DeathHandler::HandleSignal(int sig, void * /* info */, void *secret) {
   // Workaround malloc() inside backtrace()
   heap_trap_active_ = true;
   int trace_size = backtrace(trace, frames_count_ + 2);
-  backtrace();
+  backtrace_symbols_fd( trace, trace_size, 2 );
   heap_trap_active_ = false;
   if (trace_size <= 2) {
     safe_abort();
