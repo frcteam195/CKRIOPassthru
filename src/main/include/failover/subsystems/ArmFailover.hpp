@@ -6,6 +6,8 @@
 
 #include "MotorControl.pb.h"
 #include "MotorConfiguration.pb.h"
+#include "SolenoidControl.pb.h"
+
 #include <cstdint>
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/SwerveDriveKinematics.h"
@@ -43,6 +45,7 @@ private:
     void SetBaseConfig(int id, ck::MotorConfiguration::Motor*& config_obj, int current_limit = 40);
     void SetBaseControl(int id, ck::MotorControl::Motor*& control_obj);
     void SetBaseControl(int id, ck::MotorControl::Motor*& control_obj, int master_id);
+    void SetBaseSolenoid(int id, int module_id, ck::SolenoidControl::Solenoid*& control_obj);
     void ConfigPID(ck::MotorConfiguration::Motor*& config_obj, ConfigDataSet& d);
 
     static constexpr int LOWER_ARM_MASTER_ID = 9;
@@ -53,6 +56,17 @@ private:
 
     static constexpr int LOWER_ARM_CANCODER_ID = 29;
     static constexpr int UPPER_ARM_CANCODER_ID = 31;
+
+    static constexpr int LOWER_BRAKE_SOLENOID_ID = 7;
+    static constexpr int UPPER_BRAKE_SOLENOID_ID = 6;
+    static constexpr int EXTENSION_1_SOLENOID_ID = 0;
+    static constexpr int EXTENSION_2_SOLENOID_ID = 2;
+
+    static constexpr int LOWER_BRAKE_SOLENOID_MODULE_ID = 0;
+    static constexpr int UPPER_BRAKE_SOLENOID_MODULE_ID = 0;
+    static constexpr int EXTENSION_1_SOLENOID_MODULE_ID = 1;
+    static constexpr int EXTENSION_2_SOLENOID_MODULE_ID = 1;
+
 
     ConfigDataSet lower_arm_pid {0.524, 0.0, 0.33, 0.242, 3600, 3700, 3, true, 8958, true, -13371};
     ConfigDataSet upper_arm_pid {1.7, 0.0, 2.5, 3.91463871, 200, 450, 1, true, -573, true, -3604};
@@ -69,4 +83,9 @@ private:
     ck::MotorControl::Motor* mUpperArmMaster = nullptr;
     ck::MotorControl::Motor* mUpperArmFollower = nullptr;
     ck::MotorControl::Motor* mWrist = nullptr;
+
+    ck::SolenoidControl::Solenoid* mLowerBrake = nullptr;
+    ck::SolenoidControl::Solenoid* mUpperBrake = nullptr;
+    ck::SolenoidControl::Solenoid* mExtension1 = nullptr;
+    ck::SolenoidControl::Solenoid* mExtension2 = nullptr;
 };

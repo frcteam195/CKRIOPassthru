@@ -6,6 +6,8 @@
 
 #include "MotorControl.pb.h"
 #include "MotorConfiguration.pb.h"
+#include "SolenoidControl.pb.h"
+
 #include <cstdint>
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/SwerveDriveKinematics.h"
@@ -28,7 +30,12 @@ private:
 
     static constexpr int INTAKE_ID = 14;
 
+    static constexpr int PINCH_SOLENOID_ID = 1;
+    static constexpr int PINCH_SOLENOID_MODULE_ID = 1;
+
     ck::MotorConfiguration::Motor* mIntakeConfig = nullptr;
 
     ck::MotorControl::Motor* mIntake = nullptr;
+
+    ck::SolenoidControl::Solenoid* mPinch = nullptr;
 };

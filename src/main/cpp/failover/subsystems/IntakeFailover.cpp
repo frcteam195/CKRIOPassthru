@@ -24,12 +24,20 @@ void IntakeFailover::run()
 {
     mIntake->set_control_mode(ck::MotorControl::Motor::ControlMode::MotorControl_Motor_ControlMode_PercentOutput);
     mIntake->set_output_value(0);
+
+    mPinch->set_output_value(ck::SolenoidControl_Solenoid_SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF);
 }
 
 IntakeFailover::IntakeFailover()
 {
     SetBaseConfig(INTAKE_ID, mIntakeConfig);
     SetBaseControl(INTAKE_ID, mIntake);
+
+    mPinch = FailoverMessageManager::getInstance().addSolenoidControl();
+    mPinch->set_id(((PINCH_SOLENOID_MODULE_ID << 16) & 0xFFFF0000) | (PINCH_SOLENOID_ID & 0xFFFF));
+    mPinch->set_module_type(ck::SolenoidControl_Solenoid_ModuleType::SolenoidControl_Solenoid_ModuleType_CTREPCM);
+    mPinch->set_solenoid_type(ck::SolenoidControl_Solenoid_SolenoidType::SolenoidControl_Solenoid_SolenoidType_SINGLE);
+    mPinch->set_output_value(ck::SolenoidControl_Solenoid_SolenoidValue::SolenoidControl_Solenoid_SolenoidValue_OFF);
 }
 
 void IntakeFailover::SetBaseConfig(int id, ck::MotorConfiguration::Motor*& config_obj, int current_limit)
