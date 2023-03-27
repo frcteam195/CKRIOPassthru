@@ -163,7 +163,7 @@ void ApplyLEDControlTask::updateAnimation(const ck::LEDControl::LEDControlData& 
             {
                 try
                 {
-                    update_morse_controller(mCtrl, a.num_led(), a.morse_message(), a.color());
+                    // update_morse_controller(mCtrl, a.num_led(), a.morse_message(), a.color());
                 }
                 catch (std::exception& e)
                 {

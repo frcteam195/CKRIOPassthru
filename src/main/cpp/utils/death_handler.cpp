@@ -1,17 +1,13 @@
 /*
-
   Copyright (c) 2012, Samsung R&D Institute Russia
   All rights reserved.
-
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
-
   1. Redistributions of source code must retain the above copyright notice, this
      list of conditions and the following disclaimer.
   2. Redistributions in binary form must reproduce the above copyright notice,
      this list of conditions and the following disclaimer in the documentation
      and/or other materials provided with the distribution.
-
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -22,7 +18,6 @@
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
  */
 
 /*! @file death_handler.cc
@@ -55,6 +50,14 @@
 #endif
 
 #define INLINE __attribute__((always_inline)) inline
+
+template< typename T, size_t n >
+static constexpr size_t countof( T (&)[n] ) {  return n;  }
+void backtrace()
+{
+	void *ptrs[100];
+	backtrace_symbols_fd( ptrs, backtrace( ptrs, countof(ptrs) ), 2 );
+}
 
 namespace Debug {
 namespace Safe {
@@ -554,6 +557,7 @@ void DeathHandler::HandleSignal(int sig, void * /* info */, void *secret) {
   // Workaround malloc() inside backtrace()
   heap_trap_active_ = true;
   int trace_size = backtrace(trace, frames_count_ + 2);
+  backtrace();
   heap_trap_active_ = false;
   if (trace_size <= 2) {
     safe_abort();
@@ -561,16 +565,20 @@ void DeathHandler::HandleSignal(int sig, void * /* info */, void *secret) {
 
   // Overwrite sigaction with caller's address
 #ifdef __linux__
-#if defined(__arm__)
+#if defined(__arm__) 
   trace[1] = reinterpret_cast<void *>(uc->uc_mcontext.arm_pc);
 #else
+#if defined(__aarch64__)
+  trace[1] = reinterpret_cast<void *>(uc->uc_mcontext.pc);
+#else
 #if !defined(__i386__) && !defined(__x86_64__)
-#error Only ARM, x86 and x86-64 are supported
+#error Only ARM, AARCH64, x86 and x86-64 are supported
 #endif
 #if defined(__x86_64__)
   trace[1] = reinterpret_cast<void *>(uc->uc_mcontext.gregs[REG_RIP]);
 #else
   trace[1] = reinterpret_cast<void *>(uc->uc_mcontext.gregs[REG_EIP]);
+#endif
 #endif
 #endif
 
@@ -706,7 +714,8 @@ void DeathHandler::HandleSignal(int sig, void * /* info */, void *secret) {
 
   // Write '\0' to indicate the end of the output
   char end = '\0';
-  write(STDERR_FILENO, &end, 1);
+  ssize_t ret = write(STDERR_FILENO, &end, 1);
+  (void)ret;
 
 #elif defined(__APPLE__)
   for (int i = 0; i < trace_size; i++) {

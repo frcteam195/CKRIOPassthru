@@ -139,10 +139,12 @@ model {
                 lib library: 'librosproto', linkage: 'static'
                 binaries.all {
                     cppCompiler.args << "-Werror"
+                    cppCompiler.args << "-fnon-call-exceptions" //Remove for production
                     // cppCompiler.args << "-g"    //Generate debug info for stack trace
                     // cppCompiler.args << "-rdynamic" //Export symbols for stack trace
                     linker.args << "-lzmq"
                     linker.args << "-lprotobuf"
+                    linker.args << "lib/unwind_sigreturn.o"  //Remove for production
                     // cppCompiler.args.each{ value -> 
                     //     project.logger.lifecycle(value)
                     // }

@@ -20,18 +20,23 @@
 
 #include "networktables/NetworkTableInstance.h"
 
-Robot::Robot() : TimedRobot(20_ms) {}
+Robot::Robot() : TimedRobot(20_ms), dh()
+{
+	dh.set_cleanup(false);
+	dh.set_generate_core_dump(false);
+	dh.set_color_output(false);
+	dh.set_cut_common_path_root(true);
+	dh.set_cut_relative_paths(true);
+	dh.set_frames_count(10);
+}
 
 void Robot::RobotInit()
-{
-	// dh.set_generate_core_dump(true);
-	
+{	
 	// //Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
 	// ck::resetCANivore();
 	// ThreadRateControl trc;
 	// trc.start();
 	// trc.doRateControl(8000);	//Wait for CANivore reset and Phoenix init
-
 
 	frc::RobotController::SetBrownoutVoltage(4.5_V);
 	frc::LiveWindow::DisableAllTelemetry();
@@ -75,6 +80,7 @@ void Robot::RobotInit()
 
 	std::cout << "Initialized successfully. Entering run..." << std::endl;
 }
+
 void Robot::RobotPeriodic() {
 
 	RobotControlModeHelper::getInstance().setDSAttached(frc::DriverStation::IsDSAttached());
