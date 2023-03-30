@@ -5,10 +5,20 @@
 #include <vector>
 #include "NetworkManager.hpp"
 #include "SolenoidManager.hpp"
+#include "utils/RobotControlModeHelper.hpp"
 
 ApplySolenoidValuesTask::ApplySolenoidValuesTask() : Task(THREAD_RATE_MS, TASK_NAME)
 {
     NetworkManager::getInstance().joinGroup(SOLENOID_CONTROL_MESSAGE_GROUP.c_str());
+}
+
+ApplySolenoidValuesTask::~ApplySolenoidValuesTask()
+{
+    if (mCompressor)
+    {
+        delete mCompressor;
+    }
+    mCompressor = nullptr;
 }
 
 void ApplySolenoidValuesTask::run(uint32_t timeSinceLastUpdateMs)
@@ -21,6 +31,32 @@ void ApplySolenoidValuesTask::run(uint32_t timeSinceLastUpdateMs)
         ck::SolenoidControl solenoidUpdate;
         if (solenoidUpdate.ParseFromArray(&buf[0], buf.size()))
         {
+            if (solenoidUpdate.solenoids_size() > 0)
+            {
+                if (mCompressor == nullptr)
+                {
+                    mCompressor = new frc::Compressor(0, frc::PneumaticsModuleType::CTREPCM);
+                    mCompressor->Disable();
+                    mCompressorState = false;
+                }
+
+                if (!solenoidUpdate.compressor_is_enabled_for_auto() && RobotControlModeHelper::getInstance().getControlMode() != CONTROL_MODE::TELEOP)
+                {
+                    if (mCompressorState)
+                    {
+                        mCompressor->Disable();
+                        mCompressorState = false;
+                    }
+                }
+                else
+                {
+                    if (!mCompressorState)
+                    {
+                        mCompressor->EnableDigital();
+                        mCompressorState = true;
+                    }
+                }
+            }
 
             //https://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.util.message_differencer#MessageDifferencer.Reporter
             //Maybe look into reportdifferencesto function
