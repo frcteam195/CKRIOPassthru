@@ -51,14 +51,14 @@ WORKDIR /tmp
 
 RUN curl -SL https://github.com/wpilibsuite/opensdk/releases/download/v2023-8/cortexa9_vfpv3-roborio-academic-2023-x86_64-linux-gnu-Toolchain-12.1.0.tgz | sh -c 'mkdir -p /usr/local && cd /usr/local && tar xzf - --strip-components=2'
 
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
-	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
-	&& cd /tmp/protobuf-3.18.0 \
-	&& ./configure \
-	&& make -j4 && make install \
-	&& cd /tmp \
-	&& rm -Rf /tmp/* \
-	&& ldconfig
+#RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
+#	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
+#	&& cd /tmp/protobuf-3.18.0 \
+#	&& ./configure \
+#	&& make -j4 && make install \
+#	&& cd /tmp \
+#	&& rm -Rf /tmp/* \
+#	&& ldconfig
 
 WORKDIR /tmp
 RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4.3.4.tar.gz \
@@ -74,16 +74,44 @@ RUN curl -SLO https://github.com/zeromq/libzmq/releases/download/v4.3.4/zeromq-4
 	&& cd /tmp \
 	&& rm -Rf /tmp/* 
 
+RUN wget https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libz1_1.2.11-r0.71_cortexa9-vfpv3.ipk \
+	https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libz-dev_1.2.11-r0.71_cortexa9-vfpv3.ipk \
+	https://download.ni.com/ni-linux-rt/feeds/2019/arm/cortexa9-vfpv3/libz-staticdev_1.2.11-r0.71_cortexa9-vfpv3.ipk \
+	&& for f in *.ipk; do \
+	ar p $f data.tar.gz | sh -c "cd /usr/local/arm-nilrt-linux-gnueabi/sysroot && tar xzf -"; \
+	done \
+	&& rm -Rf /tmp/*
+
+ARG RR_TOOLCHAIN=/tmp/roboriotoolchain.cmake
+
+RUN echo "set(CMAKE_SYSTEM_NAME Linux)" > ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_SYSTEM_PROCESSOR armv7)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_CXX_COMPILER /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-g++ CACHE FILEPATH riocxx)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_C_COMPILER /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-gcc CACHE FILEPATH rioc)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_LINKER /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-ld CACHE FILEPATH riold)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_AR /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-ar CACHE FILEPATH rioar)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_RANLIB /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-ranlib CACHE FILEPATH rioranlib)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_STRIP /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-strip CACHE FILEPATH riostrip)" >> ${RR_TOOLCHAIN} \
+	&& echo "set(CMAKE_READELF /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-readelf CACHE FILEPATH rioreadelf)" >> ${RR_TOOLCHAIN}
+
+
 WORKDIR /tmp
-RUN curl -SLO https://github.com/protocolbuffers/protobuf/releases/download/v3.18.0/protobuf-cpp-3.18.0.tar.gz \
-	&& tar -xzf protobuf-cpp-3.18.0.tar.gz \
-	&& cd /tmp/protobuf-3.18.0 \
-	&& ./configure --host=arm-frc${YEAR}-linux-gnueabi CC=arm-frc${YEAR}-linux-gnueabi-gcc CXX=arm-frc${YEAR}-linux-gnueabi-g++ \
-	&& cd /tmp/protobuf-3.18.0/src \
-	&& make -j4 \
-	&& chown -R `id -u`:`id -g` .libs/libprotobuf.so \
-	&& arm-frc${YEAR}-linux-gnueabi-strip .libs/libprotobuf.so \
-	&& cp .libs/libprotobuf.so /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libprotobuf.so \
+RUN git clone https://github.com/protocolbuffers/protobuf.git \
+	&& cd /tmp/protobuf \
+	&& git checkout 482156c0f96dd670b9f1ba4f946e66edeb04535f \
+	&& cd third_party \
+	&& rm -Rf abseil-cpp \
+	&& git clone https://github.com/abseil/abseil-cpp.git \
+	&& cd abseil-cpp \
+	&& git checkout b971ac5250ea8de900eae9f95e06548d14cd95fe \
+	&& cd /tmp/protobuf \
+	&& mkdir cppbuild \
+	&& cd /tmp/protobuf/cppbuild \
+	&& cmake ../cmake -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_ABSL_PROVIDER=module -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_TOOLCHAIN_FILE=/tmp/roboriotoolchain.cmake -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_WITH_ZLIB=ON  -DZLIB_LIBRARY=/usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libz.so.1.2.11 -DZLIB_INCLUDE_DIR=/usr/local/arm-nilrt-linux-gnueabi/sysroot/usr/include \
+	&& make -j4 CROSS_COMPILE_TARGET=yes \
+	&& chown -R `id -u`:`id -g` ./libprotobuf.so \
+	&& arm-frc${YEAR}-linux-gnueabi-strip ./libprotobuf.so \
+	&& cp ./libprotobuf.so /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libprotobuf.so \
 	&& cd /tmp \
 	&& rm -Rf /tmp/*
 

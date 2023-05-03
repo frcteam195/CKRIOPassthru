@@ -13,7 +13,7 @@ docker run -it --rm --net=host \
 	--volume="${HOME}/.gradle:${HOME}/.gradle:rw" \
 	--volume="${HOME}:${HOME}:rw" \
 	--volume="$(realpath $(dirname ${0})/..):/build/CKRIOPassthru" \
-	 guitar24t/ck-roborio-buildenv:latest \
+	 guitar24t/ck-roborio-buildenv:amd64 \
 	/bin/bash -c '\
 	cd CKRIOPassthru \
 	&& bash	\
