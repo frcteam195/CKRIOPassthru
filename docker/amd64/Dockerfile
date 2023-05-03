@@ -94,7 +94,7 @@ RUN echo "set(CMAKE_SYSTEM_NAME Linux)" > ${RR_TOOLCHAIN} \
 	&& echo "set(CMAKE_STRIP /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-strip CACHE FILEPATH riostrip)" >> ${RR_TOOLCHAIN} \
 	&& echo "set(CMAKE_READELF /usr/local/bin/arm-frc${YEAR}-linux-gnueabi-readelf CACHE FILEPATH rioreadelf)" >> ${RR_TOOLCHAIN}
 
-
+ARG PROTO_VER=22.3.0
 WORKDIR /tmp
 RUN git clone https://github.com/protocolbuffers/protobuf.git \
 	&& cd /tmp/protobuf \
@@ -107,11 +107,12 @@ RUN git clone https://github.com/protocolbuffers/protobuf.git \
 	&& cd /tmp/protobuf \
 	&& mkdir cppbuild \
 	&& cd /tmp/protobuf/cppbuild \
-	&& cmake ../cmake -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_ABSL_PROVIDER=module -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_TOOLCHAIN_FILE=/tmp/roboriotoolchain.cmake -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_WITH_ZLIB=ON  -DZLIB_LIBRARY=/usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libz.so.1.2.11 -DZLIB_INCLUDE_DIR=/usr/local/arm-nilrt-linux-gnueabi/sysroot/usr/include \
+	&& cmake .. -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_ABSL_PROVIDER=module -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_TOOLCHAIN_FILE=/tmp/roboriotoolchain.cmake -Dprotobuf_BUILD_SHARED_LIBS=ON -Dprotobuf_WITH_ZLIB=ON  -DZLIB_LIBRARY=/usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libz.so.1.2.11 -DZLIB_INCLUDE_DIR=/usr/local/arm-nilrt-linux-gnueabi/sysroot/usr/include \
 	&& make -j4 CROSS_COMPILE_TARGET=yes \
 	&& chown -R `id -u`:`id -g` ./libprotobuf.so \
 	&& arm-frc${YEAR}-linux-gnueabi-strip ./libprotobuf.so \
 	&& cp ./libprotobuf.so /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libprotobuf.so \
+	&& cp ./libprotobuf.so.${PROTO_VER} /usr/local/arm-nilrt-linux-gnueabi/sysroot/lib/libprotobuf.so.${PROTO_VER} \
 	&& cd /tmp \
 	&& rm -Rf /tmp/*
 
