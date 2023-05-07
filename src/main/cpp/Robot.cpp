@@ -44,6 +44,10 @@ void Robot::RobotInit()
 	frc::LiveWindow::DisableAllTelemetry();
 	ctre::phoenix::unmanaged::Unmanaged::LoadPhoenix();
 
+#ifdef EXTERNAL_PHOENIX_CONTROL
+	ctre::phoenix::unmanaged::Unmanaged::SetPhoenixDiagnosticsStartTime(-1);
+#endif
+
 	RobotControlModeHelper::getInstance().setControlMode(CONTROL_MODE::DISABLED);
 
 	ck::configureSystemPriority();
