@@ -52,17 +52,21 @@ public:
 
 private:
 	//Declare tasks as member variables in Robot cpp so they never go out of scope
-	ReceiveMessagesTask receiveMessagesTask;
+	
+#ifndef EXTERNAL_PHOENIX_CONTROL
 	ApplyIMUConfigTask applyIMUConfigTask;
 	ApplyEncoderConfigTask applyEncoderConfigTask;
 	ApplyLEDControlTask applyLEDControlTask;
 	ApplyMotorConfigTask applyMotorConfigTask;
 	ApplyMotorValuesTask applyMotorValuesTask;
-	ApplySolenoidValuesTask applySolenoidValuesTask;
-	SendRobotDataTask sendRobotDataTask;
 	SendIMUDataTask sendIMUDataTask;
 	SendEncoderDataTask sendEncoderDataTask;
 	SendMotorDataTask sendMotorDataTask;
+#endif
+
+	ReceiveMessagesTask receiveMessagesTask;
+	ApplySolenoidValuesTask applySolenoidValuesTask;
+	SendRobotDataTask sendRobotDataTask;
 	SendSolenoidDataTask sendSolenoidDataTask;
 	SendJoystickDataTask sendJoystickDataTask;
 	ProcessHeartbeatTask processHeartbeatTask;

@@ -1,3 +1,5 @@
+#define EXTERNAL_PHOENIX_CONTROL
+
 #include "Robot.hpp"
 #include "utils/GlobalConfig.hpp"
 #include "utils/CKLogger.hpp"
@@ -49,18 +51,23 @@ void Robot::RobotInit()
 
 	//Register Tasks
 	TaskScheduler::getInstance().scheduleTask(receiveMessagesTask);
+
+#ifndef EXTERNAL_PHOENIX_CONTROL
 	// TaskScheduler::getInstance().scheduleTask(applyEncoderConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyIMUConfigTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorValuesTask);
 	TaskScheduler::getInstance().scheduleTask(applyMotorConfigTask);
-	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
-	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
 	// TaskScheduler::getInstance().scheduleTask(sendEncoderDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendIMUDataTask);
 	TaskScheduler::getInstance().scheduleTask(sendMotorDataTask);
-	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
-	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(applyLEDControlTask);
+#endif
+
+	
+	// TaskScheduler::getInstance().scheduleTask(sendSolenoidDataTask);
+	TaskScheduler::getInstance().scheduleTask(applySolenoidValuesTask);
+	TaskScheduler::getInstance().scheduleTask(sendRobotDataTask);
+	TaskScheduler::getInstance().scheduleTask(sendJoystickDataTask);
 	TaskScheduler::getInstance().scheduleTask(processHeartbeatTask);
 	TaskScheduler::getInstance().scheduleTask(updateDSConnectionStatusTask);
 
