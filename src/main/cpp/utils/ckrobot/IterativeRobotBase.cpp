@@ -8,7 +8,7 @@
 
 #include <fmt/format.h>
 #include <hal/DriverStation.h>
-#include <networktables/NetworkTableInstance.h>
+// #include <networktables/NetworkTableInstance.h>
 
 #include "frc/DSControlWord.h"
 #include "frc/Errors.h"
@@ -190,12 +190,12 @@ namespace ck
 	RobotPeriodic();
 	m_watchdog.AddEpoch("RobotPeriodic()");
 
-	SmartDashboard::UpdateValues();
-	m_watchdog.AddEpoch("SmartDashboard::UpdateValues()");
-	LiveWindow::UpdateValues();
-	m_watchdog.AddEpoch("LiveWindow::UpdateValues()");
-	Shuffleboard::Update();
-	m_watchdog.AddEpoch("Shuffleboard::Update()");
+	// SmartDashboard::UpdateValues();
+	// m_watchdog.AddEpoch("SmartDashboard::UpdateValues()");
+	// LiveWindow::UpdateValues();
+	// m_watchdog.AddEpoch("LiveWindow::UpdateValues()");
+	// Shuffleboard::Update();
+	// m_watchdog.AddEpoch("Shuffleboard::Update()");
 
 	if constexpr (IsSimulation()) {
 		HAL_SimPeriodicBefore();
@@ -207,9 +207,9 @@ namespace ck
 	m_watchdog.Disable();
 
 	// Flush NetworkTables
-	if (m_ntFlushEnabled) {
-		nt::NetworkTableInstance::GetDefault().FlushLocal();
-	}
+	// if (m_ntFlushEnabled) {
+	// 	nt::NetworkTableInstance::GetDefault().FlushLocal();
+	// }
 
 	// // Warn on loop time overruns
 	// if (m_watchdog.IsExpired()) {

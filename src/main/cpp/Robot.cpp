@@ -20,8 +20,6 @@
 #include "utils/CKSendable.hpp"
 #include "utils/AutoStartPositionAnglePair.hpp"
 
-#include "networktables/NetworkTableInstance.h"
-
 Robot::Robot() : TimedRobot(20_ms), dh()
 {
 	// //Restart CANivore to mitigate CPU spike bug. TODO: Needs testing
