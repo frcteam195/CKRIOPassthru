@@ -27,17 +27,7 @@ task protoc {
         exec {
             workingDir "$projectDir/src/main/proto"
             project.logger.lifecycle('Generating C++ Code from .proto files')
-            commandLine 'bash', '-c', 'rm -Rf ../protogen; mkdir -p ../protogen; protoc --cpp_out=../protogen/ *.proto'
-        }
-        exec {
-            workingDir "$projectDir/src/main/protogen"
-            project.logger.lifecycle('Compiling generated source...')
-            commandLine 'bash', '-c', 'arm-frc2023-linux-gnueabi-g++ -c *.cc -I ../include/ -I ./ -std=c++17 -O3'
-        }
-        exec {
-            workingDir "$projectDir/src/main/protogen"
-            project.logger.lifecycle('Linking compiled source into static lib...')
-            commandLine 'bash', '-c', 'arm-frc2023-linux-gnueabi-ar crf ../../../lib/librosproto.a *.o'
+            commandLine 'bash', '-c', 'rm -Rf ../protogen; make ODIR=../protogen FULL_LIB=../../../lib/librosproto.a CXX=arm-frc2023-linux-gnueabi-g++ CXX_FLAGS="-I ../protogen/ -I ../include/ -std=c++17 -O3" AR=arm-frc2023-linux-gnueabi-ar PROTOC=$(which protoc)'
         }
     }
 }
